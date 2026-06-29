@@ -128,7 +128,7 @@ df_base = carregar_dados()
 df = df_base.explode('UF_Lista')
 df['UF_Filtro'] = df['UF_Lista']
     
-    html = f"""
+html = f"""
     <div style="display: flex; gap: 20px; margin-bottom: 25px; margin-top: 10px;">
         <div style="flex: 1; background: #fff; padding: 22px; border-radius: 6px; border-left: 4px solid {COR_PRIMARIA}; box-shadow: 0 2px 5px rgba(0,0,0,0.04);">
             <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Autos de Infração Auditados</div>
