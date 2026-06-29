@@ -225,6 +225,28 @@ st.sidebar.markdown(f"""
 # 4. CABEÇALHO E MENU SUPERIOR (TABS)
 # ==========================================
 st.markdown("<h1>Painel Estratégico de Gestão de Riscos e Passivo Ambiental</h1>", unsafe_allow_html=True)
+
+# ==========================================
+# 4. CABEÇALHO E MENU SUPERIOR (TABS)
+# ==========================================
+st.markdown("<h1>Painel Estratégico de Gestão de Riscos e Passivo Ambiental</h1>", unsafe_allow_html=True)
+
+# Inserção discreta da logo e nome da empresa cliente
+logo_prime_base64 = get_image_base64("associados-prime-sem-fundo.png")
+if logo_prime_base64:
+    st.markdown(f"""
+    <div style="display: flex; align-items: center; gap: 10px; margin-top: -5px; margin-bottom: 15px; opacity: 0.85;">
+        <img src="data:image/png;base64,{logo_prime_base64}" style="height: 35px;">
+        <span style="font-size: 15px; font-weight: 500; color: #475569; letter-spacing: 0.5px;">| Auditoria de Conformidade Administrativa</span>
+    </div>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("<p style='font-size: 15px; font-weight: 500; color: #475569; margin-top: -5px; margin-bottom: 15px;'>Prime Seafood LTDA | Auditoria de Conformidade Administrativa</p>", unsafe_allow_html=True)
+
+st.markdown("<p style='font-size: 14px; color: #64748b; margin-bottom: 5px;'>Ferramenta analítica de contencioso administrativo, mapeamento de passivo e medidas acautelatórias do IBAMA.</p>", unsafe_allow_html=True)
+
+renderizar_kpis(df)
+
 st.markdown("<p style='font-size: 14px; color: #64748b; margin-bottom: 5px;'>Ferramenta analítica de contencioso administrativo, mapeamento de passivo e medidas acautelatórias do IBAMA.</p>", unsafe_allow_html=True)
 
 renderizar_kpis(df)
