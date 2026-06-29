@@ -94,7 +94,6 @@ def classificar_objeto(desc):
 def limpar_e_separar_ufs(val):
     val_str = str(val).upper()
     encontrados = []
-    # Busca por siglas de estados brasileiros
     for token in re.findall(r'\b[A-Z]{2}\b', val_str):
         if token in {'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'}:
             encontrados.append(token)
@@ -105,21 +104,34 @@ def carregar_dados():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmM6tv0bqBxxx4Rc9pAYGPDXDAfWCV3fnv6mZAwoAYfaXBn_jhVNadrlsALWsyFvSYai-oD7QHk_VD/pub?output=csv"
     df = pd.read_csv(url)
     
-    # IMPORTANTE: Verifique se os nomes das colunas abaixo batem com sua planilha
-    # Se na planilha for 'Valor da Multa', mude o código abaixo para 'Valor da Multa'
-    df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
+    # Remove espaços em branco invisíveis no início/fim dos nomes das colunas
+    df.columns = df.columns.str.strip()
+    
+    # TRATAMENTO SEGURO DE MOEDA BRASILEIRA (Transforma "R$ 1.500,00" ou "1.500,00" em número real)
+    if 'Valor Multa' in df.columns:
+        df['Valor Multa'] = df['Valor Multa'].astype(str)
+        df['Valor Multa'] = df['Valor Multa'].str.replace('R$', '', regex=False)
+        df['Valor Multa'] = df['Valor Multa'].str.replace(' ', '', regex=False)
+        df['Valor Multa'] = df['Valor Multa'].str.replace('.', '', regex=False)
+        df['Valor Multa'] = df['Valor Multa'].str.replace(',', '.', regex=False)
+        df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
+    else:
+        df['Valor Multa'] = 0
+
     df['Descrição das Autuações'] = df['Descrição das Autuações'].fillna('-')
     df['Sanções Aplicadas'] = df['Sanções Aplicadas'].fillna('-')
+    df['Data Infração'] = pd.to_datetime(df['Data Infração'], errors='coerce')
     
     df['Objeto Identificado'] = df['Descrição das Autuações'].apply(classificar_objeto)
-    df['UF_Lista'] = df['UF'].apply(limpar_e_separar_ufs)
-    df['UF_Clean'] = df['UF_Lista'].apply(lambda x: ' / '.join(x))
     
     # Criar colunas booleanas para sanções
     df['Apreensão'] = df['Sanções Aplicadas'].str.contains('apreensão', case=False, na=False)
     df['Depósito'] = df['Sanções Aplicadas'].str.contains('depósito', case=False, na=False)
     df['Embargo/Interdição'] = df['Sanções Aplicadas'].str.contains('embargo|interdição', case=False, na=False)
     df['Suspensão'] = df['Sanções Aplicadas'].str.contains('suspensão', case=False, na=False)
+    
+    df['UF_Lista'] = df['UF'].apply(limpar_e_separar_ufs)
+    df['UF_Clean'] = df['UF_Lista'].apply(lambda x: ' / '.join(x))
     
     return df
 
@@ -163,8 +175,6 @@ else:
     st.sidebar.markdown(f"<h2 style='color:{COR_PRIMARIA}; text-align:center;'>CARVALHO & FADUL</h2>", unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-
-df_base = carregar_dados()
 
 df_exploded = df_base.explode('UF_Lista')
 df_exploded['UF_Filtro'] = df_exploded['UF_Lista']
@@ -247,7 +257,6 @@ with tab1:
         st.markdown("### Investigação Qualitativa Individual")
         st.write("Selecione a categoria para investigar a redação técnica dos fiscais:")
         
-        # INCLUSÃO DO ITEM "TODOS" NA LISTA DE OBJETOS
         lista_opcoes_objetos = ['Todos'] + df_obj['Objeto'].tolist()
         objeto_alvo = st.selectbox("", lista_opcoes_objetos, label_visibility="collapsed")
         
@@ -258,7 +267,6 @@ with tab1:
             df_focado = df_unicos[df_unicos['Objeto Identificado'] == objeto_alvo]
             titulo_caixa_kpi = "Total Mapeado na Categoria"
         
-        # KPI Dinâmico específico do Objeto selecionado
         st.markdown(f"""
         <div style="background-color: {COR_PRIMARIA}; padding: 15px 20px; border-radius: 6px; margin-bottom: 20px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
             <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; opacity: 0.9;">{titulo_caixa_kpi}</div>
@@ -266,7 +274,6 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
         
-        # Lista em formato de Sanfona para detalhamento completo da categorização
         for _, row in df_focado.iterrows():
             with st.expander(f"A.I: {row['Nº A.I.']} | UF: {row['UF_Clean']}"):
                 st.markdown(f"**Processo SEI:** `{row['Nº Processo']}`")
@@ -369,4 +376,4 @@ with tab5:
     st.dataframe(df_export, use_container_width=True, hide_index=True)
     
     csv = df_export.to_csv(index=False).encode('utf-8')
-    st.download_button(label="📥 Exportar Matriz Analítica (CSV)", data=csv, file_name='Auditoria_IBAMA.csv', mime='text/csv')     
+    st.download_button(label="📥 Exportar Matriz Analítica (CSV)", data=csv, file_name='Auditoria_IBAMA.csv', mime='text/csv')
