@@ -103,12 +103,15 @@ def limpar_e_separar_ufs(val):
             encontrados.append(token)
     return encontrados if encontrados else ['N/D']
 
-@st.cache_data
-def carregar_dados(file):
-    df_raw = pd.read_excel(file, sheet_name='IBAMA')
+@st.cache_data(ttl=600)
+def carregar_dados():
+    # Link direto da sua planilha publicada como CSV
+    url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmM6tv0bqBxxx4Rc9pAYGPDXDAfWCV3fnv6mZAwoAYfaXBn_jhVNadrlsALWsyFvSYai-oD7QHk_VD/pub?output=csv"
+    df = pd.read_csv(url)
     
+    # MOTOR DE LIMPEZA E DEDUPLICAÇÃO (MANTIDO)
     colunas_chave = ['Nº Processo', 'Tipo Infração', 'Nº A.I.', 'Data Infração']
-    df = df_raw.drop_duplicates(subset=colunas_chave, keep='last').copy()
+    df = df.drop_duplicates(subset=colunas_chave, keep='last').copy()
     
     df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
     df['Descrição das Autuações'] = df['Descrição das Autuações'].fillna('-')
