@@ -111,9 +111,10 @@ def carregar_dados():
     
     # MOTOR DE LIMPEZA E DEDUPLICAÇÃO (MANTIDO)
     colunas_chave = ['Nº Processo', 'Tipo Infração', 'Nº A.I.', 'Data Infração']
-    df = df.drop_duplicates(subset=colunas_chave, keep='last').copy()
     
     df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
+    df['Objeto Identificado'] = df['Descrição das Autuações'].apply(classificar_objeto)
+    df['Data Infração'] = pd.to_datetime(df['Data Infração'], errors='coerce')
     df['Descrição das Autuações'] = df['Descrição das Autuações'].fillna('-')
     df['Sanções Aplicadas'] = df['Sanções Aplicadas'].fillna('-')
     df['Data Infração'] = pd.to_datetime(df['Data Infração'], errors='coerce')
