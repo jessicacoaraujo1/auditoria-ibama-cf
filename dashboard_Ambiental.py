@@ -142,8 +142,8 @@ html = f"""
             <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Medidas Acautelatórias (Físicas)</div>
             <div style="font-size: 30px; color: {COR_SECUNDARIA}; font-weight: 700; margin-top: 4px;">{qtd_apreensoes}</div>
         </div>
-    </div>
-"""
+        </div>
+        """
     st.markdown(html, unsafe_allow_html=True)
 
 # ==========================================
