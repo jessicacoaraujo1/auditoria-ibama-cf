@@ -166,15 +166,7 @@ else:
 
 st.sidebar.markdown("---")
 
-uploaded_file = st.sidebar.file_uploader("", type=["xlsx"], label_visibility="collapsed")
-if uploaded_file is not None:
-    df_base = carregar_dados(uploaded_file)
-else:
-    try:
-        df_base = carregar_dados('Auditoria Ambiental Prime (IBAMA).xlsx')
-    except:
-        st.sidebar.error("Faça o upload do arquivo base.")
-        st.stop()
+df_base = carregar_dados()
 
 df_exploded = df_base.explode('UF_Lista')
 df_exploded['UF_Filtro'] = df_exploded['UF_Lista']
