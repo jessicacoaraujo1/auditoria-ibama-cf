@@ -379,4 +379,4 @@ with tab5:
     st.dataframe(df_export, use_container_width=True, hide_index=True)
     
     csv = df_export.to_csv(index=False).encode('utf-8')
-    st.download_button(label="📥 Exportar Matriz Analítica (CSV)", data=csv, file_name='Auditoria_IBAMA.csv', mime='text/csv')
+    st.download_button(label="📥 Exportar Matriz Analítica (CSV)", data=csv, file_name='Auditoria_IBAMA.csv', mime='text/csv')     
