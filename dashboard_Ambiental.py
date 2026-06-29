@@ -226,11 +226,6 @@ st.sidebar.markdown(f"""
 # ==========================================
 st.markdown("<h1>Painel Estratégico de Gestão de Riscos e Passivo Ambiental</h1>", unsafe_allow_html=True)
 
-# ==========================================
-# 4. CABEÇALHO E MENU SUPERIOR (TABS)
-# ==========================================
-st.markdown("<h1>Painel Estratégico de Gestão de Riscos e Passivo Ambiental</h1>", unsafe_allow_html=True)
-
 # Inserção discreta da logo e nome da empresa cliente
 logo_prime_base64 = get_image_base64("associados-prime-sem-fundo.png")
 if logo_prime_base64:
