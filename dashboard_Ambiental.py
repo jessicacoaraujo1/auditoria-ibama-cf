@@ -10,15 +10,11 @@ import re
 # 1. CONFIGURAÇÃO DA PÁGINA E CSS CORPORATIVO
 # ==========================================
 st.set_page_config(page_title="Gestão de Riscos IBAMA", layout="wide")
-
-# Função de busca automática na sua planilha
 @st.cache_data(ttl=600)
 def carregar_dados():
-    # Este link é a sua "fonte oficial" na nuvem
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmM6tv0bqBxxx4Rc9pAYGPDXDAfWCV3fnv6mZAwoAYfaXBn_jhVNadrlsALWsyFvSYai-oD7QHk_VD/pub?output=csv"
     df = pd.read_csv(url)
     
-    # Lógica de limpeza (aqui estão os seus cálculos)
     df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
     # [O restante da sua lógica original de UFs e Classificação entra aqui]
     return df
