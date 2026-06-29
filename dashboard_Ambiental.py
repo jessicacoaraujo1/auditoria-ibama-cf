@@ -143,7 +143,7 @@ html = f"""
             <div style="font-size: 30px; color: {COR_SECUNDARIA}; font-weight: 700; margin-top: 4px;">{qtd_apreensoes}</div>
         </div>
     </div>
-    """
+"""
     st.markdown(html, unsafe_allow_html=True)
 
 # ==========================================
