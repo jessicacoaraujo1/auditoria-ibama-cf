@@ -113,6 +113,7 @@ def carregar_dados():
     colunas_chave = ['Nº Processo', 'Tipo Infração', 'Nº A.I.', 'Data Infração']
     
     df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
+    return df
 
     df['Descrição das Autuações'] = df['Descrição das Autuações'].fillna('-')
     df['Sanções Aplicadas'] = df['Sanções Aplicadas'].fillna('-')
