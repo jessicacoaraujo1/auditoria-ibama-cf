@@ -10,14 +10,6 @@ import re
 # 1. CONFIGURAÇÃO DA PÁGINA E CSS CORPORATIVO
 # ==========================================
 st.set_page_config(page_title="Gestão de Riscos IBAMA", layout="wide")
-@st.cache_data(ttl=600)
-def carregar_dados():
-    url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmM6tv0bqBxxx4Rc9pAYGPDXDAfWCV3fnv6mZAwoAYfaXBn_jhVNadrlsALWsyFvSYai-oD7QHk_VD/pub?output=csv"
-    df = pd.read_csv(url)
-    
-    df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
-    # [O restante da sua lógica original de UFs e Classificação entra aqui]
-    return df
 
 # Paleta Oficial (Carvalho & Fadul)
 COR_PRIMARIA = "#7c1617"     # Vermelho Bordô
@@ -97,54 +89,44 @@ def classificar_objeto(desc):
     elif 'siscomex' in desc or 'due' in desc or 'ncm' in desc or 'lpco' in desc: return 'Aduaneiro / Siscomex / LPCO'
     elif 'licença' in desc or 'rgp' in desc: return 'Falta de Licença / RGP'
     elif 'resíduo' in desc or 'poluição' in desc: return 'Poluição / Resíduos Sólidos'
-    elif 'atum' in desc or 'demersal' in desc: return 'Atuns e Demersais'
-    elif 'garoupa' in desc or 'badejo' in desc: return 'Garoupa e Badejo (Ameaçados)'
     else: return 'Administrativo / Diversos'
-
-ESTADOS_VALIDOS = {'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'}
 
 def limpar_e_separar_ufs(val):
     val_str = str(val).upper()
     encontrados = []
-    for token in re.split(r'[^A-Z]', val_str):
-        if token in ESTADOS_VALIDOS and token not in encontrados:
+    # Busca por siglas de estados brasileiros
+    for token in re.findall(r'\b[A-Z]{2}\b', val_str):
+        if token in {'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'}:
             encontrados.append(token)
-    return encontrados if encontrados else ['N/D']
+    return list(set(encontrados)) if encontrados else ['N/D']
 
 @st.cache_data(ttl=600)
 def carregar_dados():
-    # Link direto da sua planilha publicada como CSV
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmM6tv0bqBxxx4Rc9pAYGPDXDAfWCV3fnv6mZAwoAYfaXBn_jhVNadrlsALWsyFvSYai-oD7QHk_VD/pub?output=csv"
     df = pd.read_csv(url)
     
-    # MOTOR DE LIMPEZA E DEDUPLICAÇÃO (MANTIDO)
-    colunas_chave = ['Nº Processo', 'Tipo Infração', 'Nº A.I.', 'Data Infração']
-    
-     # Tratamento de valores para garantir os cálculos financeiros
+    # IMPORTANTE: Verifique se os nomes das colunas abaixo batem com sua planilha
+    # Se na planilha for 'Valor da Multa', mude o código abaixo para 'Valor da Multa'
     df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
     df['Descrição das Autuações'] = df['Descrição das Autuações'].fillna('-')
     df['Sanções Aplicadas'] = df['Sanções Aplicadas'].fillna('-')
-    df['Data Infração'] = pd.to_datetime(df['Data Infração'], errors='coerce')
     
     df['Objeto Identificado'] = df['Descrição das Autuações'].apply(classificar_objeto)
-    
-    df['Apreensão'] = df['Sanções Aplicadas'].str.contains('apreensão', case=False)
-    df['Depósito'] = df['Sanções Aplicadas'].str.contains('depósito', case=False)
-    df['Embargo/Interdição'] = df['Sanções Aplicadas'].str.contains('embargo|interdição', case=False)
-    df['Suspensão'] = df['Sanções Aplicadas'].str.contains('suspensão', case=False)
-    
     df['UF_Lista'] = df['UF'].apply(limpar_e_separar_ufs)
     df['UF_Clean'] = df['UF_Lista'].apply(lambda x: ' / '.join(x))
     
+    # Criar colunas booleanas para sanções
+    df['Apreensão'] = df['Sanções Aplicadas'].str.contains('apreensão', case=False, na=False)
+    df['Depósito'] = df['Sanções Aplicadas'].str.contains('depósito', case=False, na=False)
+    df['Embargo/Interdição'] = df['Sanções Aplicadas'].str.contains('embargo|interdição', case=False, na=False)
+    df['Suspensão'] = df['Sanções Aplicadas'].str.contains('suspensão', case=False, na=False)
+    
     return df
 
-
-def renderizar_kpis(df_filtrado):
-    df_unicos = df_filtrado.drop_duplicates(subset=['Nº Processo', 'Nº A.I.'])
-    
-    valor_total = df_unicos['Valor Multa'].sum()
-    valor_formatado = f"R$ {valor_total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    qtd_apreensoes = df_unicos['Apreensão'].sum() + df_unicos['Depósito'].sum()
+# Carrega os dados uma única vez
+df_base = carregar_dados()
+df = df_base.explode('UF_Lista')
+df['UF_Filtro'] = df['UF_Lista']
     
     html = f"""
     <div style="display: flex; gap: 20px; margin-bottom: 25px; margin-top: 10px;">
