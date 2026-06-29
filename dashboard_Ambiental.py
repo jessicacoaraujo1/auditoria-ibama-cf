@@ -112,9 +112,8 @@ def carregar_dados():
     # MOTOR DE LIMPEZA E DEDUPLICAÇÃO (MANTIDO)
     colunas_chave = ['Nº Processo', 'Tipo Infração', 'Nº A.I.', 'Data Infração']
     
+     # Tratamento de valores para garantir os cálculos financeiros
     df['Valor Multa'] = pd.to_numeric(df['Valor Multa'], errors='coerce').fillna(0)
-    return df
-
     df['Descrição das Autuações'] = df['Descrição das Autuações'].fillna('-')
     df['Sanções Aplicadas'] = df['Sanções Aplicadas'].fillna('-')
     df['Data Infração'] = pd.to_datetime(df['Data Infração'], errors='coerce')
@@ -130,6 +129,7 @@ def carregar_dados():
     df['UF_Clean'] = df['UF_Lista'].apply(lambda x: ' / '.join(x))
     
     return df
+
 
 def renderizar_kpis(df_filtrado):
     df_unicos = df_filtrado.drop_duplicates(subset=['Nº Processo', 'Nº A.I.'])
