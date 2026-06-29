@@ -232,7 +232,7 @@ if logo_prime_base64:
     st.markdown(f"""
     <div style="display: flex; align-items: center; gap: 10px; margin-top: -5px; margin-bottom: 15px; opacity: 0.85;">
         <img src="data:image/png;base64,{logo_prime_base64}" style="height: 35px;">
-        <span style="font-size: 15px; font-weight: 500; color: #475569; letter-spacing: 0.5px;">| Auditoria de Conformidade Administrativa</span>
+        <span style="font-size: 15px; font-weight: 500; color: #475569; letter-spacing: 0.5px;">| PRIME SEAFOOD LTDA</span>
     </div>
     """, unsafe_allow_html=True)
 else:
