@@ -141,7 +141,8 @@ df = df_base.explode('UF_Lista')
 df['UF_Filtro'] = df['UF_Lista']
     
 def renderizar_kpis(df_filtrado):
-    df_unicos = df_filtrado.drop_duplicates(subset=['Nº Processo', 'Nº A.I.'])
+    # CORREÇÃO: Deduplicar exclusivamente pela chave única do Auto de Infração
+    df_unicos = df_filtrado.drop_duplicates(subset=['Nº A.I.'])
     
     valor_total = df_unicos['Valor Multa'].sum()
     valor_formatado = f"R$ {valor_total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -236,7 +237,8 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "Base de Dados Consolidada"
 ])
 
-df_unicos = df.drop_duplicates(subset=['Nº Processo', 'Nº A.I.'])
+# CORREÇÃO: Deduplicar exclusivamente pela chave única do Auto de Infração
+df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 
 # ---------------------------------------------------------
 # ABA 1: AUDITORIA DE OBJETOS E INVESTIGAÇÃO QUALITATIVA
@@ -288,7 +290,7 @@ with tab1:
 # ABA 2: ANÁLISE REGIONAL
 # ---------------------------------------------------------
 with tab2:
-    df_uf_unique = df.drop_duplicates(subset=['UF_Filtro', 'Nº Processo', 'Nº A.I.'])
+    df_uf_unique = df.drop_duplicates(subset=['UF_Filtro', 'Nº A.I.'])
     df_uf = df_uf_unique.groupby('UF_Filtro').agg({'Valor Multa': 'sum', 'Nº A.I.': 'nunique'}).reset_index()
     df_uf = df_uf.sort_values(by='Valor Multa', ascending=False)
     
