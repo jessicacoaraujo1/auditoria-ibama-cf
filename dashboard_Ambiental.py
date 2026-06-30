@@ -240,12 +240,13 @@ st.markdown("<p style='font-size: 14px; color: #64748b; margin-bottom: 5px;'>Fer
 
 renderizar_kpis(df)
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "Auditoria de Objetos", 
     "Análise Regional", 
     "Tipologia e Sanções", 
-    "Pesquisa Profunda (Filtros)", 
-    "Base de Dados Consolidada"
+    "Pesquisa Profunda", 
+    "Base Consolidada",
+    "Plano de Mitigação (Prevenção)"
 ])
 
 # CORREÇÃO: Deduplicar exclusivamente pela chave única do Auto de Infração
