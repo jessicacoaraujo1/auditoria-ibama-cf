@@ -390,3 +390,61 @@ with tab5:
     
     csv = df_export.to_csv(index=False).encode('utf-8')
     st.download_button(label="📥 Exportar Matriz Analítica (CSV)", data=csv, file_name='Auditoria_IBAMA.csv', mime='text/csv')
+
+
+# ==========================================
+# ABA 6: PLANO DE MITIGAÇÃO (PREVENÇÃO)
+# ==========================================
+with tab6:
+    st.markdown("## Estratégias de Mitigação de Riscos e Compliance")
+    st.markdown("Diretrizes preventivas e corretivas elaboradas para reduzir o passivo ambiental e evitar novas autuações, com foco nas cadeias de Lagosta e Pargo.")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("### ⚙️ Âmbito Operacional")
+        with st.expander("Controle de Embarque (Lagosta)"):
+            st.markdown("""
+            **Risco Mapeado:** Transporte abaixo do percentual de lagostas vivas.
+            *   **Medida:** Implementação de Checklist de Triagem no cais.
+            *   **Ação:** Proibição de embarque de carga sem aferição prévia de que **mínimo de 70%** do lote está vivo.
+            *   **Ferramenta:** Manual de Bolso do Encarregado (POP).
+            """)
+        with st.expander("Monitoramento VMS (Pargo)"):
+            st.markdown("""
+            **Risco Mapeado:** Autuação por pesca em profundidade < 50m.
+            *   **Medida:** Auditoria de Satélite (PREPS) diária.
+            *   **Ação:** Alarme interno de aproximação de zonas proibidas para as embarcações MR PESCA e DINIZ PESCA.
+            """)
+
+    with col2:
+        st.markdown("### 🏢 Âmbito Administrativo")
+        with st.expander("Declaração de Estoque no Defeso"):
+            st.markdown("""
+            **Risco Mapeado:** Omissão de estoque gerando apreensões milionárias.
+            *   **Medida:** Calendário de Compliance Ambiental.
+            *   **Ação:** Trava no sistema interno 5 dias antes do prazo final do IBAMA/MAPA para emissão obrigatória do relatório de câmaras frias.
+            """)
+        with st.expander("Auditoria de Fornecedores (RGP)"):
+            st.markdown("""
+            **Risco Mapeado:** Compra de barco/filial sem RGP ativo.
+            *   **Medida:** Bloqueio de emissão de NF de entrada.
+            *   **Ação:** Nenhuma filial (ex: Touros, Icapuí) pode transacionar pescado sem validação mensal do RGP no painel central.
+            """)
+
+    with col3:
+        st.markdown("### ⚖️ Âmbito Jurídico")
+        with st.expander("Teses de Defesa Padronizadas"):
+            st.markdown("""
+            **Risco Mapeado:** Prazos curtos (20 dias) e defesas genéricas.
+            *   **Medida:** Biblioteca de Teses Homologadas.
+            *   **Ação:** Utilizar a tese de "Erro de Formalização no SEI" e "Nulidade por Falta de Intimação Válida" de forma imediata após a notificação fiscal.
+            """)
+        with st.expander("Protocolo de Abordagem Fiscal"):
+            st.markdown("""
+            **Risco Mapeado:** Assinatura de Termos de Apreensão sem ressalvas.
+            *   **Medida:** Treinamento de Gestão de Crise (E-book).
+            *   **Ação:** Motoristas e encarregados orientados a documentar divergências de peso no ato da fiscalização da PRF/IBAMA.
+            """)
+            
+    st.info("💡 **Próximos Passos:** Disponibilização dos arquivos em PDF (Manuais Operacionais e E-books de Treinamento) diretamente nesta plataforma para download pelas filiais.")
