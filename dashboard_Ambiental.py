@@ -296,27 +296,37 @@ with tab_mapa:
         lat="Lat",
         lon="Lon",
         color="Tipo",
-        size_max=16,
-        zoom=4.2,
-        center={"lat": -5.0, "lon": -42.0}, # Centraliza bem no meio do Nordeste/Norte
+        size_max=18, # Aumentei um pouco o tamanho das bolinhas para destacarem bem no satélite
+        zoom=4.5,
+        center={"lat": -5.0, "lon": -42.0},
         hover_name="Nome",
         hover_data={"Cidade": True, "Status": True, "Lat": False, "Lon": False, "Tipo": False},
         color_discrete_map={
-            "Base Própria (Prime)": "#7c1617", # O Vermelho Bordô da Prime
-            "Prestador de Serviço / Terceira": "#d97706" # Amarelo/Âmbar para destacar terceiros
+            "Base Própria (Prime)": "#ff2a2a", # Vermelho vivo vibrante para brilhar no satélite escuro
+            "Prestador de Serviço / Terceira": "#ffb700" # Âmbar/Dourado bem aceso
         }
     )
     
-    # Configuração de estilo de mapa limpo e profissional
+    # Configuração de Satélite de Alta Resolução (Sem precisar de API Key!)
     fig_mapa.update_layout(
-        mapbox_style="carto-positron",
+        mapbox_style="white-bg", # Fundo neutro que recebe a camada fotográfica
+        mapbox_layers=[
+            {
+                "below": 'traces',
+                "sourcetype": "raster",
+                "source": [
+                    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                ]
+            }
+        ],
         margin={"r":0,"t":0,"l":0,"b":0},
         legend=dict(
             orientation="h",
             yanchor="bottom",
             y=1.02,
             xanchor="right",
-            x=1
+            x=1,
+            font=dict(color="#ffffff") # Legenda em cor clara para leitura perfeita
         )
     )
     
