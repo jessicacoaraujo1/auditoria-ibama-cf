@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import folium
+from streamlit_folium import st_folium
 import plotly.express as px
 import plotly.graph_objects as go
 import os
@@ -259,29 +261,29 @@ df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 
 with tab_mapa:
     st.markdown("## 📍 Mapeamento Operacional: Litoral Norte e Nordeste")
-    st.markdown("Visão espacial interativa das unidades próprias e rede de prestadores de serviço terceirizados (do Amapá à Bahia), para controle de risco e fiscalização.")
+    st.markdown("Visão espacial interativa de alta resolução (Satélite Google) das unidades próprias e rede de prestadores de serviço terceirizados.")
     
-    # 1. Base de dados georreferenciada
+    # 1. Base de dados com informações descritivas detalhadas para os Popups
     dados_mapa = [
-        {"Nome": "Matriz / Escritório", "Cidade": "Fortaleza - CE", "Lat": -3.7172, "Lon": -38.5433, "Tipo": "Base Própria (Prime)", "Status": "Ativa / Regular"},
-        {"Nome": "Filial Indústria Icapuí", "Cidade": "Icapuí - CE", "Lat": -4.7119, "Lon": -37.3544, "Tipo": "Base Própria (Prime)", "Status": "Histórico de Defeso (Lagosta)"},
-        {"Nome": "Filial Indústria Acaraú", "Cidade": "Acaraú - CE", "Lat": -2.8853, "Lon": -40.1200, "Tipo": "Base Própria (Prime)", "Status": "Ativa / Regular"},
-        {"Nome": "Filial Costeira São Gonçalo", "Cidade": "S. G. do Amarante - CE", "Lat": -3.6064, "Lon": -38.9717, "Tipo": "Base Própria (Prime)", "Status": "Atenção: Pesca (Pargo)"},
-        {"Nome": "Filial Bragança", "Cidade": "Bragança - PA", "Lat": -1.0536, "Lon": -46.7656, "Tipo": "Base Própria (Prime)", "Status": "Histórico: Pesca < 50m (Pargo)"},
-        {"Nome": "Filial Belém", "Cidade": "Belém - PA", "Lat": -1.4558, "Lon": -48.5039, "Tipo": "Base Própria (Prime)", "Status": "Atenção: Controle Aduaneiro"},
-        {"Nome": "Filial Luís Correia", "Cidade": "Luís Correia - PI", "Lat": -2.8856, "Lon": -41.6681, "Tipo": "Base Própria (Prime)", "Status": "Câmaras Frias / Estoque"},
-        {"Nome": "Filial Touros", "Cidade": "Touros - RN", "Lat": -5.1989, "Lon": -35.4608, "Tipo": "Base Própria (Prime)", "Status": "Atenção: RGP de Filial"},
-        {"Nome": "Filial Baía Formosa", "Cidade": "Baía Formosa - RN", "Lat": -6.3719, "Lon": -35.0053, "Tipo": "Base Própria (Prime)", "Status": "Histórico: Petrecho Proibido"},
-        {"Nome": "Filial Alhandra", "Cidade": "Alhandra - PB", "Lat": -7.4328, "Lon": -34.9125, "Tipo": "Base Própria (Prime)", "Status": "Ativa / Transporte"},
-        {"Nome": "Soene Pescados", "Cidade": "Santana / Macapá - AP", "Lat": -0.0583, "Lon": -51.1717, "Tipo": "Prestador de Serviço / Terceira", "Status": "Apoio Logístico Extremo Norte"},
-        {"Nome": "Carapitanga Pescados / Maricultura", "Cidade": "Goiana - PE", "Lat": -7.5617, "Lon": -34.9011, "Tipo": "Prestador de Serviço / Terceira", "Status": "Alerta: Alvo de Fiscalização Recente"},
-        {"Nome": "Cabel Frigorífico", "Cidade": "Salvador / Litoral - BA", "Lat": -12.9714, "Lon": -38.5014, "Tipo": "Prestador de Serviço / Terceira", "Status": "Apoio Litoral Sul / Bahia"}
+        {"Nome": "Matriz / Escritório Central", "Cidade": "Fortaleza - CE", "Lat": -3.7172, "Lon": -38.5433, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "star", "Status": "Ativa / Regular", "Descricao": "Sede administrativa e coordenação jurídica/operacional da rede."},
+        {"Nome": "Filial Indústria Icapuí", "Cidade": "Icapuí - CE", "Lat": -4.7119, "Lon": -37.3544, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "industry", "Status": "Alerta: Histórico de Defeso (Lagosta)", "Descricao": "Unidade industrial focada em processamento. Requer auditoria rigorosa de estoque no defeso."},
+        {"Nome": "Filial Indústria Acaraú", "Cidade": "Acaraú - CE", "Lat": -2.8853, "Lon": -40.1200, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "industry", "Status": "Ativa / Regular", "Descricao": "Planta de processamento e congelamento de pescado costeiro."},
+        {"Nome": "Filial Costeira São Gonçalo", "Cidade": "S. G. do Amarante - CE", "Lat": -3.6064, "Lon": -38.9717, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "anchor", "Status": "Atenção: Pesca (Pargo)", "Descricao": "Ponto de apoio costeiro. Monitorar relatórios de rastreamento de profundidade VMS."},
+        {"Nome": "Filial Bragança", "Cidade": "Bragança - PA", "Lat": -1.0536, "Lon": -46.7656, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "anchor", "Status": "Histórico: Pesca < 50m (Pargo)", "Descricao": "Unidade estratégica no Pará. Atenção redobrada com autuações de frotas parceiras no pargo."},
+        {"Nome": "Filial Belém", "Cidade": "Belém - PA", "Lat": -1.4558, "Lon": -48.5039, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "briefcase", "Status": "Atenção: Controle Aduaneiro", "Descricao": "Apoio logístico e aduaneiro para exportações saindo do Norte do país."},
+        {"Nome": "Filial Luís Correia", "Cidade": "Luís Correia - PI", "Lat": -2.8856, "Lon": -41.6681, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "asterisk", "Status": "Câmaras Frias / Estoque", "Descricao": "Centro de armazenamento frigorífico. Risco focado na declaração de estoques de lagosta."},
+        {"Nome": "Filial Touros", "Cidade": "Touros - RN", "Lat": -5.1989, "Lon": -35.4608, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "anchor", "Status": "Atenção: RGP de Filial", "Descricao": "Unidade costeira de recepção. Necessário checagem mensal de vigência do RGP."},
+        {"Nome": "Filial Baía Formosa", "Cidade": "Baía Formosa - RN", "Lat": -6.3719, "Lon": -35.0053, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "anchor", "Status": "Histórico: Petrecho Proibido", "Descricao": "Recepção de lagosta. Foco em barrar entrada de pescado capturado por rede de caçoeira."},
+        {"Nome": "Filial Alhandra", "Cidade": "Alhandra - PB", "Lat": -7.4328, "Lon": -34.9125, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "road", "Status": "Ativa / Transporte", "Descricao": "Hub de apoio rodoviário e transporte de cargas interativado."},
+        {"Nome": "Soene Pescados", "Cidade": "Santana / Macapá - AP", "Lat": -0.0583, "Lon": -51.1717, "Tipo": "Prestador de Serviço / Terceira", "Cor": "orange", "Ícone": "globe", "Status": "Apoio Logístico Extremo Norte", "Descricao": "Parceiro de serviços e apoio operacional logístico no extremo Norte (Amapá)."},
+        {"Nome": "Carapitanga Pescados", "Cidade": "Goiana - PE", "Lat": -7.5617, "Lon": -34.9011, "Tipo": "Prestador de Serviço / Terceira", "Cor": "orange", "Ícone": "warning-sign", "Status": "Alerta: Alvo de Fiscalização Recente", "Descricao": "Parceiro de maricultura/processamento em PE. Requer due diligence nas NFs de transação."},
+        {"Nome": "Cabel Frigorífico", "Cidade": "Salvador / Litoral - BA", "Lat": -12.9714, "Lon": -38.5014, "Tipo": "Prestador de Serviço / Terceira", "Cor": "orange", "Ícone": "globe", "Status": "Apoio Litoral Sul / Bahia", "Descricao": "Prestador de serviços de armazenagem e apoio logístico no litoral baiano."}
     ]
     
     df_mapa = pd.DataFrame(dados_mapa)
     
-    # 2. Filtro rápido na tela para facilitar a vida da gestão
-    tipo_filtro = st.radio("Filtrar visualização por categoria:", ["Todos os Pontos", "Apenas Bases Próprias (Prime)", "Apenas Terceirizados / Prestadores"], horizontal=True)
+    # 2. Filtro de exibição por categoria
+    tipo_filtro = st.radio("Filtrar visualização no mapa:", ["Todos os Pontos", "Apenas Bases Próprias (Prime)", "Apenas Terceirizados / Prestadores"], horizontal=True)
     
     if tipo_filtro == "Apenas Bases Próprias (Prime)":
         df_exibicao = df_mapa[df_mapa['Tipo'] == "Base Própria (Prime)"]
@@ -290,52 +292,56 @@ with tab_mapa:
     else:
         df_exibicao = df_mapa
 
-    # 3. Construção do Mapa Interativo com paleta de cores corporativa
-    fig_mapa = px.scatter_mapbox(
-        df_exibicao,
-        lat="Lat",
-        lon="Lon",
-        color="Tipo",
-        size_max=18, # Aumentei um pouco o tamanho das bolinhas para destacarem bem no satélite
-        zoom=4.5,
-        center={"lat": -5.0, "lon": -42.0},
-        hover_name="Nome",
-        hover_data={"Cidade": True, "Status": True, "Lat": False, "Lon": False, "Tipo": False},
-        color_discrete_map={
-            "Base Própria (Prime)": "#ff2a2a", # Vermelho vivo vibrante para brilhar no satélite escuro
-            "Prestador de Serviço / Terceira": "#ffb700" # Âmbar/Dourado bem aceso
-        }
-    )
+    # 3. Criação do Mapa Base focado no Nordeste/Norte
+    mapa = folium.Map(location=[-4.5, -40.0], zoom_start=5, tiles=None, control_scale=True)
+
+    # Adicionando a camada nativa do Google Satellite Híbrido (Satélite + Nomes de Cidades/Estradas)
+    folium.TileLayer(
+        tiles='https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+        attr='Google Maps / Satellite Hybrid',
+        name='Google Satélite Híbrido',
+        overlay=False,
+        control=True
+    ).add_to(mapa)
+
+    # 4. Inserção dos Marcadores MAIORES e Ultra Descritivos
+    for idx, row in df_exibicao.iterrows():
+        html_popup = f"""
+        <div style="font-family: Arial, sans-serif; width: 260px; padding: 5px;">
+            <h4 style="margin: 0 0 5px 0; color: #333; border-bottom: 2px solid {'#7c1617' if row['Cor']=='red' else '#d97706'}; padding-bottom: 3px;">
+                {row['Nome']}
+            </h4>
+            <p style="margin: 3px 0; font-size: 12px;"><b>📍 Cidade:</b> {row['Cidade']}</p>
+            <p style="margin: 3px 0; font-size: 12px;"><b>🏢 Categoria:</b> <span style="color: {'#7c1617' if row['Cor']=='red' else '#d97706'}; font-weight: bold;">{row['Tipo']}</span></p>
+            <p style="margin: 6px 0 3px 0; font-size: 12px; background-color: #f8fafc; padding: 4px; border-left: 3px solid #3b82f6;"><b>🚦 Status:</b> {row['Status']}</p>
+            <p style="margin: 5px 0 0 0; font-size: 11px; color: #475569; font-style: italic;">"{row['Descricao']}"</p>
+        </div>
+        """
+        
+        folium.Marker(
+            location=[row['Lat'], row['Lon']],
+            popup=folium.Popup(html_popup, max_width=300),
+            tooltip=f"📌 {row['Nome']} ({row['Cidade']}) - Clique para detalhes",
+            icon=folium.Icon(color=row['Cor'], icon=row['Ícone'], prefix='glyphicon')
+        ).add_to(mapa)
+        
+        folium.CircleMarker(
+            location=[row['Lat'], row['Lon']],
+            radius=14,
+            color='#7c1617' if row['Cor']=='red' else '#d97706',
+            fill=True,
+            fill_color='#ff0000' if row['Cor']=='red' else '#ffae00',
+            fill_opacity=0.3,
+            weight=2
+        ).add_to(mapa)
+
+    # 5. Renderização do mapa dentro do Streamlit
+    st_folium(mapa, width="100%", height=550)
     
-    # Configuração de Satélite de Alta Resolução (Sem precisar de API Key!)
-    fig_mapa.update_layout(
-        mapbox_style="white-bg", # Fundo neutro que recebe a camada fotográfica
-        mapbox_layers=[
-            {
-                "below": 'traces',
-                "sourcetype": "raster",
-                "source": [
-                    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                ]
-            }
-        ],
-        margin={"r":0,"t":0,"l":0,"b":0},
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1,
-            font=dict(color="#ffffff") # Legenda em cor clara para leitura perfeita
-        )
-    )
-    
-    st.plotly_chart(fig_mapa, use_container_width=True)
-    
-    # 4. Tabela inferior para consulta rápida e auditoria
+    # 6. Tabela inferior para consulta rápida e auditoria
     st.markdown("### 📋 Detalhamento das Unidades e Prestadores Mapeados")
     st.dataframe(
-        df_exibicao[['Nome', 'Cidade', 'Tipo', 'Status']], 
+        df_exibicao[['Nome', 'Cidade', 'Tipo', 'Status', 'Descricao']], 
         use_container_width=True,
         hide_index=True
     )
