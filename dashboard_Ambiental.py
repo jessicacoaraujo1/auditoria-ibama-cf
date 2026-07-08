@@ -9,7 +9,7 @@ import base64
 import re
 
 # ==========================================
-# 1. CONFIGURAÇÃO DA PÁGINA E CSS CORPORATIVO
+# 1. CONFIGURAÇÃO DA PÁGINA E CSS DEFINITIVO (CLARO / ESCURO)
 # ==========================================
 st.set_page_config(page_title="Gestão de Riscos IBAMA", layout="wide")
 
@@ -28,8 +28,12 @@ st.markdown(f"""
         font-family: 'Inter', sans-serif;
     }}
     
+    /* =========================================================
+       ☀️ TEMA PADRÃO (MODO CLARO / LIGHT MODE)
+       ========================================================= */
     .stApp {{
         background-color: {COR_FUNDO_APP};
+        color: {COR_SECUNDARIA};
     }}
     
     [data-testid="stSidebar"] {{
@@ -44,7 +48,6 @@ st.markdown(f"""
     }}
     
     header {{ background: transparent !important; }}
-    
     .block-container {{ padding-top: 1rem; padding-bottom: 2rem; max-width: 95%; }}
     
     h1 {{ color: {COR_PRIMARIA} !important; font-weight: 700 !important; font-size: 2rem !important; text-transform: uppercase; letter-spacing: -0.5px; padding-bottom: 5px; }}
@@ -66,16 +69,70 @@ st.markdown(f"""
         background-color: transparent;
     }}
     
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
-    div[data-testid="stNotification"] {
+    /* Caixas de Alerta (st.info / st.error) */
+    div[data-testid="stNotification"] {{
         background-color: #f8fafc !important;
         border: 1px solid #cbd5e1 !important;
-    }
-    div[data-testid="stNotification"] p {
+    }}
+    div[data-testid="stNotification"] p {{
         color: #1e293b !important;
         font-weight: 500 !important;
-    }
+    }}
+
+    /* --- AQUI ESTÃO AS REGRAS QUE SUBSTITUIRAM O TEXTÃO DO HTML --- */
+    .kpi-card {{
+        flex: 1;
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 6px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+        border: 1px solid transparent;
+    }}
+    .kpi-title {{ font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }}
+    .kpi-val {{ font-size: 30px; color: {COR_SECUNDARIA}; font-weight: 700; margin-top: 4px; white-space: nowrap; }}
+
+    /* =========================================================
+       🌙 ADAPTAÇÃO AUTOMÁTICA PARA MODO ESCURO (DARK MODE)
+       ========================================================= */
+    @media (prefers-color-scheme: dark) {{
+        .stApp {{
+            background-color: #0e1117 !important;
+            color: #fafafa !important;
+        }}
+        [data-testid="stSidebar"] {{
+            background-color: #161b22 !important;
+            border-right: 2px solid {COR_PRIMARIA} !important;
+        }}
+        h3 {{ color: #f8fafc !important; }}
+        .stTabs [data-baseweb="tab"] {{ color: #94a3b8; }}
+        
+        div[data-testid="stNotification"] {{
+            background-color: #1e293b !important;
+            border: 1px solid #475569 !important;
+        }}
+        div[data-testid="stNotification"] p {{ color: #f8fafc !important; }}
+
+        /* À noite, os KPIs ficam escuros automaticamente! */
+        .kpi-card {{
+            background: #161b22 !important;
+            border: 1px solid #334155 !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
+        }}
+        .kpi-title {{ color: #94a3b8 !important; }}
+        .kpi-val {{ color: #f8fafc !important; }}
+
+        div[data-testid="stExpander"] {{
+            background-color: #161b22 !important;
+            border: 1px solid #334155 !important;
+            border-radius: 6px !important;
+        }}
+        div[data-testid="stExpander"] details summary p {{
+            color: #f8fafc !important;
+        }}
+    }}
+    
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
     </style>
 """, unsafe_allow_html=True)
 
@@ -114,10 +171,8 @@ def carregar_dados():
     url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmM6tv0bqBxxx4Rc9pAYGPDXDAfWCV3fnv6mZAwoAYfaXBn_jhVNadrlsALWsyFvSYai-oD7QHk_VD/pub?output=csv"
     df = pd.read_csv(url)
     
-    # Remove espaços em branco invisíveis no início/fim dos nomes das colunas
     df.columns = df.columns.str.strip()
     
-    # TRATAMENTO SEGURO DE MOEDA BRASILEIRA (Transforma "R$ 1.500,00" ou "1.500,00" em número real)
     if 'Valor Multa' in df.columns:
         df['Valor Multa'] = df['Valor Multa'].astype(str)
         df['Valor Multa'] = df['Valor Multa'].str.replace('R$', '', regex=False)
@@ -134,7 +189,6 @@ def carregar_dados():
     
     df['Objeto Identificado'] = df['Descrição das Autuações'].apply(classificar_objeto)
     
-    # Criar colunas booleanas para sanções
     df['Apreensão'] = df['Sanções Aplicadas'].str.contains('apreensão', case=False, na=False)
     df['Depósito'] = df['Sanções Aplicadas'].str.contains('depósito', case=False, na=False)
     df['Embargo/Interdição'] = df['Sanções Aplicadas'].str.contains('embargo|interdição', case=False, na=False)
@@ -145,7 +199,6 @@ def carregar_dados():
     
     return df
 
-# Carrega os dados uma única vez
 df_base = carregar_dados()
 df = df_base.explode('UF_Lista')
 df['UF_Filtro'] = df['UF_Lista']
@@ -158,23 +211,25 @@ def renderizar_kpis(df_filtrado):
     valor_formatado = f"R$ {valor_total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     qtd_apreensoes = df_unicos['Apreensão'].sum() + df_unicos['Depósito'].sum()
     
+    # Repare como o HTML ficou limpo e puxando a formatação do CSS acima:
     html = f"""
     <div style="display: flex; gap: 20px; margin-bottom: 25px; margin-top: 10px;">
-        <div style="flex: 1; background: #fff; padding: 22px; border-radius: 6px; border-left: 4px solid {COR_PRIMARIA}; box-shadow: 0 2px 5px rgba(0,0,0,0.04);">
-            <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Autos de Infração Auditados</div>
-            <div style="font-size: 30px; color: {COR_SECUNDARIA}; font-weight: 700; margin-top: 4px;">{len(df_unicos)}</div>
+        <div class="kpi-card" style="border-left: 4px solid {COR_PRIMARIA};">
+            <div class="kpi-title">Autos de Infração Auditados</div>
+            <div class="kpi-val">{len(df_unicos)}</div>
         </div>
-        <div style="flex: 1; background: #fff; padding: 22px; border-radius: 6px; border-left: 4px solid {COR_DOURADO}; box-shadow: 0 2px 5px rgba(0,0,0,0.04);">
-            <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Passivo Financeiro Consolidado</div>
-            <div style="font-size: 30px; color: {COR_SECUNDARIA}; font-weight: 700; margin-top: 4px; white-space: nowrap;">{valor_formatado}</div>
+        <div class="kpi-card" style="border-left: 4px solid {COR_DOURADO};">
+            <div class="kpi-title">Passivo Financeiro Consolidado</div>
+            <div class="kpi-val">{valor_formatado}</div>
         </div>
-        <div style="flex: 1; background: #fff; padding: 22px; border-radius: 6px; border-left: 4px solid #475569; box-shadow: 0 2px 5px rgba(0,0,0,0.04);">
-            <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Medidas Acautelatórias (Físicas)</div>
-            <div style="font-size: 30px; color: {COR_SECUNDARIA}; font-weight: 700; margin-top: 4px;">{qtd_apreensoes}</div>
+        <div class="kpi-card" style="border-left: 4px solid #475569;">
+            <div class="kpi-title">Medidas Acautelatórias (Físicas)</div>
+            <div class="kpi-val">{qtd_apreensoes}</div>
         </div>
     </div>
     """
     st.markdown(html, unsafe_allow_html=True)
+
 
 # ==========================================
 # 3. BARRA LATERAL (LOGO, FILTROS E ASSINATURA)
