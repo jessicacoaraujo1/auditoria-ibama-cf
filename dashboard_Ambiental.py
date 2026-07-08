@@ -240,17 +240,95 @@ st.markdown("<p style='font-size: 14px; color: #64748b; margin-bottom: 5px;'>Fer
 
 renderizar_kpis(df)
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "📍 Mapa Operacional", 
     "Auditoria de Objetos", 
     "Análise Regional", 
     "Tipologia e Sanções", 
     "Pesquisa Profunda", 
     "Base Consolidada",
-    "Plano de Mitigação (Prevenção)"
+    "Plano de Mitigação"
 ])
 
 # CORREÇÃO: Deduplicar exclusivamente pela chave única do Auto de Infração
 df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
+
+# =====================================================================
+# 2. BLOCO DO MAPA AQUI 
+# =====================================================================
+
+with tab_mapa:
+    st.markdown("## 📍 Mapeamento Operacional: Litoral Norte e Nordeste")
+    st.markdown("Visão espacial interativa das unidades próprias e rede de prestadores de serviço terceirizados (do Amapá à Bahia), para controle de risco e fiscalização.")
+    
+    # 1. Base de dados georreferenciada
+    dados_mapa = [
+        {"Nome": "Matriz / Escritório", "Cidade": "Fortaleza - CE", "Lat": -3.7172, "Lon": -38.5433, "Tipo": "Base Própria (Prime)", "Status": "Ativa / Regular"},
+        {"Nome": "Filial Indústria Icapuí", "Cidade": "Icapuí - CE", "Lat": -4.7119, "Lon": -37.3544, "Tipo": "Base Própria (Prime)", "Status": "Histórico de Defeso (Lagosta)"},
+        {"Nome": "Filial Indústria Acaraú", "Cidade": "Acaraú - CE", "Lat": -2.8853, "Lon": -40.1200, "Tipo": "Base Própria (Prime)", "Status": "Ativa / Regular"},
+        {"Nome": "Filial Costeira São Gonçalo", "Cidade": "S. G. do Amarante - CE", "Lat": -3.6064, "Lon": -38.9717, "Tipo": "Base Própria (Prime)", "Status": "Atenção: Pesca (Pargo)"},
+        {"Nome": "Filial Bragança", "Cidade": "Bragança - PA", "Lat": -1.0536, "Lon": -46.7656, "Tipo": "Base Própria (Prime)", "Status": "Histórico: Pesca < 50m (Pargo)"},
+        {"Nome": "Filial Belém", "Cidade": "Belém - PA", "Lat": -1.4558, "Lon": -48.5039, "Tipo": "Base Própria (Prime)", "Status": "Atenção: Controle Aduaneiro"},
+        {"Nome": "Filial Luís Correia", "Cidade": "Luís Correia - PI", "Lat": -2.8856, "Lon": -41.6681, "Tipo": "Base Própria (Prime)", "Status": "Câmaras Frias / Estoque"},
+        {"Nome": "Filial Touros", "Cidade": "Touros - RN", "Lat": -5.1989, "Lon": -35.4608, "Tipo": "Base Própria (Prime)", "Status": "Atenção: RGP de Filial"},
+        {"Nome": "Filial Baía Formosa", "Cidade": "Baía Formosa - RN", "Lat": -6.3719, "Lon": -35.0053, "Tipo": "Base Própria (Prime)", "Status": "Histórico: Petrecho Proibido"},
+        {"Nome": "Filial Alhandra", "Cidade": "Alhandra - PB", "Lat": -7.4328, "Lon": -34.9125, "Tipo": "Base Própria (Prime)", "Status": "Ativa / Transporte"},
+        {"Nome": "Soene Pescados", "Cidade": "Santana / Macapá - AP", "Lat": -0.0583, "Lon": -51.1717, "Tipo": "Prestador de Serviço / Terceira", "Status": "Apoio Logístico Extremo Norte"},
+        {"Nome": "Carapitanga Pescados / Maricultura", "Cidade": "Goiana - PE", "Lat": -7.5617, "Lon": -34.9011, "Tipo": "Prestador de Serviço / Terceira", "Status": "Alerta: Alvo de Fiscalização Recente"},
+        {"Nome": "Cabel Frigorífico", "Cidade": "Salvador / Litoral - BA", "Lat": -12.9714, "Lon": -38.5014, "Tipo": "Prestador de Serviço / Terceira", "Status": "Apoio Litoral Sul / Bahia"}
+    ]
+    
+    df_mapa = pd.DataFrame(dados_mapa)
+    
+    # 2. Filtro rápido na tela para facilitar a vida da gestão
+    tipo_filtro = st.radio("Filtrar visualização por categoria:", ["Todos os Pontos", "Apenas Bases Próprias (Prime)", "Apenas Terceirizados / Prestadores"], horizontal=True)
+    
+    if tipo_filtro == "Apenas Bases Próprias (Prime)":
+        df_exibicao = df_mapa[df_mapa['Tipo'] == "Base Própria (Prime)"]
+    elif tipo_filtro == "Apenas Terceirizados / Prestadores":
+        df_exibicao = df_mapa[df_mapa['Tipo'] == "Prestador de Serviço / Terceira"]
+    else:
+        df_exibicao = df_mapa
+
+    # 3. Construção do Mapa Interativo com paleta de cores corporativa
+    fig_mapa = px.scatter_mapbox(
+        df_exibicao,
+        lat="Lat",
+        lon="Lon",
+        color="Tipo",
+        size_max=16,
+        zoom=4.2,
+        center={"lat": -5.0, "lon": -42.0}, # Centraliza bem no meio do Nordeste/Norte
+        hover_name="Nome",
+        hover_data={"Cidade": True, "Status": True, "Lat": False, "Lon": False, "Tipo": False},
+        color_discrete_map={
+            "Base Própria (Prime)": "#7c1617", # O Vermelho Bordô da Prime
+            "Prestador de Serviço / Terceira": "#d97706" # Amarelo/Âmbar para destacar terceiros
+        }
+    )
+    
+    # Configuração de estilo de mapa limpo e profissional
+    fig_mapa.update_layout(
+        mapbox_style="carto-positron",
+        margin={"r":0,"t":0,"l":0,"b":0},
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
+    )
+    
+    st.plotly_chart(fig_mapa, use_container_width=True)
+    
+    # 4. Tabela inferior para consulta rápida e auditoria
+    st.markdown("### 📋 Detalhamento das Unidades e Prestadores Mapeados")
+    st.dataframe(
+        df_exibicao[['Nome', 'Cidade', 'Tipo', 'Status']], 
+        use_container_width=True,
+        hide_index=True
+    )
 
 # ---------------------------------------------------------
 # ABA 1: AUDITORIA DE OBJETOS E INVESTIGAÇÃO QUALITATIVA
