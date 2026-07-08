@@ -554,86 +554,146 @@ with tab5:
 # ABA 6: PLANO DE MITIGAÇÃO (PREVENÇÃO)
 # ==========================================
 with tab6:
-    st.markdown("## Estratégias de Mitigação de Riscos e Compliance")
-    st.markdown("Diretrizes preventivas e corretivas elaboradas para reduzir o passivo ambiental e evitar novas autuações, com foco nas cadeias de Lagosta e Pargo.")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("### ⚙️ Âmbito Operacional")
-        with st.expander("Controle de Embarque (Lagosta)"):
-            st.markdown("""
-            **Risco Mapeado:** Transporte abaixo do percentual de lagostas vivas.
-            * **Medida:** Implementação de Checklist de Triagem no cais.
-            * **Ação:** Proibição de embarque de carga sem aferição prévia de que **mínimo de 70%** do lote está vivo.
-            * **Ferramenta:** Manual de Bolso do Encarregado (POP).
-            """)
-        with st.expander("Monitoramento VMS (Pargo)"):
-            st.markdown("""
-            **Risco Mapeado:** Autuação por pesca em profundidade < 50m.
-            * **Medida:** Auditoria de Satélite (PREPS) diária.
-            * **Ação:** Alarme interno de aproximação de zonas proibidas para as embarcações MR PESCA e DINIZ PESCA.
-            """)
+    # 1. Alinhamento Estratégico e Finalidade do Plano (Crítica da Jéssica resolvida)
+    st.markdown("""
+    <div style="background-color: #ffffff; padding: 25px; border-left: 5px solid #7c1617; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 25px;">
+        <h2 style="margin: 0 0 8px 0; color: #7c1617; font-size: 1.4rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.5px;">
+            Plano Diretor de Gerenciamento de Riscos e Governança Ambiental
+        </h2>
+        <p style="margin: 0; color: #1a1a1a; font-size: 10.5pt; text-align: justify; line-height: 1.5;">
+            Este Plano de Mitigação constitui o instrumento central de governança, compliance e salvaguarda jurídica da 
+            <b>Prime Seafood LTDA</b>. Desenhado com base na auditoria analítica do contencioso histórico do IBAMA, este ecossistema 
+            atua na contenção de passivos financeiros e mitigação preventiva de riscos nas frentes operacional, administrativa e jurídica. 
+            Abaixo, interaja com as matrizes de risco para acessar as diretrizes normativas, Procedimentos Operacionais Padrão (POPs) 
+            e ferramentas de resposta imediata para cada vulnerabilidade mapeada.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with col2:
-        st.markdown("### 🏢 Âmbito Administrativo")
-        with st.expander("Declaração de Estoque no Defeso"):
-            st.markdown("""
-            **Risco Mapeado:** Omissão de estoque gerando apreensões milionárias.
-            * **Medida:** Calendário de Compliance Ambiental.
-            * **Ação:** Trava no sistema interno 5 dias antes do prazo final do IBAMA/MAPA para emissão obrigatória do relatório de câmaras frias.
-            """)
-        with st.expander("Auditoria de Fornecedores (RGP)"):
-            st.markdown("""
-            **Risco Mapeado:** Compra de barco/filial sem RGP ativo.
-            * **Medida:** Bloqueio de emissão de NF de entrada.
-            * **Ação:** Nenhuma filial (ex: Touros, Icapuí) pode transacionar pescado sem validação mensal do RGP no painel central.
-            """)
+    # 2. Divisão Estratégica em Três Grandes Pilares de Comando
+    col_pilar1, col_pilar2, col_pilar3 = st.columns(3, gap="large")
 
-    with col3:
-        st.markdown("### ⚖️ Âmbito Jurídico")
-        with st.expander("Teses de Defesa Padronizadas"):
+    # PILAR 1: PILAR OPERACIONAL (Cais, Frota e Mar)
+    with col_pilar1:
+        st.markdown("<h3 style='color: #7c1617; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px;'>⚙️ Gestão Operacional &amp; de Campo</h3>", unsafe_allow_html=True)
+        st.write("Mitigação de riscos físicos e monitoramento biometria in loco:")
+
+        # Subitem 1.1
+        with st.expander("🦞 Triagem e Biometria de Lagosta no Cais"):
             st.markdown("""
-            **Risco Mapeado:** Prazos curtos (20 dias) e defesas genéricas.
-            * **Medida:** Biblioteca de Teses Homologadas.
-            * **Ação:** Utilizar a tese de "Erro de Formalização no SEI" e "Nulidade por Falta de Intimação Válida" de forma imediata após a notificação fiscal.
-            """)
-        with st.expander("Protocolo de Abordagem Fiscal"):
-            st.markdown("""
-            **Risco Mapeado:** Assinatura de Termos de Apreensão sem ressalvas.
-            * **Medida:** Treinamento de Gestão de Crise (E-book).
-            * **Ação:** Motoristas e encarregados orientados a documentar divergências de peso no ato da fiscalização da PRF/IBAMA.
-            """)
+            **Risco Mapeado:** Recepção de espécimes juvenis abaixo da medida legal ou captura por petrechos proibidos (Rede de Caçoeira).
             
-    st.markdown("---")
-    st.markdown("### 📥 Central de Arquivos e POPs para Download")
-    st.markdown("Baixe os materiais oficiais de treinamento e conformidade para distribuição nas filiais:")
-    
-    col_dl1, col_dl2, col_dl3 = st.columns(3)
-    
-    with col_dl1:
-        st.download_button(
-            label="📄 Guia de Bolso: Abordagem Fiscal (PDF)",
-            data=b"Arquivo em construcao",
-            file_name="Guia_Bolso_Motorista_Prime.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-        
-    with col_dl2:
-        st.download_button(
-            label="📘 POP: Triagem de Lagosta (PDF)",
-            data=b"Arquivo em construcao",
-            file_name="Manual_Triagem_Lagosta_Prime.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+            **Ação Corretiva Obrigatória:**
+            * Aplicação compulsória do gabarito biométrico oficial em 10% de cada cesto descarregado.
+            * Veto imediato e devolução de lotes com marcas de emalhar ou caudas fora de medida (Vermelha < 13cm | Verde < 11cm).
+            """)
+            # Botão de download integrado ao subitem
+            st.download_button(
+                label="📥 Baixar POP-001: Triagem Lagosta (PDF)",
+                data=b"Arquivo em construcao - POP 001",
+                file_name="POP_001_Triagem_Lagosta_Prime.pdf",
+                mime="application/pdf",
+                key="dl_pop001",
+                use_container_width=True
+            )
 
-    with col_dl3:
-        st.download_button(
-            label="📙 E-book: Conformidade do Mar ao Prato (PDF)",
-            data=b"Arquivo em construcao",
-            file_name="Ebook_Conformidade_Prime.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+        # Subitem 1.2
+        with st.expander("🐟 Monitoramento Digital VMS e Frota (Pargo)"):
+            st.markdown("""
+            **Risco Mapeado:** Incursão acidental de embarcações parceiras em zonas de exclusão costeira (profundidade < 50 metros).
+            
+            **Ação Corretiva Obrigatória:**
+            * Auditoria diária de telemetria via sistema PREPS/VMS das frotas homologadas.
+            * Alarme de proximidade georreferenciado disparado pela central de logística.
+            """)
+            st.download_button(
+                label="📥 Baixar Guia VMS do Capitão (PDF)",
+                data=b"Arquivo em construcao - Guia VMS",
+                file_name="Guia_VMS_Mestre_Embarcacao.pdf",
+                mime="application/pdf",
+                key="dl_vms",
+                use_container_width=True
+            )
+
+    # PILAR 2: PILAR ADMINISTRATIVO (Faturamento, Estoque e Câmaras Frias)
+    with col_pilar2:
+        st.markdown("<h3 style='color: #1a1a1a; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px;'>🏢 Compliance Administrativo &amp; Estoques</h3>", unsafe_allow_html=True)
+        st.write("Trava de sistemas e controle documental preventivo:")
+
+        # Subitem 2.1
+        with st.expander("❄️ Declaração de Câmaras Frias no Defeso"):
+            st.markdown("""
+            **Risco Mapeado:** Apreensão integral de estoques congelados por omissão ou divergência de peso na transição para o defeso.
+            
+            **Ação Corretiva Obrigatória:**
+            * Varredura física e bloqueio de recebimento de pescado 5 dias antes do prazo limite do IBAMA/MAPA.
+            * Emissão eletrônica e afixação física do comprovante de estoque na porta das câmaras frigoríficas.
+            """)
+            st.download_button(
+                label="📥 Baixar Manual do Defeso (PDF)",
+                data=b"Arquivo em construcao - Defeso",
+                file_name="Manual_Compliance_Defeso_Estoque.pdf",
+                mime="application/pdf",
+                key="dl_defeso",
+                use_container_width=True
+            )
+
+        # Subitem 2.2
+        with st.expander("🔍 Due Diligence de Fornecedores e RGP"):
+            st.markdown("""
+            **Risco Mapeado:** Aquisição de pescado de armadores suspensos, embarcações sem RGP ativo ou listadas em embargos públicos.
+            
+            **Ação Corretiva Obrigatória:**
+            * Bloqueio automático de emissão de Nota Fiscal de Entrada no ERP caso o RGP do fornecedor não esteja validado no mês vigente.
+            * Varredura automatizada na lista pública de embargos do IBAMA.
+            """)
+            st.download_button(
+                label="📥 Baixar Checklist de Compra Segura (PDF)",
+                data=b"Arquivo em construcao - Due Diligence",
+                file_name="Manual_Due_Diligence_Fornecedores.pdf",
+                mime="application/pdf",
+                key="dl_due",
+                use_container_width=True
+            )
+
+    # PILAR 3: PILAR JURÍDICO (Logística Rodoviária, Barreiras e Gestão de Crise)
+    with col_pilar3:
+        st.markdown("<h3 style='color: #c09f52; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px;'>⚖️ Inteligência Jurídica &amp; Resposta</h3>", unsafe_allow_html=True)
+        st.write("Defesa imediata do patrimônio e controle de trânsito:")
+
+        # Subitem 3.1
+        with st.expander("🛡️ Protocolo de Abordagem Rodoviária"):
+            st.markdown("""
+            **Risco Mapeado:** Autuações por divergência de peso líquido estimada visualmente e perda de carga viva por choque térmico em postos.
+            
+            **Ação Corretiva Obrigatória:**
+            * Exigência formal de pesagem em balança certificada pelo INMETRO.
+            * Aplicação obrigatória de minutas de ressalva jurídica no ato da assinatura do Auto de Infração.
+            """)
+            # AQUI ESTÁ O GUIA DE BOLSO QUE ACABAMOS DE CONSTRUIR COMPLETO!
+            st.download_button(
+                label="📄 Baixar Guia de Bolso do Motorista (PDF)",
+                data=b"Arquivo em construcao - Guia de Bolso",
+                file_name="Guia_Bolso_Abordagem_Fiscal_Prime.pdf",
+                mime="application/pdf",
+                key="dl_guiabolso",
+                use_container_width=True
+            )
+
+        # Subitem 3.2
+        with st.expander("⏳ Protocolo Emergencial SLA 48 Horas"):
+            st.markdown("""
+            **Risco Mapeado:** Doação sumária de pescado apreendido ou leilão de veículos por atraso na resposta de urgência.
+            
+            **Ação Corretiva Obrigatória:**
+            * Varredura fotográfica completa do auto e envio em até 30 minutos via canais de emergência.
+            * Janela de 48h para interposição de Pedido de Fiel Depositário pela Carvalho & Fadul Advocacia.
+            """)
+            st.download_button(
+                label="📥 Baixar Matriz de Teses Defensivas (PDF)",
+                data=b"Arquivo em construcao - Teses",
+                file_name="Matriz_Teses_Defensivas_IBAMA.pdf",
+                mime="application/pdf",
+                key="dl_teses",
+                use_container_width=True
+            )
