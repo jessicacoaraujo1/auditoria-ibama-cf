@@ -554,153 +554,193 @@ with tab5:
 # ABA 6: PLANO DE MITIGAÇÃO (PREVENÇÃO)
 # ==========================================
 with tab6:
-    # 1. Apresentação Corporativa de Alta Gravidade (Propósito de Governança e Compliance)
+    # 1. APRESENTAÇÃO EXECUTIVA (A Finalidade do Plano para a Diretoria)
     st.markdown(f"""
-    <div style="background-color: #ffffff; padding: 28px 32px; border-left: 4px solid {COR_PRIMARIA}; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 25px;">
-        <p style="margin: 0 0 6px 0; color: {COR_PRIMARIA}; font-size: 10pt; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">
-            Carvalho & Fadul Advocacia | Sistema de Governança Corporativa
+    <div style="background-color: #ffffff; padding: 25px 30px; border-left: 5px solid {COR_PRIMARIA}; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 25px;">
+        <p style="margin: 0 0 4px 0; color: {COR_DOURADO}; font-size: 9.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+            Carvalho & Fadul Advocacia | Governança & Compliance Ambiental
         </p>
-        <h2 style="margin: 0 0 12px 0; color: {COR_SECUNDARIA}; font-size: 1.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.5px;">
-            Plano Diretor de Gerenciamento de Riscos e Mitigação Ambiental
+        <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.5px;">
+            Plano Diretor de Gerenciamento de Riscos e Mitigação
         </h2>
         <p style="margin: 0; color: #334155; font-size: 10.5pt; text-align: justify; line-height: 1.6;">
-            Este ecossistema de mitigação constitui o instrumento central de inteligência preventiva e blindagem jurídica da 
-            <b>Prime Seafood LTDA</b>. Desenvolvido a partir da auditoria analítica do contencioso histórico do IBAMA, o plano 
-            converte o rigor das normas ambientais vigentes em protocolos práticos de gerenciamento de riscos. 
-            Abaixo estão consolidadas as <b>4 ferramentas de conformidade prioritárias</b> desta primeira fase do projeto. 
-            Interaja com a matriz tática para auditar as vulnerabilidades mapeadas, as ações corretivas obrigatórias e os manuais 
-            executivos projetados para distribuição na rede de filiais.
+            Este painel representa a síntese estratégica da auditoria do contencioso administrativo do IBAMA, convertendo o histórico 
+            de autuações em um <b>sistema ativo de prevenção de passivos e blindagem jurídica</b> para a Prime Seafood LTDA. 
+            O plano está estruturado em <b>3 Pilares de Comando</b> (Operacional, Administrativo e Jurídico), cobrindo integralmente as 
+            vulnerabilidades da empresa. Clique em qualquer um dos cards abaixo para expandir o enquadramento legal, auditar as regras 
+            de compliance obrigatórias e fazer o download dos <b>Guias Operacionais e Manuais</b> diagramados para as filiais.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # 2. Seletor Dinâmico da Matriz de Riscos (Menu Minimalista Padrão Harvard/PowerBI)
-    st.markdown("### Matriz Tática de Vulnerabilidades")
-    st.write("Selecione a frente regulatória para abrir a auditoria detalhada de risco e acessar os manuais operacionais:")
-    
-    opcao_risco = st.radio(
-        label="Navegação de Riscos",
-        options=[
-            "1. Abordagem Rodoviária e Barreiras Fiscais",
-            "2. Desembarque e Controle Biométrico (Lagosta)",
-            "3. Monitoramento de Satélite e Zonas Costeiras (Pargo)",
-            "4. Expedição e Rastreabilidade Documental (Exportação)"
-        ],
-        horizontal=True,
-        label_visibility="collapsed",
-        key="mit_seletor_principal"
-    )
+    # 2. BARRA DE INDICADORES RÁPIDOS DO PLANO (Visual PowerBI)
+    c_ind1, c_ind2, c_ind3 = st.columns(3, gap="medium")
+    with c_ind1:
+        st.markdown(f"<div style='background:#f8fafc; padding:12px; border-radius:4px; border:1px solid #e2e8f0; text-align:center;'><span style='font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;'>Frentes de Governança</span><br><b style='font-size:18px; color:{COR_PRIMARIA};'>3 Pilares Estratégicos</b></div>", unsafe_allow_html=True)
+    with c_ind2:
+        st.markdown(f"<div style='background:#f8fafc; padding:12px; border-radius:4px; border:1px solid #e2e8f0; text-align:center;'><span style='font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;'>Manuais Prioritários (Fase 1)</span><br><b style='font-size:18px; color:{COR_DOURADO};'>4 Guias Executivos</b></div>", unsafe_allow_html=True)
+    with c_ind3:
+        st.markdown(f"<div style='background:#f8fafc; padding:12px; border-radius:4px; border:1px solid #e2e8f0; text-align:center;'><span style='font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;'>Status de Conformidade</span><br><b style='font-size:18px; color:#15803d;'>Protocolos Ativos</b></div>", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # 3. Detalhamento granular e interativo baseado na escolha do usuário
-    
-    # -----------------------------------------------------------------
-    # FERRAMENTA 1: ABORDAGEM RODOVIÁRIA
-    # -----------------------------------------------------------------
-    if opcao_risco.startswith("1."):
-        st.markdown("#### ⚖️ Frente Jurídico-Logística: Controle de Trânsito em Barreiras Fiscais")
-        st.write("Auditoria de vulnerabilidade em postos de pesagem e barreiras móveis do IBAMA / PRF.")
-        
-        with st.expander("Análise Granular do Risco e Enquadramento Técnico", expanded=True):
-            st.markdown(f"""
-            * <b>Risco Mapeado:</b> Lavratura de Autos de Infração por divergência de peso estimado visualmente pelos fiscais ("olhômetro") e apreensão incidental de lagostas vivas sob alegação de transporte irregular de caudas mortas.
-            * <b>Rigor Normativo Vigente:</b> Artigo 35 do Decreto Federal nº 6.514/2008 (Multas de até R$ 100.000,00 acrescidas de R$ 20,00 por quilo de pescado irregular + apreensão do veículo transportador).
-            * <b>Ação Preventiva Compulsória:</b> Exigência formal e imediata de pesagem oficial em balança rodoviária devidamente aferida e certificada pelo INMETRO no local da abordagem. Obrigatoriedade de lavratura de ressalvas de defesa técnica por escrito na via física do auto de infração antes da assinatura do condutor.
-            * <b>SLA Jurídico de Emergência:</b> Janela crítica de <b>48 horas</b> pós-abordagem para o acionamento fotográfico e protocolo da petição de Pedido de Fiel Depositário pela Carvalho & Fadul Advocacia, garantindo a guarda do baú frigorífico e da carga.
-            """, unsafe_allow_html=True)
-            
-            st.markdown("---")
-            st.markdown("##### 📁 Ancoragem do Material (Desenho em Canva)")
-            st.info("Este tópico está vinculado ao **Guia de Bolso do Motorista e Transportador**. O layout está sendo elaborado no Canva e sua alocação final em PDF será disponibilizada no botão abaixo:")
-            
-            st.download_button(
-                label="📥 Baixar Guia de Bolso: Abordagem Fiscal (PDF)",
-                data=b"Placeholder_Guia_Bolso",
-                file_name="Guia_Bolso_Abordagem_Fiscal_Prime.pdf",
-                mime="application/pdf",
-                key="mit_dl_guia_bolso",
-                use_container_width=True
-            )
+    # 3. MATRIZ DE RISCOS INTERATIVA (RESTAURANDO OS 3 PILARES COMPLETOS)
+    col_op, col_adm, col_jur = st.columns(3, gap="large")
 
-    # -----------------------------------------------------------------
-    # FERRAMENTA 2: DESEMBARQUE E BIOMETRIA (LAGOSTA)
-    # -----------------------------------------------------------------
-    elif opcao_risco.startswith("2."):
-        st.markdown("#### 🦞 Frente de Chão de Fábrica: Recepção e Biometria de Lagosta")
-        st.write("Auditoria de vulnerabilidade técnica no cais de desembarque e recepção de matéria-prima.")
-        
-        with st.expander("Análise Granular do Risco e Enquadramento Técnico", expanded=True):
-            st.markdown(f"""
-            * <b>Risco Mapeado:</b> Recepção involuntária de espécimes juvenis (abaixo do tamanho mínimo de maturação sexual) ou capturados por petrechos proibidos pela legislação ambiental (Rede de Caçoeira / Emalhar).
-            * <b>Rigor Normativo Vigente:</b> Portaria Interministerial MPA/MMA nº 138/2014 e Lei nº 9.605/1998. Tolerância legal zero para indivíduos abaixo do padrão (Lagosta-Vermelha: cauda < 13cm | Lagosta-Verde: cauda < 11cm).
-            * <b>Ação Preventiva Compulsória:</b> Implementação obrigatória do teste do gabarito antropométrico oficial em amostragem mínima de 10% de cada cesto descarregado na balança. Veto imediato de compra e bloqueio de faturamento de lotes que apresentem marcas características de estrangulamento por rede ou tamanho fora da norma.
-            * <b>Regra de Ouro de Vitalidade:</b> Monitoramento estrito e classificação de lotes para transporte de longa distância, exigindo um **índice mínimo de 70% de espécimes vivos e vitais** na expedição rodoviária para afastar suspeitas de beneficiamento ilegal a bordo.
-            """, unsafe_allow_html=True)
+    # =================================================================
+    # PILAR 1: GESTÃO OPERACIONAL (CAIS, FROTA E CAPTURA)
+    # =================================================================
+    with col_op:
+        st.markdown(f"<h3 style='color: {COR_PRIMARIA}; font-size: 13pt; border-bottom: 2px solid {COR_PRIMARIA}; padding-bottom: 6px; margin-bottom: 12px;'>⚙️ 1. Pilar Operacional & Campo</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:12px; color:#64748b; margin-bottom:15px;'>Mitigação de riscos físicos em biometria, embarque e controle de mar.</p>", unsafe_allow_html=True)
+
+        # CARD 1.1: TRIAGEM DE LAGOSTA (GUIA CANVA 1)
+        with st.expander("🦞 Triagem e Biometria de Lagosta no Cais", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Recepção de lagostas juvenis (abaixo do tamanho legal) ou capturadas por petrechos ilícitos (Rede de Caçoeira), gerando multas por quilograma e embargo de fábrica.
             
+            **Enquadramento Legal:** Portaria Interministerial MPA/MMA nº 138/2014 e Lei nº 9.605/98. Tolerância zero para Vermelha < 13cm (cauda) e Verde < 11cm (cauda).
+            
+            **Protocolo de Mitigação (Diretriz Prime):**
+            * Medição compulsória com gabarito em amostragem de 10% da descarga.
+            * Veto de compra para lotes com marcas de emalhar/estrangulamento.
+            * **Regra dos 70% Vivas:** Expedição rodoviária apenas para lotes com vitalidade ≥ 70%, prevenindo mortalidade no trânsito.
+            """)
             st.markdown("---")
-            st.markdown("##### 📁 Ancoragem do Material (Desenho em Canva)")
-            st.info("Este tópico está vinculado ao **POP-001: Manual de Triagem, Biometria e Recepção de Lagostas**. O layout está sendo elaborado no Canva e sua alocação final em PDF será disponibilizada no botão abaixo:")
-            
+            st.markdown("##### 📥 Material Oficial (Fase 1 - Canva)")
             st.download_button(
-                label="📥 Baixar POP-001: Triagem e Biometria de Lagosta (PDF)",
-                data=b"Placeholder_POP_001",
+                label="📄 Baixar POP-001: Triagem de Lagosta (PDF)",
+                data=b"Placeholder_POP_Lagosta",
                 file_name="POP_001_Triagem_Biometria_Lagosta.pdf",
                 mime="application/pdf",
-                key="mit_dl_pop_001",
+                key="dl_op_lagosta",
                 use_container_width=True
             )
 
-    # -----------------------------------------------------------------
-    # FERRAMENTA 3: MONITORAMENTO DE SATÉLITE (PARGO)
-    # -----------------------------------------------------------------
-    elif opcao_risco.startswith("3."):
-        st.markdown("#### 🐟 Frente de Captura e Frota: Telemetria VMS e Zonas do Pargo")
-        st.write("Auditoria de vulnerabilidade na operação das embarcações parceiras e frotas de captura.")
-        
-        with st.expander("Análise Granular do Risco e Enquadramento Técnico", expanded=True):
-            st.markdown(f"""
-            * <b>Risco Mapeado:</b> Incursão e pesca de embarcações fornecedoras em zonas de exclusão costeira ou profundidades proibidas (inferiores a 50 metros), além de falhas de transmissão do sinal obrigatório de rastreamento.
-            * <b>Rigor Normativo Vigente:</b> Plano de Gestão do Pargo (Instruções Normativas IBAMA/MAPA) e regulamento do sistema PREPS/VMS de monitoramento por satélite.
-            * <b>Ação Preventiva Compulsória:</b> Auditoria diária automatizada da telemetria e das coordenadas georreferenciadas dos barcos cadastrados (ex: MR PESCA e DINIZ PESCA) antes da homologação da compra do pescado. Emissão de alertas automáticos de proximidade e exigência de preenchimento milimétrico do Mapa de Bordo pelo mestre da embarcação.
-            """, unsafe_allow_html=True)
+        # CARD 1.2: VMS E PARGO (GUIA CANVA 2)
+        with st.expander("🐟 Monitoramento Digital VMS e Frota (Pargo)", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Incursão de embarcações parceiras em zonas de exclusão costeira (profundidade < 50 metros) ou interrupção do sinal de rastreamento por satélite.
             
+            **Enquadramento Legal:** Instruções Normativas do Plano de Gestão do Pargo (MAPA/IBAMA) e regras do Sistema PREPS/VMS.
+            
+            **Protocolo de Mitigação (Diretriz Prime):**
+            * Auditoria diária de telemetria das frotas homologadas antes da recepção do pescado.
+            * Alarme de aproximação de zonas proibidas georreferenciado pela matriz.
+            * Obrigatoriedade de preenchimento milimétrico do Mapa de Bordo.
+            """)
             st.markdown("---")
-            st.markdown("##### 📁 Ancoragem do Material (Desenho em Canva)")
-            st.info("Este tópico está vinculado ao **Guia Rápido do Mestre e Capitão de Embarcação**. O layout está sendo elaborado no Canva e sua alocação final em PDF será disponibilizada no botão abaixo:")
-            
+            st.markdown("##### 📥 Material Oficial (Fase 1 - Canva)")
             st.download_button(
-                label="📥 Baixar Guia de Navegação e Controle VMS (PDF)",
+                label="📄 Baixar Guia VMS e Navegação (PDF)",
                 data=b"Placeholder_Guia_VMS",
                 file_name="Guia_VMS_Controle_Frota_Pargo.pdf",
                 mime="application/pdf",
-                key="mit_dl_guia_vms",
+                key="dl_op_vms",
                 use_container_width=True
             )
 
-    # -----------------------------------------------------------------
-    # FERRAMENTA 4: EXPEDIÇÃO E EXPORTAÇÃO
-    # -----------------------------------------------------------------
-    elif opcao_risco.startswith("4."):
-        st.markdown("#### 🏢 Frente Aduaneira: Declaração de Estoques e Rastreabilidade Documental")
-        st.write("Auditoria de vulnerabilidade administrativa no fechamento de câmaras frias para o defeso e faturamento internacional.")
-        
-        with st.expander("Análise Granular do Risco e Enquadramento Técnico", expanded=True):
-            st.markdown(f"""
-            * <b>Risco Mapeado:</b> Bloqueios e retenções de contêineres em portos e aeroportos fiscais (MAPA/Receita Federal/Siscomex) por omissão documental, atrasos crônicos na Declaração de Estoques do defeso ou divergências nos códigos NCM/LPCO.
-            * <b>Rigor Normativo Vigente:</b> Normas aduaneiras de exportação de pescado e prazos legais peremptórios de declaração de estoque físico (geralmente até 7 dias após o início do defeso da espécie).
-            * <b>Ação Preventiva Compulsória:</b> Implementação de trava sistêmica no ERP da empresa 5 dias antes do prazo limite do IBAMA, forçando a varredura física completa das câmaras frigoríficas. Emissão compulsória do laudo de inventário e afixação do documento impresso nas portas das unidades de estoque para auditoria de fiscais aduaneiros.
-            """, unsafe_allow_html=True)
+    # =================================================================
+    # PILAR 2: COMPLIANCE ADMINISTRATIVO (ESTOQUES, RGP E ADUANA)
+    # =================================================================
+    with col_adm:
+        st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 13pt; border-bottom: 2px solid {COR_SECUNDARIA}; padding-bottom: 6px; margin-bottom: 12px;'>🏢 2. Pilar Administrativo</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:12px; color:#64748b; margin-bottom:15px;'>Trava sistêmica, conformidade documental e auditoria aduaneira.</p>", unsafe_allow_html=True)
+
+        # CARD 2.1: DEFESO E ESTOQUES (GUIA CANVA 3)
+        with st.expander("❄️ Declaração de Câmaras Frias no Defeso", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Apreensão integral de estoques congelados por atraso na declaração ou divergência entre o volume físico e o sistema oficial do MAPA/IBAMA no início do defeso.
             
+            **Enquadramento Legal:** Art. 35 do Decreto nº 6.514/08 e normas anuais de defeso (declaração obrigatória em até 7 dias após o fechamento da pesca).
+            
+            **Protocolo de Mitigação (Diretriz Prime):**
+            * Trava no sistema ERP 5 dias antes do prazo final, impedindo novas entradas.
+            * Inventário físico obrigatório auditado por dois responsáveis.
+            * Afixação pública do recibo de declaração na porta da câmara frigorífica.
+            """)
             st.markdown("---")
-            st.markdown("##### 📁 Ancoragem do Material (Desenho em Canva)")
-            st.info("Este tópico está vinculado ao **Checklist Sinal Verde: Auditoria Aduaneira e de Defeso**. O layout está sendo elaborado no Canva e sua alocação final em PDF será disponibilizada no botão abaixo:")
-            
+            st.markdown("##### 📥 Material Oficial (Fase 1 - Canva)")
             st.download_button(
-                label="📥 Baixar Checklist Sinal Verde: Expedição e Aduana (PDF)",
-                data=b"Placeholder_Checklist_SinalVerde",
-                file_name="Checklist_Sinal_Verde_Exportacao.pdf",
+                label="📄 Baixar Manual do Defeso e Estoques (PDF)",
+                data=b"Placeholder_Manual_Defeso",
+                file_name="Manual_Compliance_Defeso_Estoque.pdf",
                 mime="application/pdf",
-                key="mit_dl_sinal_verde",
+                key="dl_adm_defeso",
+                use_container_width=True
+            )
+
+        # CARD 2.2: DUE DILIGENCE DE FORNECEDORES (RESTAURADO!)
+        with st.expander("🔍 Due Diligence de Fornecedores e RGP", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Aquisição de pescado de embarcações com Registro Geral da Atividade Pesqueira (RGP) suspenso, cancelado ou de armadores listados em embargos públicos do IBAMA.
+            
+            **Enquadramento Legal:** Lei nº 9.605/98 (Responsabilidade solidária e receptação de produto de infração ambiental).
+            
+            **Protocolo de Mitigação (Diretriz Prime):**
+            * Consulta mensal automatizada da vigência do RGP das embarcações parceiras.
+            * Bloqueio no sistema fiscal para emissão de Nota Fiscal de Entrada de fornecedores embargados ou irregulares.
+            * Exigência de certidão negativa de débitos ambientais na homologação de frotas.
+            """)
+            st.markdown("---")
+            st.markdown("##### 📥 Ancoragem de Procedimento Interno")
+            st.download_button(
+                label="📄 Baixar Checklist de Compra Segura (PDF)",
+                data=b"Placeholder_Due_Diligence",
+                file_name="Procedimento_Due_Diligence_RGP.pdf",
+                mime="application/pdf",
+                key="dl_adm_rgp",
+                use_container_width=True
+            )
+
+    # =================================================================
+    # PILAR 3: INTELIGÊNCIA JURÍDICA (TRANSPORTE E DEFESA)
+    # =================================================================
+    with col_jur:
+        st.markdown(f"<h3 style='color: {COR_DOURADO}; font-size: 13pt; border-bottom: 2px solid {COR_DOURADO}; padding-bottom: 6px; margin-bottom: 12px;'>⚖️ 3. Pilar Jurídico & Resposta</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:12px; color:#64748b; margin-bottom:15px;'>Blindagem rodoviária, gestão de crise e contencioso administrativo.</p>", unsafe_allow_html=True)
+
+        # CARD 3.1: ABORDAGEM FISCAL E TRANSPORTE (GUIA CANVA 4 - O QUE FIZEMOS!)
+        with st.expander("🛡️ Protocolo de Abordagem Rodoviária e Fiscais", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Autuações por divergência de peso estimada visualmente ("olhômetro") em barreiras e arbitramento de multas por mortalidade incidental de lagosta viva no trânsito.
+            
+            **Enquadramento Legal:** Instruções Normativas IBAMA/PRF e legislação metrológica do INMETRO.
+            
+            **Protocolo de Mitigação (Diretriz Prime):**
+            * Proibição de rompimento de lacres sem a presença do agente fiscal.
+            * Exigência inalienável de pesagem em balança rodoviária aferida pelo INMETRO.
+            * **Assinatura com Ressalva:** Uso obrigatório de minutas de ressalva técnica no campo de observações do Auto de Infração no ato da lavratura.
+            """)
+            st.markdown("---")
+            st.markdown("##### 📥 Material Oficial (Fase 1 - Canva)")
+            st.download_button(
+                label="📄 Baixar Guia de Bolso do Motorista (PDF)",
+                data=b"Placeholder_Guia_Bolso_Motorista",
+                file_name="Guia_Bolso_Motorista_Prime_Seafood.pdf",
+                mime="application/pdf",
+                key="dl_jur_guia_bolso",
+                use_container_width=True
+            )
+
+        # CARD 3.2: TESES DE DEFESA E SLA 48H (RESTAURADO!)
+        with st.expander("⏳ SLA 48h e Matriz de Teses Defensivas", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Perda de prazos defensivos curtos (20 dias) e risco de doação sumária de pescado apreendido ou leilão de veículos frigoríficos por falta de medida judicial de urgência.
+            
+            **Enquadramento Legal:** Processo Administrativo Federal (Lei nº 9.784/99) e Instrução Normativa IBAMA nº 19/2023.
+            
+            **Protocolo de Mitigação (Diretriz Prime):**
+            * **SLA 48 Horas:** Janela crítica pós-autuação para acionamento fotográfico e protocolo do Pedido de Fiel Depositário pela Carvalho & Fadul Advocacia.
+            * Aplicação imediata de teses homologadas (Nulidade por falha de intimação no SEI e Adquirente de Boa-Fé).
+            """)
+            st.markdown("---")
+            st.markdown("##### 📥 Ancoragem de Contencioso")
+            st.download_button(
+                label="📄 Baixar Matriz de Teses Homologadas (PDF)",
+                data=b"Placeholder_Teses_Defesa",
+                file_name="Matriz_Teses_Defensivas_IBAMA.pdf",
+                mime="application/pdf",
+                key="dl_jur_teses",
                 use_container_width=True
             )
