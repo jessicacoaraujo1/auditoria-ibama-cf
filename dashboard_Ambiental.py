@@ -509,15 +509,15 @@ with tab6:
         with st.expander("Controle de Embarque (Lagosta)"):
             st.markdown("""
             **Risco Mapeado:** Transporte abaixo do percentual de lagostas vivas.
-            *   **Medida:** Implementação de Checklist de Triagem no cais.
-            *   **Ação:** Proibição de embarque de carga sem aferição prévia de que **mínimo de 70%** do lote está vivo.
-            *   **Ferramenta:** Manual de Bolso do Encarregado (POP).
+            * **Medida:** Implementação de Checklist de Triagem no cais.
+            * **Ação:** Proibição de embarque de carga sem aferição prévia de que **mínimo de 70%** do lote está vivo.
+            * **Ferramenta:** Manual de Bolso do Encarregado (POP).
             """)
         with st.expander("Monitoramento VMS (Pargo)"):
             st.markdown("""
             **Risco Mapeado:** Autuação por pesca em profundidade < 50m.
-            *   **Medida:** Auditoria de Satélite (PREPS) diária.
-            *   **Ação:** Alarme interno de aproximação de zonas proibidas para as embarcações MR PESCA e DINIZ PESCA.
+            * **Medida:** Auditoria de Satélite (PREPS) diária.
+            * **Ação:** Alarme interno de aproximação de zonas proibidas para as embarcações MR PESCA e DINIZ PESCA.
             """)
 
     with col2:
@@ -525,14 +525,14 @@ with tab6:
         with st.expander("Declaração de Estoque no Defeso"):
             st.markdown("""
             **Risco Mapeado:** Omissão de estoque gerando apreensões milionárias.
-            *   **Medida:** Calendário de Compliance Ambiental.
-            *   **Ação:** Trava no sistema interno 5 dias antes do prazo final do IBAMA/MAPA para emissão obrigatória do relatório de câmaras frias.
+            * **Medida:** Calendário de Compliance Ambiental.
+            * **Ação:** Trava no sistema interno 5 dias antes do prazo final do IBAMA/MAPA para emissão obrigatória do relatório de câmaras frias.
             """)
         with st.expander("Auditoria de Fornecedores (RGP)"):
             st.markdown("""
             **Risco Mapeado:** Compra de barco/filial sem RGP ativo.
-            *   **Medida:** Bloqueio de emissão de NF de entrada.
-            *   **Ação:** Nenhuma filial (ex: Touros, Icapuí) pode transacionar pescado sem validação mensal do RGP no painel central.
+            * **Medida:** Bloqueio de emissão de NF de entrada.
+            * **Ação:** Nenhuma filial (ex: Touros, Icapuí) pode transacionar pescado sem validação mensal do RGP no painel central.
             """)
 
     with col3:
@@ -540,17 +540,17 @@ with tab6:
         with st.expander("Teses de Defesa Padronizadas"):
             st.markdown("""
             **Risco Mapeado:** Prazos curtos (20 dias) e defesas genéricas.
-            *   **Medida:** Biblioteca de Teses Homologadas.
-            *   **Ação:** Utilizar a tese de "Erro de Formalização no SEI" e "Nulidade por Falta de Intimação Válida" de forma imediata após a notificação fiscal.
+            * **Medida:** Biblioteca de Teses Homologadas.
+            * **Ação:** Utilizar a tese de "Erro de Formalização no SEI" e "Nulidade por Falta de Intimação Válida" de forma imediata após a notificação fiscal.
             """)
         with st.expander("Protocolo de Abordagem Fiscal"):
             st.markdown("""
             **Risco Mapeado:** Assinatura de Termos de Apreensão sem ressalvas.
-            *   **Medida:** Treinamento de Gestão de Crise (E-book).
-            *   **Ação:** Motoristas e encarregados orientados a documentar divergências de peso no ato da fiscalização da PRF/IBAMA.
+            * **Medida:** Treinamento de Gestão de Crise (E-book).
+            * **Ação:** Motoristas e encarregados orientados a documentar divergências de peso no ato da fiscalização da PRF/IBAMA.
             """)
             
-  st.markdown("---")
+    st.markdown("---")
     st.markdown("### 📥 Central de Arquivos e POPs para Download")
     st.markdown("Baixe os materiais oficiais de treinamento e conformidade para distribuição nas filiais:")
     
@@ -559,7 +559,7 @@ with tab6:
     with col_dl1:
         st.download_button(
             label="📄 Guia de Bolso: Abordagem Fiscal (PDF)",
-            data=b"Arquivo em construcao", # Quando o PDF estiver pronto, ligaremos aqui
+            data=b"Arquivo em construcao",
             file_name="Guia_Bolso_Motorista_Prime.pdf",
             mime="application/pdf",
             use_container_width=True
