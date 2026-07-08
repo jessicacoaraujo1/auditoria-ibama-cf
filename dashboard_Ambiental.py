@@ -68,6 +68,14 @@ st.markdown(f"""
     
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
+    div[data-testid="stNotification"] {
+        background-color: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+    div[data-testid="stNotification"] p {
+        color: #1e293b !important;
+        font-weight: 500 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -542,4 +550,35 @@ with tab6:
             *   **Ação:** Motoristas e encarregados orientados a documentar divergências de peso no ato da fiscalização da PRF/IBAMA.
             """)
             
-    st.info("💡 **Próximos Passos:** Disponibilização dos arquivos em PDF (Manuais Operacionais e E-books de Treinamento) diretamente nesta plataforma para download pelas filiais.")
+  st.markdown("---")
+    st.markdown("### 📥 Central de Arquivos e POPs para Download")
+    st.markdown("Baixe os materiais oficiais de treinamento e conformidade para distribuição nas filiais:")
+    
+    col_dl1, col_dl2, col_dl3 = st.columns(3)
+    
+    with col_dl1:
+        st.download_button(
+            label="📄 Guia de Bolso: Abordagem Fiscal (PDF)",
+            data=b"Arquivo em construcao", # Quando o PDF estiver pronto, ligaremos aqui
+            file_name="Guia_Bolso_Motorista_Prime.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+        
+    with col_dl2:
+        st.download_button(
+            label="📘 POP: Triagem de Lagosta (PDF)",
+            data=b"Arquivo em construcao",
+            file_name="Manual_Triagem_Lagosta_Prime.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+
+    with col_dl3:
+        st.download_button(
+            label="📙 E-book: Conformidade do Mar ao Prato (PDF)",
+            data=b"Arquivo em construcao",
+            file_name="Ebook_Conformidade_Prime.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
