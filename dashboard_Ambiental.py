@@ -243,7 +243,7 @@ st.markdown("<p style='font-size: 14px; color: #64748b; margin-bottom: 5px;'>Fer
 renderizar_kpis(df)
 
 tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "📍 Mapa Operacional", 
+    "Mapa Operacional", 
     "Auditoria de Objetos", 
     "Análise Regional", 
     "Tipologia e Sanções", 
@@ -260,7 +260,7 @@ df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 # =====================================================================
 
 with tab_mapa:
-    st.markdown("## 📍 Mapeamento Operacional: Litoral Norte e Nordeste")
+    st.markdown("## Mapeamento Operacional: Litoral Norte e Nordeste")
     st.markdown("Visão espacial interativa de alta resolução (Satélite Google) das unidades próprias e rede de prestadores de serviço terceirizados.")
     
     # 1. Base de dados com informações descritivas detalhadas para os Popups
