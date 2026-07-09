@@ -202,6 +202,206 @@ def carregar_dados():
 df_base = carregar_dados()
 df = df_base.explode('UF_Lista')
 df['UF_Filtro'] = df['UF_Lista']
+
+# ==========================================
+# 2.1 BASE GEORREFERENCIADA DO PARQUE INDUSTRIAL PRIME SEAFOOD
+# ==========================================
+def carregar_unidades_prime():
+    unidades = [
+        # --- MATRIZ ---
+        {
+            "nome": "Icapuí Matriz",
+            "cnpj": "15.425.593/0001-02",
+            "uf": "CE",
+            "tipo": "Matriz / Administração",
+            "endereco": "Av. Enoque Carneiro, nº 3203, Sala 1, Andar 1, Cajuais, Icapuí/CE - CEP: 62.810-000",
+            "lat": -4.7112, "lon": -37.3621,
+            "cor": "#c09f52", "icone": "star"
+        },
+        # --- INDÚSTRIAS DE PROCESSAMENTO ---
+        {
+            "nome": "Indústria Icapuí",
+            "cnpj": "15.452.593/0007-90",
+            "uf": "CE",
+            "tipo": "Indústria / Beneficiamento",
+            "endereco": "Av. Enoque Carneiro, nº 3203, Cajuais, Icapuí/CE - CEP: 62.810-000",
+            "lat": -4.7115, "lon": -37.3618,
+            "cor": "#7c1617", "icone": "industry"
+        },
+        {
+            "nome": "Indústria Pará (Bragança)",
+            "cnpj": "15.452.593/0011-76",
+            "uf": "PA",
+            "tipo": "Indústria / Beneficiamento",
+            "endereco": "Rodovia PA 458, Bragança-Ajuruteua, S/N, Vila Bacuriteua (Zona Rural), Bragança/PA - CEP: 68.603-800",
+            "lat": -0.9631, "lon": -46.7324,
+            "cor": "#7c1617", "icone": "industry"
+        },
+        {
+            "nome": "Indústria Recife",
+            "cnpj": "15.452.593/0002-85",
+            "uf": "PE",
+            "tipo": "Indústria / Beneficiamento",
+            "endereco": "Rua Comendador Moraes, nº 373, Loja 0000, Pina, Recife/PE - CEP: 51.010-197",
+            "lat": -8.0872, "lon": -34.8841,
+            "cor": "#7c1617", "icone": "industry"
+        },
+        {
+            "nome": "Indústria Alcobaça",
+            "cnpj": "15.452.593/0003-66",
+            "uf": "BA",
+            "tipo": "Indústria / Beneficiamento",
+            "endereco": "Rodovia BR 418, S/N, KM 16, Sala 04, Taquari, Alcobaça/BA - CEP: 45.910-972",
+            "lat": -17.5181, "lon": -39.1962,
+            "cor": "#7c1617", "icone": "industry"
+        },
+        # --- FILIAIS DE CAPTAÇÃO E ENTREPOSTOS ---
+        {
+            "nome": "Belém (Campina de Icoaraci)",
+            "cnpj": "15.452.593/0014-19",
+            "uf": "PA",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Monsenhor José Maria Azevedo, nº 457, Sala E, Campina de Icoaraci, Belém/PA - CEP: 66.813-550",
+            "lat": -1.2982, "lon": -48.4831,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Calçoene",
+            "cnpj": "15.452.593/0020-67",
+            "uf": "AP",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Hugulino Pinheiro, nº 411, Beira Rio, Calçoene/AP - CEP: 68.960-000",
+            "lat": 2.4971, "lon": -50.9502,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Luís Correia",
+            "cnpj": "15.452.593/0008-70",
+            "uf": "PI",
+            "tipo": "Filial de Captação",
+            "endereco": "Av. José Maria de Lima, nº 53, Centro, Luís Correia/PI - CEP: 64.220-000",
+            "lat": -2.8781, "lon": -41.6692,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Aranaú 1 (Acaraú)",
+            "cnpj": "15.452.593/0019-23",
+            "uf": "CE",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Miguel Arcanjo Meneses, nº 669, Distrito de Aranaú, Acaraú/CE - CEP: 62.580-000",
+            "lat": -2.8361, "lon": -40.1332,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Aranaú 2 (Acaraú)",
+            "cnpj": "15.452.593/0022-29",
+            "uf": "CE",
+            "tipo": "Filial de Captação",
+            "endereco": "Vila Aranaú, Via 3 - Praia, nº 85, Distrito de Aranaú, Acaraú/CE - CEP: 62.580-000",
+            "lat": -2.8351, "lon": -40.1311,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Areia Branca",
+            "cnpj": "15.452.593/0016-80",
+            "uf": "RN",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Coronel Solon, nº 352, Letra A, Quadra 006, Centro, Areia Branca/RN - CEP: 59.655-000",
+            "lat": -4.9542, "lon": -37.1351,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Porto do Mangue",
+            "cnpj": "15.452.593/0024-90",
+            "uf": "RN",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Santo Antônio, nº 61, Centro, Porto do Mangue/RN - CEP: 59.668-000",
+            "lat": -5.0681, "lon": -36.7822,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Touros",
+            "cnpj": "15.452.593/0013-38",
+            "uf": "RN",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Frei Serafim, nº 1955, Centro, Touros/RN - CEP: 59.584-000",
+            "lat": -5.1972, "lon": -35.4611,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Pitangui (Extremoz)",
+            "cnpj": "15.452.593/0023-00",
+            "uf": "RN",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Projetada, S/N, Pitangui, Extremoz/RN - CEP: 59.575-000",
+            "lat": -5.6791, "lon": -35.2452,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Natal (Ribeira)",
+            "cnpj": "15.452.593/0018-42",
+            "uf": "RN",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Chile, nº 164, Ribeira, Natal/RN - CEP: 59.012-250",
+            "lat": -5.7731, "lon": -35.2032,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Baía Formosa 1",
+            "cnpj": "15.452.593/0010-95",
+            "uf": "RN",
+            "tipo": "Filial de Captação",
+            "endereco": "Praça da Conceição, nº 32, Centro, Baía Formosa/RN - CEP: 59.194-000",
+            "lat": -6.3712, "lon": -35.0111,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Baía Formosa 2",
+            "cnpj": "15.452.593/0021-48",
+            "uf": "RN",
+            "tipo": "Filial de Captação",
+            "endereco": "Travessa João Porfírio de Souza, nº 61, Centro, Baía Formosa/RN - CEP: 59.194-000",
+            "lat": -6.3721, "lon": -35.0122,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Acaú (Pitimbu)",
+            "cnpj": "15.452.593/0004-47",
+            "uf": "PB",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Projetada 05, nº 86A, Sala A, Lote 09, Quadra K, Loteamento Pontinha, Pitimbu/PB - CEP: 58.324-000",
+            "lat": -7.4321, "lon": -34.8092,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "São José da Coroa Grande",
+            "cnpj": "15.452.593/0012-57",
+            "uf": "PE",
+            "tipo": "Filial de Captação",
+            "endereco": "3ª Travessa Constantino Gomes, S/N, Centro, São José da Coroa Grande/PE - CEP: 55.565-000",
+            "lat": -8.8981, "lon": -35.1482,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Canavieiras",
+            "cnpj": "15.452.593/0017-61",
+            "uf": "BA",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Adelízia da Silva Rodrigues, nº 85, Centro, Canavieiras/BA - CEP: 45.860-000",
+            "lat": -15.6762, "lon": -38.9481,
+            "cor": "#0f172a", "icone": "anchor"
+        },
+        {
+            "nome": "Pontal (Alcobaça)",
+            "cnpj": "15.452.593/0009-51",
+            "uf": "BA",
+            "tipo": "Filial de Captação",
+            "endereco": "Rua Contorno, nº 73 e 42, Barra, Alcobaça/BA - CEP: 45.910-000",
+            "lat": -17.5251, "lon": -39.1912,
+            "cor": "#0f172a", "icone": "anchor"
+        }
+    ]
+    return pd.DataFrame(unidades)
     
 def renderizar_kpis(df_filtrado):
     # CORREÇÃO: Deduplicar exclusivamente pela chave única do Auto de Infração
@@ -356,49 +556,71 @@ with tab_mapa:
         df_exibicao = df_mapa
 
     # 3. Criação do Mapa Base focado no Nordeste/Norte
-    mapa = folium.Map(location=[-4.5, -40.0], zoom_start=5, tiles=None, control_scale=True)
+    # ==========================================
+    # GERAÇÃO DO MAPA GEORREFERENCIADO (FOLIUM)
+    # ==========================================
+    st.markdown("### 🛰️ Monitoramento Geoespacial: Unidades Operacionais & Autuações")
+    st.write("Visão consolidada do parque industrial da Prime Seafood em contraste com a dispersão de fiscalizações do IBAMA.")
 
-    # Adicionando a camada nativa do Google Satellite Híbrido (Satélite + Nomes de Cidades/Estradas)
-    folium.TileLayer(
-        tiles='https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-        attr='Google Maps / Satellite Hybrid',
-        name='Google Satélite Híbrido',
-        overlay=False,
-        control=True
-    ).add_to(mapa)
+    # Opção de filtro de visualização no mapa
+    exibir_camada = st.radio(
+        "Camadas Geográficas:",
+        options=["Todas as Camadas (Unidades + Autos)", "Apenas Unidades Prime Seafood", "Apenas Autos de Infração"],
+        horizontal=True
+    )
 
-    # 4. Inserção dos Marcadores MAIORES e Ultra Descritivos
-    for idx, row in df_exibicao.iterrows():
-        html_popup = f"""
-        <div style="font-family: Arial, sans-serif; width: 260px; padding: 5px;">
-            <h4 style="margin: 0 0 5px 0; color: #333; border-bottom: 2px solid {'#7c1617' if row['Cor']=='red' else '#d97706'}; padding-bottom: 3px;">
-                {row['Nome']}
-            </h4>
-            <p style="margin: 3px 0; font-size: 12px;"><b>📍 Cidade:</b> {row['Cidade']}</p>
-            <p style="margin: 3px 0; font-size: 12px;"><b>🏢 Categoria:</b> <span style="color: {'#7c1617' if row['Cor']=='red' else '#d97706'}; font-weight: bold;">{row['Tipo']}</span></p>
-            <p style="margin: 6px 0 3px 0; font-size: 12px; background-color: #f8fafc; padding: 4px; border-left: 3px solid #3b82f6;"><b>🚦 Status:</b> {row['Status']}</p>
-            <p style="margin: 5px 0 0 0; font-size: 11px; color: #475569; font-style: italic;">"{row['Descricao']}"</p>
-        </div>
-        """
+    # Inicializa o mapa centralizado no Nordeste/Norte (Litoral de Atuação)
+    mapa = folium.Map(
+        location=[-5.5, -39.0],
+        zoom_start=6,
+        tiles="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+        attr="Google Satellite"
+    )
+
+    # 1. CAMADA DE UNIDADES PRIME SEAFOOD
+    if exibir_camada in ["Todas as Camadas (Unidades + Autos)", "Apenas Unidades Prime Seafood"]:
+        df_unidades = carregar_unidades_prime()
         
-        folium.Marker(
-            location=[row['Lat'], row['Lon']],
-            popup=folium.Popup(html_popup, max_width=300),
-            tooltip=f"📌 {row['Nome']} ({row['Cidade']}) - Clique para detalhes",
-            icon=folium.Icon(color=row['Cor'], icon=row['Ícone'], prefix='glyphicon')
-        ).add_to(mapa)
-        
-        folium.CircleMarker(
-            location=[row['Lat'], row['Lon']],
-            radius=14,
-            color='#7c1617' if row['Cor']=='red' else '#d97706',
-            fill=True,
-            fill_color='#ff0000' if row['Cor']=='red' else '#ffae00',
-            fill_opacity=0.3,
-            weight=2
-        ).add_to(mapa)
+        # Se houver filtro de UF ativo na barra lateral, filtra as unidades também
+        if "Todos" not in ufs_selecionadas:
+            df_unidades = df_unidades[df_unidades['uf'].isin(ufs_selecionadas)]
+            
+        for _, und in df_unidades.iterrows():
+            # HTML personalizado do Popup (estética Carvalho & Fadul)
+            html_popup = f"""
+            <div style="font-family: 'Inter', sans-serif; width: 260px; padding: 5px;">
+                <b style="color: {COR_PRIMARIA}; font-size: 13px; text-transform: uppercase;">{und['nome']}</b><br>
+                <span style="background: {und['cor']}; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: bold;">{und['tipo']}</span>
+                <hr style="margin: 8px 0; border: 0; border-top: 1px solid #e2e8f0;">
+                <b style="font-size: 11px; color: #1a1a1a;">CNPJ:</b> <span style="font-size: 11px; color: #475569;">{und['cnpj']}</span><br>
+                <b style="font-size: 11px; color: #1a1a1a;">Endereço:</b><br>
+                <span style="font-size: 10px; color: #64748b; line-height: 1.2;">{und['endereco']}</span>
+            </div>
+            """
+            
+            folium.Marker(
+                location=[und['lat'], und['lon']],
+                popup=folium.Popup(html_popup, max_width=300),
+                tooltip=f"🏢 {und['nome']} ({und['uf']})",
+                icon=folium.Icon(color="darkred" if und['cor'] == "#7c1617" else ("beige" if und['cor'] == "#c09f52" else "darkblue"), icon=und['icone'], prefix='fa')
+            ).add_to(mapa)
 
-    # 5. Renderização do mapa dentro do Streamlit
+    # 2. CAMADA DE AUTOS DE INFRAÇÃO (IBAMA)
+    if exibir_camada in ["Todas as Camadas (Unidades + Autos)", "Apenas Autos de Infração"]:
+        for _, auto in df_filtrado.iterrows():
+            if pd.notnull(auto.get('Lat')) and pd.notnull(auto.get('Lon')):
+                folium.CircleMarker(
+                    location=[auto['Lat'], auto['Lon']],
+                    radius=6,
+                    popup=f"<b>Auto:</b> {auto['Nº A.I.']}<br><b>Valor:</b> R$ {auto['Valor Multa']:,.2f}",
+                    tooltip=f"🚨 Auto IBAMA: {auto['Nº A.I.']}",
+                    color="#ff2a2a",
+                    fill=True,
+                    fill_color="#ff2a2a",
+                    fill_opacity=0.7
+                ).add_to(mapa)
+
+    # Renderiza o mapa no Streamlit
     st_folium(mapa, width="100%", height=550)
     
     # 6. Tabela inferior para consulta rápida e auditoria
