@@ -543,45 +543,49 @@ with tab_mapa:
     if uf_selecionada != 'Todos':
         df_unidades_mapa = df_unidades_mapa[df_unidades_mapa['uf'] == uf_selecionada]
 
-    # 2. PAINEL DE CONTROLE DE AUDITORIA
-    c_ctrl1, c_ctrl2, c_ctrl3 = st.columns([1.5, 1.4, 1.1], gap="medium")
+    # 2. PAINEL DE CONTROLE DE AUDITORIA (Com proporções ajustadas para caber o texto original)
+    c_ctrl1, c_ctrl2 = st.columns([1.5, 1.5], gap="large")
     
     with c_ctrl1:
         st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Foco de Auditoria por Unidade:</b>", unsafe_allow_html=True)
         lista_opcoes_und = ["Visão Macrorregional (Todos os Polos)"] + df_unidades_mapa['nome'].tolist()
-        unidade_escolhida = st.selectbox("Selecione o polo:", lista_opcoes_und, label_visibility="collapsed", key="mapa_select_und")
+        # TEXTO ORIGINAL RESTAURADO AQUI
+        unidade_escolhida = st.selectbox("Selecione o polo da Prime Seafood para auditar o volume de autuações e o objeto de fiscalização preponderante na respectiva região:", lista_opcoes_und, label_visibility="collapsed", key="mapa_select_und")
         
     with c_ctrl2:
         st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Camadas de Sobreposição Espacial:</b>", unsafe_allow_html=True)
+        # TEXTOS ORIGINAIS RESTAURADOS AQUI
         exibir_camada = st.radio(
             "Filtro de Camadas",
-            options=["Visão Integrada", "Apenas Malha Prime Seafood"],
-            horizontal=True,
+            options=["Visão Integrada (Malha Operacional + Infrações IBAMA)", "Apenas Malha Operacional (Prime Seafood)"],
+            horizontal=False, # Mudado para False para o texto longo caber perfeitamente
             label_visibility="collapsed",
             key="mapa_seletor_camadas"
         )
         
-    with c_ctrl3:
-        st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Disposição do Painel:</b>", unsafe_allow_html=True)
-        modo_layout = st.radio(
-            "Layout do Mapa",
-            options=["Expandido (Tela Cheia)", "Dividido (Lado a Lado)"],
-            horizontal=True,
-            label_visibility="collapsed",
-            key="mapa_seletor_layout"
-        )
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # BOTÃO DE CONTROLE DO LAYOUT (Isolado para não espremer os textos acima)
+    st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Disposição do Painel Analítico:</b>", unsafe_allow_html=True)
+    modo_layout = st.radio(
+        "Layout do Mapa",
+        options=["Expandido (Mapa em Tela Cheia)", "Dividido (Relatório ao lado do Mapa)"],
+        horizontal=True,
+        label_visibility="collapsed",
+        key="mapa_seletor_layout"
+    )
 
     # Processamento de Coordenadas e Escopo Regional
     if unidade_escolhida == "Visão Macrorregional (Todos os Polos)":
         lat_centro, lon_centro, zoom_inical = -5.5, -39.0, 6
         df_autos_regiao = df.copy() if uf_selecionada == 'Todos' else df[df['UF_Filtro'] == uf_selecionada]
-        nome_regiao = "Malha Global"
+        nome_regiao = "Malha Global (Norte/Nordeste)"
         obs_unidade = "Visão panorâmica da infraestrutura logístico-industrial. Para auditoria pontual de conformidade e acionamento de diretrizes mitigatórias, selecione uma filial específica no painel acima."
     else:
         und_data = df_unidades_mapa[df_unidades_mapa['nome'] == unidade_escolhida].iloc[0]
         lat_centro, lon_centro, zoom_inical = und_data['lat'], und_data['lon'], 10
         df_autos_regiao = df[df['UF_Filtro'] == und_data['uf']]
-        nome_regiao = f"Polo {und_data['uf']}"
+        nome_regiao = f"Estado de Atuação: {und_data['uf']}"
         
         # Diretrizes de Conformidade Rigorosas
         if "Indústria" in und_data['tipo'] or "Matriz" in und_data['tipo']:
@@ -669,7 +673,7 @@ with tab_mapa:
         ).add_to(mapa)
 
     # CAMADA: CONTENCIOSO ADMINISTRATIVO (IBAMA)
-    if exibir_camada == "Visão Integrada":
+    if exibir_camada == "Visão Integrada (Malha Operacional + Infrações IBAMA)":
         for _, auto in df.iterrows():
             if pd.notnull(auto.get('Lat')) and pd.notnull(auto.get('Lon')):
                 popup_auto = f"""
@@ -692,7 +696,7 @@ with tab_mapa:
     # =================================================================
     # RENDERIZAÇÃO CONDICIONAL (O BOTÃO MÁGICO DE LAYOUT)
     # =================================================================
-    if modo_layout == "Expandido (Tela Cheia)":
+    if modo_layout == "Expandido (Mapa em Tela Cheia)":
         # 1. Relatório Antes do Mapa
         st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 1.1rem; border-bottom: 2px solid {COR_BORDAS}; padding-bottom: 5px; margin-top: 10px;'>Relatório de Exposição e Conformidade da Região Mapeada</h3>", unsafe_allow_html=True)
         col_kpi1, col_kpi2, col_kpi3 = st.columns(3, gap="medium")
