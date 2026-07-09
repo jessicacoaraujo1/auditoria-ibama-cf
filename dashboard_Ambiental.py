@@ -526,9 +526,9 @@ df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 # ABA DO MAPA: MATRIZ GEOESPACIAL DE CONTENCIOSO E INFRAESTRUTURA
 # =====================================================================
 with tab_mapa:
-    # 1. TÍTULO ÚNICO E LIMPO (Sem duplicidades ou poluição)
+    # 1. TÍTULO EXECUTIVO LIMPO
     st.markdown(f"""
-    <div style="border-left: 4px solid {COR_PRIMARIA}; padding-left: 14px; margin-bottom: 20px;">
+    <div style="border-left: 4px solid {COR_PRIMARIA}; padding-left: 14px; margin-bottom: 15px;">
         <h2 style="margin: 0; color: {COR_SECUNDARIA}; font-size: 1.4rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.5px;">
             Matriz Geoespacial de Contencioso & Infraestrutura Operacional
         </h2>
@@ -543,163 +543,174 @@ with tab_mapa:
     if uf_selecionada != 'Todos':
         df_unidades_mapa = df_unidades_mapa[df_unidades_mapa['uf'] == uf_selecionada]
 
-    # 2. ESTRUTURA EM DUAS COLUNAS (Esquerda: Controles e KPIs | Direita: Mapa Hero)
-    col_controles, col_mapa = st.columns([1.1, 2.3], gap="large")
+    # 2. BARRA DE COMANDO SUPERIOR (Controles horizontais acima do mapa)
+    c_ctrl1, c_ctrl2 = st.columns([1.3, 1.7], gap="large")
     
-    with col_controles:
-        # Seletor de Camadas Simplificado (Sem ocultar as unidades da empresa)
-        exibir_camada = st.radio(
-            "Camadas do Mapa:",
-            options=["Visão Integrada (Unidades + Autos IBAMA)", "Apenas Parque Industrial Prime"],
-            horizontal=True,
-            key="mapa_seletor_camadas"
-        )
-        
-        st.markdown("<hr style='margin: 12px 0; border: 0; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
-        
-        # Texto direto solicitado para guiar a interatividade
-        st.write("Selecione uma unidade da Prime Seafood para centralizar no mapa, auditar o risco regional e conferir observações técnicas:")
-        
+    with c_ctrl1:
+        st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>📍 Centralizar Câmera & Auditar Unidade:</b>", unsafe_allow_html=True)
         lista_opcoes_und = ["🌐 Visão Geral (Todos os Polos)"] + df_unidades_mapa['nome'].tolist()
         unidade_escolhida = st.selectbox("", lista_opcoes_und, label_visibility="collapsed", key="mapa_select_und")
         
-        # Lógica inteligente: calcula os dados e coordenadas com base na escolha
-        if unidade_escolhida == "🌐 Visão Geral (Todos os Polos)":
-            lat_centro, lon_centro, zoom_inical = -5.5, -39.0, 6
-            df_autos_regiao = df.copy() if uf_selecionada == 'Todos' else df[df['UF_Filtro'] == uf_selecionada]
-            nome_regiao = "Nordeste / Norte (Geral)"
-            obs_unidade = "Visão panorâmica de toda a malha logístico-industrial da Prime Seafood. Para auditoria pontual de conformidade, selecione uma filial específica acima."
-        else:
-            und_data = df_unidades_mapa[df_unidades_mapa['nome'] == unidade_escolhida].iloc[0]
-            lat_centro, lon_centro, zoom_inical = und_data['lat'], und_data['lon'], 10
-            df_autos_regiao = df[df['UF_Filtro'] == und_data['uf']]
-            nome_regiao = f"Estado: {und_data['uf']}"
-            
-            # Gera observações automáticas de compliance baseadas no tipo de filial
-            if "Indústria" in und_data['tipo'] or "Matriz" in und_data['tipo']:
-                obs_unidade = f"<b>{und_data['nome']}:</b> Unidade de processamento e congelamento. Foco de compliance na varredura de estoque e declaração obrigatória no defeso da lagosta. Exige auditoria estrita no recebimento de matéria-prima costeira."
-            else:
-                obs_unidade = f"<b>{und_data['nome']}:</b> Filial de captação costeira e apoio logístico. Risco focado no embarque rodoviário e triagem biométrica. Obrigatória a checagem mensal do RGP das embarcações parceiras e vitalidade da carga."
-
-        # Cálculos para os quadros da região
-        total_autos_reg = df_autos_regiao['Nº A.I.'].nunique() if not df_autos_regiao.empty else 0
-        val_total_reg = df_autos_regiao['Valor Multa'].sum() if not df_autos_regiao.empty else 0.0
-        val_fmt_reg = f"R$ {val_total_reg:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        
-        if not df_autos_regiao.empty and 'Objeto Identificado' in df_autos_regiao.columns:
-            obj_lider_reg = df_autos_regiao['Objeto Identificado'].mode()[0]
-        else:
-            obj_lider_reg = "Sem registros na região"
-
-        # 3 QUADROS DINÂMICOS (Atualizam conforme a unidade escolhida)
-        st.markdown(f"""
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_PRIMARIA}; padding:12px; border-radius:4px; margin-bottom:8px; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-            <span style="font-size:10px; color:#64748b; font-weight:600; text-transform:uppercase;">Autos Lavrados ({nome_regiao})</span><br>
-            <b style="font-size:20px; color:{COR_SECUNDARIA};">{total_autos_reg} Auto(s) de Infração</b>
-        </div>
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_DOURADO}; padding:12px; border-radius:4px; margin-bottom:8px; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-            <span style="font-size:10px; color:#64748b; font-weight:600; text-transform:uppercase;">Objeto Líder de Autuação na Região</span><br>
-            <b style="font-size:13.5px; color:#7c1617; display:block; margin-top:2px;">{obj_lider_reg}</b>
-        </div>
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #475569; padding:12px; border-radius:4px; margin-bottom:12px; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-            <span style="font-size:10px; color:#64748b; font-weight:600; text-transform:uppercase;">Passivo Financeiro ({nome_regiao})</span><br>
-            <b style="font-size:20px; color:{COR_SECUNDARIA};">{val_fmt_reg}</b>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # Quadro de Observação Técnica da Unidade
-        st.markdown(f"""
-        <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:12px; border-radius:4px; font-size:11.5px; color:#334155; line-height:1.4;">
-            <b style="color:{COR_PRIMARIA}; font-size:11px; text-transform:uppercase;">📋 Diretriz de Compliance:</b><br>
-            {obs_unidade}
-        </div>
-        """, unsafe_allow_html=True)
-
-    # =================================================================
-    # COLUNA DA DIREITA: MAPA INTERATIVO HERO
-    # =================================================================
-    with col_mapa:
-        # O mapa centraliza e aplica zoom automaticamente na unidade selecionada!
-        mapa = folium.Map(
-            location=[lat_centro, lon_centro],
-            zoom_start=zoom_inical,
-            tiles="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-            attr="Google Satellite"
+    with c_ctrl2:
+        st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>🗺️ Camada de Visualização no Satélite:</b>", unsafe_allow_html=True)
+        exibir_camada = st.radio(
+            "",
+            options=["Visão Integrada (Unidades + Autos IBAMA)", "Apenas Parque Industrial Prime"],
+            horizontal=True,
+            label_visibility="collapsed",
+            key="mapa_seletor_camadas"
         )
+        
+    # Lógica inteligente: calcula coordenadas e zoom baseados na escolha do usuário
+    if unidade_escolhida == "🌐 Visão Geral (Todos os Polos)":
+        lat_centro, lon_centro, zoom_inical = -5.5, -39.0, 6
+        df_autos_regiao = df.copy() if uf_selecionada == 'Todos' else df[df['UF_Filtro'] == uf_selecionada]
+        nome_regiao = "Nordeste / Norte (Geral)"
+        obs_unidade = "Visão panorâmica de toda a malha logístico-industrial da Prime Seafood. Para auditoria pontual e acionamento de diretrizes, selecione uma filial costeira ou indústria no seletor acima."
+    else:
+        und_data = df_unidades_mapa[df_unidades_mapa['nome'] == unidade_escolhida].iloc[0]
+        lat_centro, lon_centro, zoom_inical = und_data['lat'], und_data['lon'], 10
+        df_autos_regiao = df[df['UF_Filtro'] == und_data['uf']]
+        nome_regiao = f"Estado: {und_data['uf']}"
+        
+        # Gera observações automáticas de compliance
+        if "Indústria" in und_data['tipo'] or "Matriz" in und_data['tipo']:
+            obs_unidade = f"<b>{und_data['nome']}:</b> Unidade de processamento e congelamento. Foco de compliance na varredura de estoque e declaração obrigatória no defeso da lagosta. Exige auditoria estrita no recebimento de matéria-prima costeira."
+        else:
+            obs_unidade = f"<b>{und_data['nome']}:</b> Filial de captação costeira e apoio logístico. Risco focado no embarque rodoviário e triagem biométrica. Obrigatória a checagem mensal do RGP das embarcações parceiras e vitalidade da carga."
 
-        # CAMADA 1: UNIDADES PRIME SEAFOOD
-        for _, und in df_unidades_mapa.iterrows():
-            und_uf = und['uf']
-            df_uf_spec = df[df['UF_Filtro'] == und_uf]
-            cnt_autos = df_uf_spec['Nº A.I.'].nunique() if not df_uf_spec.empty else 0
-            obj_top = df_uf_spec['Objeto Identificado'].mode()[0] if not df_uf_spec.empty and 'Objeto Identificado' in df_uf_spec.columns else "N/D"
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # =================================================================
+    # 3. O DESTAQUE ABSOLUTO: MAPA INTERATIVO HERO (100% DA LARGURA)
+    # =================================================================
+    mapa = folium.Map(
+        location=[lat_centro, lon_centro],
+        zoom_start=zoom_inical,
+        tiles="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+        attr="Google Satellite"
+    )
+
+    # CAMADA 1: UNIDADES PRIME SEAFOOD
+    for _, und in df_unidades_mapa.iterrows():
+        und_uf = und['uf']
+        df_uf_spec = df[df['UF_Filtro'] == und_uf]
+        cnt_autos = df_uf_spec['Nº A.I.'].nunique() if not df_uf_spec.empty else 0
+        obj_top = df_uf_spec['Objeto Identificado'].mode()[0] if not df_uf_spec.empty and 'Objeto Identificado' in df_uf_spec.columns else "N/D"
+        
+        obs_popup = "Auditoria de defeso e segregação de câmara fria." if "Indústria" in und['tipo'] else "Triagem biométrica no cais e controle de vitalidade 70%."
+        
+        html_popup = f"""
+        <div style="font-family: 'Inter', sans-serif; width: 270px; padding: 4px;">
+            <b style="color: {COR_PRIMARIA}; font-size: 13px; text-transform: uppercase;">{und['nome']}</b><br>
+            <span style="background: {und['cor']}; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: bold;">{und['tipo']}</span>
+            <hr style="margin: 8px 0; border: 0; border-top: 1px solid #e2e8f0;">
+            <b style="font-size: 11px; color: #1a1a1a;">CNPJ:</b> <span style="font-size: 11px; color: #475569;">{und['cnpj']}</span><br>
+            <b style="font-size: 11px; color: #1a1a1a;">Endereço:</b><br>
+            <span style="font-size: 10px; color: #64748b; line-height: 1.3;">{und['endereco']}</span>
             
-            # Observações personalizadas embutidas dentro do próprio Popup do mapa
-            obs_popup = "Auditoria de defeso e segregação de câmara fria." if "Indústria" in und['tipo'] else "Triagem biométrica no cais e controle de vitalidade 70%."
-            
-            html_popup = f"""
-            <div style="font-family: 'Inter', sans-serif; width: 270px; padding: 4px;">
-                <b style="color: {COR_PRIMARIA}; font-size: 13px; text-transform: uppercase;">{und['nome']}</b><br>
-                <span style="background: {und['cor']}; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: bold;">{und['tipo']}</span>
-                <hr style="margin: 8px 0; border: 0; border-top: 1px solid #e2e8f0;">
-                <b style="font-size: 11px; color: #1a1a1a;">CNPJ:</b> <span style="font-size: 11px; color: #475569;">{und['cnpj']}</span><br>
-                <b style="font-size: 11px; color: #1a1a1a;">Endereço:</b><br>
-                <span style="font-size: 10px; color: #64748b; line-height: 1.3;">{und['endereco']}</span>
-                
-                <div style="background: #fdf2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 4px; margin-top: 10px;">
-                    <b style="font-size: 10px; color: #991b1b; text-transform: uppercase;">🚨 Risco Regional ({und_uf}):</b><br>
-                    <span style="font-size: 10.5px; color: #1a1a1a;"><b>Autos no Estado:</b> {cnt_autos} auto(s)</span><br>
-                    <span style="font-size: 10.5px; color: #1a1a1a;"><b>Alvo Líder:</b> {obj_top}</span><br>
-                    <hr style="margin: 4px 0; border: 0; border-top: 1px dashed #fca5a5;">
-                    <span style="font-size: 10px; color: #7c1617;"><b>Foco:</b> {obs_popup}</span>
-                </div>
+            <div style="background: #fdf2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 4px; margin-top: 10px;">
+                <b style="font-size: 10px; color: #991b1b; text-transform: uppercase;">🚨 Risco Regional ({und_uf}):</b><br>
+                <span style="font-size: 10.5px; color: #1a1a1a;"><b>Autos no Estado:</b> {cnt_autos} auto(s)</span><br>
+                <span style="font-size: 10.5px; color: #1a1a1a;"><b>Alvo Líder:</b> {obj_top}</span><br>
+                <hr style="margin: 4px 0; border: 0; border-top: 1px dashed #fca5a5;">
+                <span style="font-size: 10px; color: #7c1617;"><b>Foco:</b> {obs_popup}</span>
             </div>
-            """
-            
-            # Se a unidade for a escolhida no selectbox, destaca com cor ou comportamento no mapa
-            destaque_icone = "star" if und['nome'] == unidade_escolhida else und['icone']
-            
-            folium.Marker(
-                location=[und['lat'], und['lon']],
-                popup=folium.Popup(html_popup, max_width=300),
-                tooltip=f"🏢 {und['nome']} | Clique para ver Raio-X",
-                icon=folium.Icon(
-                    color="darkred" if und['cor'] == "#7c1617" else ("beige" if und['cor'] == "#c09f52" else "darkblue"), 
-                    icon=destaque_icone, 
-                    prefix='fa'
-                )
-            ).add_to(mapa)
+        </div>
+        """
+        
+        # Destaca o ícone da unidade escolhida no menu
+        destaque_icone = "star" if und['nome'] == unidade_escolhida else und['icone']
+        
+        folium.Marker(
+            location=[und['lat'], und['lon']],
+            popup=folium.Popup(html_popup, max_width=300),
+            tooltip=f"🏢 {und['nome']} | Clique para Raio-X",
+            icon=folium.Icon(
+                color="darkred" if und['cor'] == "#7c1617" else ("beige" if und['cor'] == "#c09f52" else "darkblue"), 
+                icon=destaque_icone, 
+                prefix='fa'
+            )
+        ).add_to(mapa)
 
-        # CAMADA 2: AUTOS DE INFRAÇÃO DO IBAMA (Só renderiza se Visão Integrada estiver selecionada)
-        if exibir_camada == "Visão Integrada (Unidades + Autos IBAMA)":
-            for _, auto in df.iterrows():
-                if pd.notnull(auto.get('Lat')) and pd.notnull(auto.get('Lon')):
-                    popup_auto = f"""
-                    <div style="font-family: 'Inter', sans-serif; width: 240px;">
-                        <b style="color: #ff2a2a; font-size: 11px; text-transform: uppercase;">🚨 Auto de Infração IBAMA</b><br>
-                        <span style="font-size: 13px; font-weight: bold; color: #1a1a1a;">Nº {auto['Nº A.I.']}</span>
-                        <hr style="margin: 6px 0; border: 0; border-top: 1px solid #e2e8f0;">
-                        <b style="font-size:11px;">Valor Arbitrado:</b> <span style="color: #7c1617; font-weight: bold;">R$ {auto['Valor Multa']:,.2f}</span><br>
-                        <b style="font-size:11px;">Alvo / Objeto:</b> <span style="color: #334155; font-size:11px;">{auto['Objeto Identificado']}</span><br>
-                        <b style="font-size:11px;">Enquadramento:</b> <span style="font-size: 10px; color: #64748b;">{auto['Tipo Infração']}</span>
-                    </div>
-                    """
-                    
-                    folium.CircleMarker(
-                        location=[auto['Lat'], auto['Lon']],
-                        radius=6,
-                        popup=folium.Popup(popup_auto, max_width=280),
-                        tooltip=f"🚨 A.I: {auto['Nº A.I.']} | {auto['Objeto Identificado']}",
-                        color="#ff2a2a",
-                        fill=True,
-                        fill_color="#ff2a2a",
-                        fill_opacity=0.8
-                    ).add_to(mapa)
+    # CAMADA 2: AUTOS DE INFRAÇÃO DO IBAMA
+    if exibir_camada == "Visão Integrada (Unidades + Autos IBAMA)":
+        for _, auto in df.iterrows():
+            if pd.notnull(auto.get('Lat')) and pd.notnull(auto.get('Lon')):
+                popup_auto = f"""
+                <div style="font-family: 'Inter', sans-serif; width: 240px;">
+                    <b style="color: #ff2a2a; font-size: 11px; text-transform: uppercase;">🚨 Auto de Infração IBAMA</b><br>
+                    <span style="font-size: 13px; font-weight: bold; color: #1a1a1a;">Nº {auto['Nº A.I.']}</span>
+                    <hr style="margin: 6px 0; border: 0; border-top: 1px solid #e2e8f0;">
+                    <b style="font-size:11px;">Valor Arbitrado:</b> <span style="color: #7c1617; font-weight: bold;">R$ {auto['Valor Multa']:,.2f}</span><br>
+                    <b style="font-size:11px;">Alvo / Objeto:</b> <span style="color: #334155; font-size:11px;">{auto['Objeto Identificado']}</span><br>
+                    <b style="font-size:11px;">Enquadramento:</b> <span style="font-size: 10px; color: #64748b;">{auto['Tipo Infração']}</span>
+                </div>
+                """
+                
+                folium.CircleMarker(
+                    location=[auto['Lat'], auto['Lon']],
+                    radius=6,
+                    popup=folium.Popup(popup_auto, max_width=280),
+                    tooltip=f"🚨 A.I: {auto['Nº A.I.']} | {auto['Objeto Identificado']}",
+                    color="#ff2a2a",
+                    fill=True,
+                    fill_color="#ff2a2a",
+                    fill_opacity=0.8
+                ).add_to(mapa)
 
-        # Renderiza o mapa ocupando toda a coluna da direita com altura confortável
-        st_folium(mapa, width="100%", height=560)
+    # RENDERIZAÇÃO EM TELA CHEIA (100% da largura e 680px de altura profissional!)
+    st_folium(mapa, width="100%", height=680)
+
+    # =================================================================
+    # 4. COCKPIT INFERIOR: RAIO-X REGIONAL & COMPLIANCE EM TEMPO REAL
+    # =================================================================
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 1.1rem; border-bottom: 2px solid {COR_BORDAS}; padding-bottom: 5px;'>🎯 Raio-X Operacional & Passivo da Região Mapeada</h3>", unsafe_allow_html=True)
     
-    # 3. TABELA INFERIOR LIMPA E COMPACTA
+    # Cálculos dinâmicos para a região em foco
+    total_autos_reg = df_autos_regiao['Nº A.I.'].nunique() if not df_autos_regiao.empty else 0
+    val_total_reg = df_autos_regiao['Valor Multa'].sum() if not df_autos_regiao.empty else 0.0
+    val_fmt_reg = f"R$ {val_total_reg:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    
+    if not df_autos_regiao.empty and 'Objeto Identificado' in df_autos_regiao.columns:
+        obj_lider_reg = df_autos_regiao['Objeto Identificado'].mode()[0]
+    else:
+        obj_lider_reg = "Sem registros na região"
+
+    # 3 Caixas em linha horizontal limpa
+    ck1, ck2, ck3 = st.columns(3, gap="medium")
+    with ck1:
+        st.markdown(f"""
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_PRIMARIA}; padding:15px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Autos Lavrados ({nome_regiao})</span><br>
+            <b style="font-size:22px; color:{COR_SECUNDARIA};">{total_autos_reg} Auto(s) de Infração</b>
+        </div>
+        """, unsafe_allow_html=True)
+    with ck2:
+        st.markdown(f"""
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_DOURADO}; padding:15px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Objeto Líder de Autuação na Região</span><br>
+            <b style="font-size:14.5px; color:#7c1617; display:block; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{obj_lider_reg}</b>
+        </div>
+        """, unsafe_allow_html=True)
+    with ck3:
+        st.markdown(f"""
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #475569; padding:15px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Passivo Financeiro ({nome_regiao})</span><br>
+            <b style="font-size:22px; color:{COR_SECUNDARIA};">{val_fmt_reg}</b>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Caixa de Diretriz Operacional logo abaixo dos KPIs
+    st.markdown(f"""
+    <div style="background:#f8fafc; border:1px solid #cbd5e1; border-left:4px solid {COR_PRIMARIA}; padding:14px; border-radius:4px; font-size:12px; color:#334155; line-height:1.5; margin-top:12px; margin-bottom:20px;">
+        <b style="color:{COR_PRIMARIA}; font-size:11.5px; text-transform:uppercase;">📋 Diretriz de Compliance Ativa para a Unidade:</b><br>
+        {obs_unidade}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 5. TABELA INFERIOR DE CONFERÊNCIA
     st.markdown("---")
     st.markdown("### 📋 Cadastro Geral das Unidades e Filiais Mapeadas")
     st.dataframe(
