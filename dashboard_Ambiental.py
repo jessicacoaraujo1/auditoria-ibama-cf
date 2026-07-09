@@ -543,49 +543,41 @@ with tab_mapa:
     if uf_selecionada != 'Todos':
         df_unidades_mapa = df_unidades_mapa[df_unidades_mapa['uf'] == uf_selecionada]
 
-    # 2. PAINEL DE CONTROLE DE AUDITORIA (Com proporções ajustadas para caber o texto original)
-    c_ctrl1, c_ctrl2 = st.columns([1.5, 1.5], gap="large")
+    # 2. PAINEL DE CONTROLE DE AUDITORIA (Com Toggle Elegante)
+    c_ctrl1, c_ctrl2, c_ctrl3 = st.columns([1.6, 1.4, 1.0], gap="large")
     
     with c_ctrl1:
         st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Foco de Auditoria por Unidade:</b>", unsafe_allow_html=True)
         lista_opcoes_und = ["Visão Macrorregional (Todos os Polos)"] + df_unidades_mapa['nome'].tolist()
-        # TEXTO ORIGINAL RESTAURADO AQUI
-        unidade_escolhida = st.selectbox("Selecione o polo da Prime Seafood para auditar o volume de autuações e o objeto de fiscalização preponderante na respectiva região:", lista_opcoes_und, label_visibility="collapsed", key="mapa_select_und")
+        unidade_escolhida = st.selectbox("Selecione o polo:", lista_opcoes_und, label_visibility="collapsed", key="mapa_select_und")
         
     with c_ctrl2:
         st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Camadas de Sobreposição Espacial:</b>", unsafe_allow_html=True)
-        # TEXTOS ORIGINAIS RESTAURADOS AQUI
         exibir_camada = st.radio(
             "Filtro de Camadas",
-            options=["Visão Integrada (Malha Operacional + Infrações IBAMA)", "Apenas Malha Operacional (Prime Seafood)"],
-            horizontal=False, # Mudado para False para o texto longo caber perfeitamente
+            options=["Visão Integrada", "Apenas Malha Prime Seafood"],
+            horizontal=True,
             label_visibility="collapsed",
             key="mapa_seletor_camadas"
         )
         
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    # BOTÃO DE CONTROLE DO LAYOUT (Isolado para não espremer os textos acima)
-    st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Disposição do Painel Analítico:</b>", unsafe_allow_html=True)
-    modo_layout = st.radio(
-        "Layout do Mapa",
-        options=["Expandido (Mapa em Tela Cheia)", "Dividido (Relatório ao lado do Mapa)"],
-        horizontal=True,
-        label_visibility="collapsed",
-        key="mapa_seletor_layout"
-    )
+    with c_ctrl3:
+        st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Layout Espacial:</b>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 5px;'></div>", unsafe_allow_html=True) # Espaçamento para alinhar perfeitamente
+        # O novo botão interativo e minimalista!
+        modo_dividido = st.toggle("Modo Split (Lado a Lado)", value=False, key="mapa_toggle_layout")
 
     # Processamento de Coordenadas e Escopo Regional
     if unidade_escolhida == "Visão Macrorregional (Todos os Polos)":
         lat_centro, lon_centro, zoom_inical = -5.5, -39.0, 6
         df_autos_regiao = df.copy() if uf_selecionada == 'Todos' else df[df['UF_Filtro'] == uf_selecionada]
-        nome_regiao = "Malha Global (Norte/Nordeste)"
+        nome_regiao = "Malha Global"
         obs_unidade = "Visão panorâmica da infraestrutura logístico-industrial. Para auditoria pontual de conformidade e acionamento de diretrizes mitigatórias, selecione uma filial específica no painel acima."
     else:
         und_data = df_unidades_mapa[df_unidades_mapa['nome'] == unidade_escolhida].iloc[0]
         lat_centro, lon_centro, zoom_inical = und_data['lat'], und_data['lon'], 10
         df_autos_regiao = df[df['UF_Filtro'] == und_data['uf']]
-        nome_regiao = f"Estado de Atuação: {und_data['uf']}"
+        nome_regiao = f"Polo {und_data['uf']}"
         
         # Diretrizes de Conformidade Rigorosas
         if "Indústria" in und_data['tipo'] or "Matriz" in und_data['tipo']:
@@ -593,13 +585,16 @@ with tab_mapa:
         else:
             obs_unidade = f"<b>{und_data['nome']}:</b> Posto de captação costeira e transbordo logístico. Risco crítico concentrado no transporte rodoviário e na biometria de espécimes. Obrigatoriedade de validação mensal da vigência do RGP das embarcações fornecedoras e protocolo de vitalidade (70%) pré-embarque."
 
-    # Processamento dos KPIs Regionais
-    total_autos_reg = df_autos_regiao['Nº A.I.'].nunique() if not df_autos_regiao.empty else 0
-    val_total_reg = df_autos_regiao['Valor Multa'].sum() if not df_autos_regiao.empty else 0.0
+    # =================================================================
+    # CORREÇÃO CRÍTICA DOS 12 MILHÕES: Deduplicação de Autos na Região
+    # =================================================================
+    df_autos_regiao_unicos = df_autos_regiao.drop_duplicates(subset=['Nº A.I.'])
+    total_autos_reg = len(df_autos_regiao_unicos)
+    val_total_reg = df_autos_regiao_unicos['Valor Multa'].sum()
     val_fmt_reg = f"R$ {val_total_reg:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
     
-    if not df_autos_regiao.empty and 'Objeto Identificado' in df_autos_regiao.columns:
-        obj_lider_reg = df_autos_regiao['Objeto Identificado'].mode()[0]
+    if not df_autos_regiao_unicos.empty and 'Objeto Identificado' in df_autos_regiao_unicos.columns:
+        obj_lider_reg = df_autos_regiao_unicos['Objeto Identificado'].mode()[0]
     else:
         obj_lider_reg = "Sem registros na região"
 
@@ -642,8 +637,9 @@ with tab_mapa:
     # CAMADA: MALHA OPERACIONAL PRIME SEAFOOD
     for _, und in df_unidades_mapa.iterrows():
         und_uf = und['uf']
-        df_uf_spec = df[df['UF_Filtro'] == und_uf]
-        cnt_autos = df_uf_spec['Nº A.I.'].nunique() if not df_uf_spec.empty else 0
+        # Corrigindo a duplicidade nos popups também!
+        df_uf_spec = df[df['UF_Filtro'] == und_uf].drop_duplicates(subset=['Nº A.I.'])
+        cnt_autos = len(df_uf_spec)
         obj_top = df_uf_spec['Objeto Identificado'].mode()[0] if not df_uf_spec.empty and 'Objeto Identificado' in df_uf_spec.columns else "N/D"
         obs_popup = "Auditar declaração de estoques e bloqueio sistêmico no defeso." if "Indústria" in und['tipo'] else "Auditar biometria no cais e licença de frota parceira."
         
@@ -672,9 +668,10 @@ with tab_mapa:
             icon=folium.Icon(color="darkred" if und['cor'] == "#7c1617" else ("beige" if und['cor'] == "#c09f52" else "darkblue"), icon=destaque_icone, prefix='fa')
         ).add_to(mapa)
 
-    # CAMADA: CONTENCIOSO ADMINISTRATIVO (IBAMA)
-    if exibir_camada == "Visão Integrada (Malha Operacional + Infrações IBAMA)":
-        for _, auto in df.iterrows():
+    # CAMADA: CONTENCIOSO ADMINISTRATIVO (IBAMA) - Usa df_unicos para plotar sem pinos repetidos no mesmo local
+    if exibir_camada == "Visão Integrada":
+        df_mapa_autos = df.drop_duplicates(subset=['Nº A.I.'])
+        for _, auto in df_mapa_autos.iterrows():
             if pd.notnull(auto.get('Lat')) and pd.notnull(auto.get('Lon')):
                 popup_auto = f"""
                 <div style="font-family: 'Inter', sans-serif; width: 240px;">
@@ -694,22 +691,22 @@ with tab_mapa:
                 ).add_to(mapa)
 
     # =================================================================
-    # RENDERIZAÇÃO CONDICIONAL (O BOTÃO MÁGICO DE LAYOUT)
+    # RENDERIZAÇÃO CONDICIONAL (BASEADA NO TOGGLE DO USUÁRIO)
     # =================================================================
-    if modo_layout == "Expandido (Mapa em Tela Cheia)":
-        # 1. Relatório Antes do Mapa
-        st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 1.1rem; border-bottom: 2px solid {COR_BORDAS}; padding-bottom: 5px; margin-top: 10px;'>Relatório de Exposição e Conformidade da Região Mapeada</h3>", unsafe_allow_html=True)
+    if not modo_dividido:
+        # Modo Expandido (Tela Cheia) - Relatório fica logo abaixo do menu de cima
+        st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 1.1rem; border-bottom: 2px solid {COR_BORDAS}; padding-bottom: 5px; margin-top: 10px;'>Relatório de Exposição e Conformidade</h3>", unsafe_allow_html=True)
         col_kpi1, col_kpi2, col_kpi3 = st.columns(3, gap="medium")
         with col_kpi1: st.markdown(kpi1_html, unsafe_allow_html=True)
         with col_kpi2: st.markdown(kpi2_html, unsafe_allow_html=True)
         with col_kpi3: st.markdown(kpi3_html, unsafe_allow_html=True)
         st.markdown(diretriz_html, unsafe_allow_html=True)
         
-        # 2. Mapa 100% de Largura
-        st_folium(mapa, width="100%", height=650)
+        # Mapa 100% de Largura
+        st_folium(mapa, width="100%", height=620)
         
     else:
-        # Modo Dividido (Lado a Lado: Relatório ~35% | Mapa ~65%)
+        # Modo Split (Lado a Lado: Relatório ~35% | Mapa ~65%)
         st.markdown("<br>", unsafe_allow_html=True)
         col_relatorio, col_mapa = st.columns([1.1, 2.2], gap="large")
         
