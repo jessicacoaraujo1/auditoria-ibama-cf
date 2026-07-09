@@ -523,53 +523,18 @@ df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 # =====================================================================
 
 with tab_mapa:
-    st.markdown("## Mapeamento Operacional: Litoral Norte e Nordeste")
-    st.markdown("Visão espacial interativa de alta resolução (Satélite Google) das unidades próprias e rede de prestadores de serviço terceirizados.")
-    
-    # 1. Base de dados com informações descritivas detalhadas para os Popups
-    dados_mapa = [
-        {"Nome": "Matriz / Escritório Central", "Cidade": "Fortaleza - CE", "Lat": -3.7172, "Lon": -38.5433, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "star", "Status": "Ativa / Regular", "Descricao": "Sede administrativa e coordenação jurídica/operacional da rede."},
-        {"Nome": "Filial Indústria Icapuí", "Cidade": "Icapuí - CE", "Lat": -4.7119, "Lon": -37.3544, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "industry", "Status": "Alerta: Histórico de Defeso (Lagosta)", "Descricao": "Unidade industrial focada em processamento. Requer auditoria rigorosa de estoque no defeso."},
-        {"Nome": "Filial Indústria Acaraú", "Cidade": "Acaraú - CE", "Lat": -2.8853, "Lon": -40.1200, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "industry", "Status": "Ativa / Regular", "Descricao": "Planta de processamento e congelamento de pescado costeiro."},
-        {"Nome": "Filial Costeira São Gonçalo", "Cidade": "S. G. do Amarante - CE", "Lat": -3.6064, "Lon": -38.9717, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "anchor", "Status": "Atenção: Pesca (Pargo)", "Descricao": "Ponto de apoio costeiro. Monitorar relatórios de rastreamento de profundidade VMS."},
-        {"Nome": "Filial Bragança", "Cidade": "Bragança - PA", "Lat": -1.0536, "Lon": -46.7656, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "anchor", "Status": "Histórico: Pesca < 50m (Pargo)", "Descricao": "Unidade estratégica no Pará. Atenção redobrada com autuações de frotas parceiras no pargo."},
-        {"Nome": "Filial Belém", "Cidade": "Belém - PA", "Lat": -1.4558, "Lon": -48.5039, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "briefcase", "Status": "Atenção: Controle Aduaneiro", "Descricao": "Apoio logístico e aduaneiro para exportações saindo do Norte do país."},
-        {"Nome": "Filial Luís Correia", "Cidade": "Luís Correia - PI", "Lat": -2.8856, "Lon": -41.6681, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "asterisk", "Status": "Câmaras Frias / Estoque", "Descricao": "Centro de armazenamento frigorífico. Risco focado na declaração de estoques de lagosta."},
-        {"Nome": "Filial Touros", "Cidade": "Touros - RN", "Lat": -5.1989, "Lon": -35.4608, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "anchor", "Status": "Atenção: RGP de Filial", "Descricao": "Unidade costeira de recepção. Necessário checagem mensal de vigência do RGP."},
-        {"Nome": "Filial Baía Formosa", "Cidade": "Baía Formosa - RN", "Lat": -6.3719, "Lon": -35.0053, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "anchor", "Status": "Histórico: Petrecho Proibido", "Descricao": "Recepção de lagosta. Foco em barrar entrada de pescado capturado por rede de caçoeira."},
-        {"Nome": "Filial Alhandra", "Cidade": "Alhandra - PB", "Lat": -7.4328, "Lon": -34.9125, "Tipo": "Base Própria (Prime)", "Cor": "red", "Ícone": "road", "Status": "Ativa / Transporte", "Descricao": "Hub de apoio rodoviário e transporte de cargas interativado."},
-        {"Nome": "Soene Pescados", "Cidade": "Santana / Macapá - AP", "Lat": -0.0583, "Lon": -51.1717, "Tipo": "Prestador de Serviço / Terceira", "Cor": "orange", "Ícone": "globe", "Status": "Apoio Logístico Extremo Norte", "Descricao": "Parceiro de serviços e apoio operacional logístico no extremo Norte (Amapá)."},
-        {"Nome": "Carapitanga Pescados", "Cidade": "Goiana - PE", "Lat": -7.5617, "Lon": -34.9011, "Tipo": "Prestador de Serviço / Terceira", "Cor": "orange", "Ícone": "warning-sign", "Status": "Alerta: Alvo de Fiscalização Recente", "Descricao": "Parceiro de maricultura/processamento em PE. Requer due diligence nas NFs de transação."},
-        {"Nome": "Cabel Frigorífico", "Cidade": "Salvador / Litoral - BA", "Lat": -12.9714, "Lon": -38.5014, "Tipo": "Prestador de Serviço / Terceira", "Cor": "orange", "Ícone": "globe", "Status": "Apoio Litoral Sul / Bahia", "Descricao": "Prestador de serviços de armazenagem e apoio logístico no litoral baiano."}
-    ]
-    
-    df_mapa = pd.DataFrame(dados_mapa)
-    
-    # 2. Filtro de exibição por categoria
-    tipo_filtro = st.radio("Filtrar visualização no mapa:", ["Todos os Pontos", "Apenas Bases Próprias (Prime)", "Apenas Terceirizados / Prestadores"], horizontal=True)
-    
-    if tipo_filtro == "Apenas Bases Próprias (Prime)":
-        df_exibicao = df_mapa[df_mapa['Tipo'] == "Base Própria (Prime)"]
-    elif tipo_filtro == "Apenas Terceirizados / Prestadores":
-        df_exibicao = df_mapa[df_mapa['Tipo'] == "Prestador de Serviço / Terceira"]
-    else:
-        df_exibicao = df_mapa
-
-    # 3. Criação do Mapa Base focado no Nordeste/Norte
-    # ==========================================
-    # GERAÇÃO DO MAPA GEORREFERENCIADO (FOLIUM)
-    # ==========================================
-    st.markdown("### 🛰️ Monitoramento Geoespacial: Unidades Operacionais & Autuações")
+    st.markdown("## 🛰️ Monitoramento Geoespacial: Unidades Operacionais & Autuações")
     st.write("Visão consolidada do parque industrial da Prime Seafood em contraste com a dispersão de fiscalizações do IBAMA.")
-
-    # Opção de filtro de visualização no mapa
+    
+    # Seletor único e limpo de camadas do mapa
     exibir_camada = st.radio(
         "Camadas Geográficas:",
         options=["Todas as Camadas (Unidades + Autos)", "Apenas Unidades Prime Seafood", "Apenas Autos de Infração"],
-        horizontal=True
+        horizontal=True,
+        key="mapa_seletor_camadas"
     )
 
-    # Inicializa o mapa centralizado no Nordeste/Norte (Litoral de Atuação)
+    # Inicializa o mapa centralizado no Litoral Norte/Nordeste
     mapa = folium.Map(
         location=[-5.5, -39.0],
         zoom_start=6,
@@ -577,16 +542,16 @@ with tab_mapa:
         attr="Google Satellite"
     )
 
-    # 1. CAMADA DE UNIDADES PRIME SEAFOOD
+    # 1. CAMADA DE UNIDADES PRIME SEAFOOD (Usando a base das 21 unidades)
     if exibir_camada in ["Todas as Camadas (Unidades + Autos)", "Apenas Unidades Prime Seafood"]:
         df_unidades = carregar_unidades_prime()
         
-        # Se houver filtro de UF ativo na barra lateral, filtra as unidades também
+        # Filtra as unidades se algum estado específico for selecionado na barra lateral
         if uf_selecionada != 'Todos':
             df_unidades = df_unidades[df_unidades['uf'] == uf_selecionada]
             
         for _, und in df_unidades.iterrows():
-            # HTML personalizado do Popup (estética Carvalho & Fadul)
+            # HTML personalizado do Popup com a identidade visual institucional
             html_popup = f"""
             <div style="font-family: 'Inter', sans-serif; width: 260px; padding: 5px;">
                 <b style="color: {COR_PRIMARIA}; font-size: 13px; text-transform: uppercase;">{und['nome']}</b><br>
@@ -602,12 +567,17 @@ with tab_mapa:
                 location=[und['lat'], und['lon']],
                 popup=folium.Popup(html_popup, max_width=300),
                 tooltip=f"🏢 {und['nome']} ({und['uf']})",
-                icon=folium.Icon(color="darkred" if und['cor'] == "#7c1617" else ("beige" if und['cor'] == "#c09f52" else "darkblue"), icon=und['icone'], prefix='fa')
+                icon=folium.Icon(
+                    color="darkred" if und['cor'] == "#7c1617" else ("beige" if und['cor'] == "#c09f52" else "darkblue"), 
+                    icon=und['icone'], 
+                    prefix='fa'
+                )
             ).add_to(mapa)
 
-    # 2. CAMADA DE AUTOS DE INFRAÇÃO (IBAMA)
+    # 2. CAMADA DE AUTOS DE INFRAÇÃO DO IBAMA (Corrigido para usar 'df')
     if exibir_camada in ["Todas as Camadas (Unidades + Autos)", "Apenas Autos de Infração"]:
-        for _, auto in df_filtrado.iterrows():
+        # AQUI ESTAVA O ERRO: Substituído df_filtrado por df
+        for _, auto in df.iterrows():
             if pd.notnull(auto.get('Lat')) and pd.notnull(auto.get('Lon')):
                 folium.CircleMarker(
                     location=[auto['Lat'], auto['Lon']],
@@ -620,14 +590,26 @@ with tab_mapa:
                     fill_opacity=0.7
                 ).add_to(mapa)
 
-    # Renderiza o mapa no Streamlit
+    # Renderiza o mapa na tela
     st_folium(mapa, width="100%", height=550)
     
-    # 6. Tabela inferior para consulta rápida e auditoria
-    st.markdown("### 📋 Detalhamento das Unidades e Prestadores Mapeados")
+    # 3. TABELA INFERIOR DE AUDITORIA DE UNIDADES
+    st.markdown("### 📋 Detalhamento do Parque Industrial e Filiais Mapeadas")
+    
+    # Carrega a tabela limpa para exibição
+    df_tabela_und = carregar_unidades_prime()
+    if uf_selecionada != 'Todos':
+        df_tabela_und = df_tabela_und[df_tabela_und['uf'] == uf_selecionada]
+        
     st.dataframe(
-        df_exibicao[['Nome', 'Cidade', 'Tipo', 'Status', 'Descricao']], 
-        use_container_width=True,
+        df_tabela_und[['nome', 'uf', 'tipo', 'cnpj', 'endereco']].rename(columns={
+            'nome': 'Unidade / Filial',
+            'uf': 'UF',
+            'tipo': 'Natureza Operacional',
+            'cnpj': 'CNPJ',
+            'endereco': 'Endereço Fiscal'
+        }), 
+        use_container_width=True, 
         hide_index=True
     )
 
