@@ -567,7 +567,7 @@ with tab_mapa:
         
     with c_ctrl3:
         st.markdown("<b style='font-size:11.5px; color:transparent;'>Layout</b>", unsafe_allow_html=True)
-        # BOTÃO DISCRETO E PROFISSIONAL (Apenas Ícone, sem descrição em texto)
+        # BOTÃO DISCRETO E PROFISSIONAL (Apenas Ícone)
         icone_btn = "🗗" if st.session_state["map_fullscreen"] else "⛶"
         if st.button(icone_btn, help="Clique para alternar entre Mapa Expandido e Modo Dividido (Lado a Lado)", use_container_width=True):
             st.session_state["map_fullscreen"] = not st.session_state["map_fullscreen"]
@@ -576,19 +576,17 @@ with tab_mapa:
     # =================================================================
     # INTEGRAÇÃO BIDIRECIONAL (Clique no Mapa = Atualização da Unidade)
     # =================================================================
-    # Verifica se o usuário clicou em algum marcador na renderização anterior
     unidade_ativa = unidade_dropdown
     if "ultimo_clique_mapa" in st.session_state and st.session_state["ultimo_clique_mapa"]:
         lat_clique = st.session_state["ultimo_clique_mapa"].get("lat")
         lon_clique = st.session_state["ultimo_clique_mapa"].get("lng")
         if lat_clique and lon_clique:
             for _, und in df_unidades_mapa.iterrows():
-                # Se o clique foi em cima de uma unidade da Prime Seafood, ela assume o foco do relatório
                 if abs(und['lat'] - lat_clique) < 0.05 and abs(und['lon'] - lon_clique) < 0.05:
                     unidade_ativa = und['nome']
                     break
 
-    # Processamento de Coordenadas e Escopo Regional com base na unidade ativa
+    # Processamento de Coordenadas e Escopo Regional
     if unidade_ativa == "Visão Macrorregional (Todos os Polos)":
         lat_centro, lon_centro, zoom_inical = -5.5, -39.0, 6
         df_autos_regiao = df.copy() if uf_selecionada == 'Todos' else df[df['UF_Filtro'] == uf_selecionada]
@@ -600,13 +598,12 @@ with tab_mapa:
         df_autos_regiao = df[df['UF_Filtro'] == und_data['uf']]
         nome_regiao = f"Estado: {und_data['uf']}"
         
-        # Diretriz de compliance clara, técnica e sem repetições
         if "Indústria" in und_data['tipo'] or "Matriz" in und_data['tipo']:
             obs_unidade = f"<b>{und_data['nome']}:</b> Unidade de processamento primário e armazenamento. Risco crítico atrelado à declaração de estoques no Sistema PesqBrasil durante o período de defeso e segregação física em câmaras frigoríficas. Exige due diligence rigorosa na documentação de entrada (NF-e/GTP)."
         else:
             obs_unidade = f"<b>{und_data['nome']}:</b> Posto de captação costeira e transbordo logístico. Risco crítico concentrado no transporte rodoviário e na biometria de espécimes. Obrigatoriedade de validação mensal da vigência do RGP das embarcações fornecedoras e protocolo de vitalidade (70%) pré-embarque."
 
-    # Cálculo Exato dos KPIs Regionais (Deduplicados pela chave do Auto de Infração)
+    # Cálculo Exato dos KPIs Regionais
     df_autos_regiao_unicos = df_autos_regiao.drop_duplicates(subset=['Nº A.I.'])
     total_autos_reg = len(df_autos_regiao_unicos)
     val_total_reg = df_autos_regiao_unicos['Valor Multa'].sum()
@@ -617,7 +614,7 @@ with tab_mapa:
     else:
         obj_lider_reg = "Sem registros na região"
 
-    # Blocos HTML do Relatório Analítico (Limpos e Coerentes)
+    # Blocos HTML do Relatório Analítico
     kpi1_html = f"""
         <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_PRIMARIA}; padding:14px; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.02); margin-bottom: 10px;">
             <span style="font-size:10.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Autuações no Estado ({nome_regiao})</span><br>
@@ -655,21 +652,35 @@ with tab_mapa:
 
     # CAMADA: MALHA OPERACIONAL PRIME SEAFOOD
     for _, und in df_unidades_mapa.iterrows():
-        # Popup limpo e estritamente cadastral (Fim da repetição com os cartões de relatório!)
+        und_uf = und['uf']
+        df_uf_spec = df[df['UF_Filtro'] == und_uf].drop_duplicates(subset=['Nº A.I.'])
+        cnt_autos = len(df_uf_spec)
+        obj_top = df_uf_spec['Objeto Identificado'].mode()[0] if not df_uf_spec.empty and 'Objeto Identificado' in df_uf_spec.columns else "N/D"
+        obs_popup = "Auditar declaração de estoques e bloqueio sistêmico no defeso." if "Indústria" in und['tipo'] else "Auditar biometria no cais e licença de frota."
+        
+        # RESTAURADO: Informação detalhada de auditoria dentro do balão do mapa
         html_popup = f"""
-        <div style="font-family: 'Inter', sans-serif; width: 250px; padding: 4px;">
+        <div style="font-family: 'Inter', sans-serif; width: 270px; padding: 4px;">
             <b style="color: {COR_PRIMARIA}; font-size: 13px; text-transform: uppercase;">{und['nome']}</b><br>
             <span style="background: {und['cor']}; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 9.5px; font-weight: bold; text-transform: uppercase;">{und['tipo']}</span>
             <hr style="margin: 8px 0; border: 0; border-top: 1px solid #e2e8f0;">
             <b style="font-size: 11px; color: #1a1a1a;">CNPJ:</b> <span style="font-size: 11px; color: #475569;">{und['cnpj']}</span><br>
             <b style="font-size: 11px; color: #1a1a1a;">Localização:</b><br>
             <span style="font-size: 10px; color: #64748b; line-height: 1.3;">{und['endereco']}</span>
+            
+            <div style="background: #fdf2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 4px; margin-top: 10px;">
+                <b style="font-size: 10px; color: #991b1b; text-transform: uppercase;">Auditoria Regional ({und_uf}):</b><br>
+                <span style="font-size: 10.5px; color: #1a1a1a;"><b>Volume de Autuações:</b> {cnt_autos} AI(s)</span><br>
+                <span style="font-size: 10.5px; color: #1a1a1a;"><b>Objeto Crítico:</b> {obj_top}</span><br>
+                <hr style="margin: 4px 0; border: 0; border-top: 1px dashed #fca5a5;">
+                <span style="font-size: 10px; color: #7c1617;"><b>Foco Preventivo:</b> {obs_popup}</span>
+            </div>
         </div>
         """
         destaque_icone = "star" if und['nome'] == unidade_ativa else und['icone']
         folium.Marker(
             location=[und['lat'], und['lon']],
-            popup=folium.Popup(html_popup, max_width=280),
+            popup=folium.Popup(html_popup, max_width=300),
             tooltip=f"🏢 {und['nome']} | Clique para auditar a região",
             icon=folium.Icon(color="darkred" if und['cor'] == "#7c1617" else ("beige" if und['cor'] == "#c09f52" else "darkblue"), icon=destaque_icone, prefix='fa')
         ).add_to(mapa)
@@ -700,7 +711,7 @@ with tab_mapa:
     # RENDERIZAÇÃO E CAPTURA DE CLIQUE NO MAPA
     # =================================================================
     if st.session_state["map_fullscreen"]:
-        # MODO EXPANDIDO (Tela Cheia): Relatório em 3 colunas logo acima do mapa
+        # MODO EXPANDIDO (Tela Cheia)
         st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 1.1rem; border-bottom: 2px solid {COR_BORDAS}; padding-bottom: 5px; margin-top: 5px;'>Relatório Regional de Exposição</h3>", unsafe_allow_html=True)
         col_kpi1, col_kpi2, col_kpi3 = st.columns(3, gap="medium")
         with col_kpi1: st.markdown(kpi1_html, unsafe_allow_html=True)
@@ -708,10 +719,9 @@ with tab_mapa:
         with col_kpi3: st.markdown(kpi3_html, unsafe_allow_html=True)
         st.markdown(diretriz_html, unsafe_allow_html=True)
         
-        # Renderiza e captura interações do mapa em largura total
         map_output = st_folium(mapa, width="100%", height=620, key="mapa_full")
     else:
-        # MODO DIVIDIDO (Lado a Lado): Relatório à esquerda, Mapa à direita
+        # MODO DIVIDIDO (Lado a Lado)
         st.markdown("<br>", unsafe_allow_html=True)
         col_relatorio, col_mapa = st.columns([1.1, 2.2], gap="large")
         
@@ -725,7 +735,6 @@ with tab_mapa:
         with col_mapa:
             map_output = st_folium(mapa, width="100%", height=550, key="mapa_split")
 
-    # Atualiza a memória com o último clique real realizado no mapa
     if map_output and "last_object_clicked" in map_output and map_output["last_object_clicked"]:
         st.session_state["ultimo_clique_mapa"] = map_output["last_object_clicked"]
 
@@ -745,6 +754,7 @@ with tab_mapa:
         use_container_width=True, 
         hide_index=True
     )
+
 
 # ---------------------------------------------------------
 # ABA 1: AUDITORIA DE OBJETOS E INVESTIGAÇÃO QUALITATIVA
