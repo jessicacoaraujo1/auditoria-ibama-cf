@@ -582,8 +582,8 @@ with tab_mapa:
         df_unidades = carregar_unidades_prime()
         
         # Se houver filtro de UF ativo na barra lateral, filtra as unidades também
-        if "Todos" not in ufs_selecionadas:
-            df_unidades = df_unidades[df_unidades['uf'].isin(ufs_selecionadas)]
+        if uf_selecionada != 'Todos':
+            df_unidades = df_unidades[df_unidades['uf'] == uf_selecionada]
             
         for _, und in df_unidades.iterrows():
             # HTML personalizado do Popup (estética Carvalho & Fadul)
