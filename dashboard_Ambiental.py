@@ -523,38 +523,42 @@ df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 # =====================================================================
 
 # =====================================================================
-# ABA DO MAPA: MATRIZ GEORREFERENCIADA DE RISCO E MALHA OPERACIONAL
+# ABA DO MAPA: MATRIZ GEORREFERENCIADA E MALHA OPERACIONAL
 # =====================================================================
 with tab_mapa:
-    # 1. CABEÇALHO TÉCNICO-JURÍDICO
+    # 1. CABEÇALHO TÉCNICO LIMPO
     st.markdown(f"""
-    <div style="border-left: 4px solid {COR_PRIMARIA}; padding-left: 14px; margin-bottom: 20px;">
+    <div style="border-left: 4px solid {COR_PRIMARIA}; padding-left: 14px; margin-bottom: 15px;">
         <h2 style="margin: 0; color: {COR_SECUNDARIA}; font-size: 1.4rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.5px;">
-            Matriz Georreferenciada de Risco Ambiental
+            Matriz Georreferenciada e Malha Operacional
         </h2>
         <p style="margin: 3px 0 0 0; color: #64748b; font-size: 13.5px;">
-            Mapeamento analítico da malha operacional da Prime Seafood em sobreposição à densidade do contencioso administrativo do IBAMA.
+            Mapeamento espacial das unidades da Prime Seafood e sobreposição do contencioso administrativo do IBAMA.
         </p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Carregamento e filtro da base de unidades operacionais
+    # Carregamento e filtro da base de unidades
     df_unidades_mapa = carregar_unidades_prime()
     if uf_selecionada != 'Todos':
         df_unidades_mapa = df_unidades_mapa[df_unidades_mapa['uf'] == uf_selecionada]
 
-    # 2. PAINEL DE CONTROLE DE AUDITORIA (Com Toggle Elegante)
-    c_ctrl1, c_ctrl2, c_ctrl3 = st.columns([1.6, 1.4, 1.0], gap="large")
+    # Controle de Estado do Layout (Tela Cheia vs Lado a Lado)
+    if "map_fullscreen" not in st.session_state:
+        st.session_state["map_fullscreen"] = True
+
+    # 2. BARRA DE COMANDO SUPERIOR
+    c_ctrl1, c_ctrl2, c_ctrl3 = st.columns([1.8, 1.4, 0.3], gap="medium")
     
     with c_ctrl1:
-        st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Foco de Auditoria por Unidade:</b>", unsafe_allow_html=True)
+        st.markdown("<b style='font-size:11.5px; color:#1a1a1a; text-transform:uppercase;'>Selecione ou clique na unidade no mapa:</b>", unsafe_allow_html=True)
         lista_opcoes_und = ["Visão Macrorregional (Todos os Polos)"] + df_unidades_mapa['nome'].tolist()
-        unidade_escolhida = st.selectbox("Selecione o polo:", lista_opcoes_und, label_visibility="collapsed", key="mapa_select_und")
+        unidade_dropdown = st.selectbox("", lista_opcoes_und, label_visibility="collapsed", key="mapa_select_und")
         
     with c_ctrl2:
-        st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Camadas de Sobreposição Espacial:</b>", unsafe_allow_html=True)
+        st.markdown("<b style='font-size:11.5px; color:#1a1a1a; text-transform:uppercase;'>Camadas do Mapa:</b>", unsafe_allow_html=True)
         exibir_camada = st.radio(
-            "Filtro de Camadas",
+            "",
             options=["Visão Integrada", "Apenas Malha Prime Seafood"],
             horizontal=True,
             label_visibility="collapsed",
@@ -562,32 +566,47 @@ with tab_mapa:
         )
         
     with c_ctrl3:
-        st.markdown("<b style='font-size:12px; color:#1a1a1a; text-transform:uppercase;'>Layout Espacial:</b>", unsafe_allow_html=True)
-        st.markdown("<div style='margin-top: 5px;'></div>", unsafe_allow_html=True) # Espaçamento para alinhar perfeitamente
-        # O novo botão interativo e minimalista!
-        modo_dividido = st.toggle("Modo Split (Lado a Lado)", value=False, key="mapa_toggle_layout")
+        st.markdown("<b style='font-size:11.5px; color:transparent;'>Layout</b>", unsafe_allow_html=True)
+        # BOTÃO DISCRETO E PROFISSIONAL (Apenas Ícone, sem descrição em texto)
+        icone_btn = "🗗" if st.session_state["map_fullscreen"] else "⛶"
+        if st.button(icone_btn, help="Clique para alternar entre Mapa Expandido e Modo Dividido (Lado a Lado)", use_container_width=True):
+            st.session_state["map_fullscreen"] = not st.session_state["map_fullscreen"]
+            st.rerun()
 
-    # Processamento de Coordenadas e Escopo Regional
-    if unidade_escolhida == "Visão Macrorregional (Todos os Polos)":
+    # =================================================================
+    # INTEGRAÇÃO BIDIRECIONAL (Clique no Mapa = Atualização da Unidade)
+    # =================================================================
+    # Verifica se o usuário clicou em algum marcador na renderização anterior
+    unidade_ativa = unidade_dropdown
+    if "ultimo_clique_mapa" in st.session_state and st.session_state["ultimo_clique_mapa"]:
+        lat_clique = st.session_state["ultimo_clique_mapa"].get("lat")
+        lon_clique = st.session_state["ultimo_clique_mapa"].get("lng")
+        if lat_clique and lon_clique:
+            for _, und in df_unidades_mapa.iterrows():
+                # Se o clique foi em cima de uma unidade da Prime Seafood, ela assume o foco do relatório
+                if abs(und['lat'] - lat_clique) < 0.05 and abs(und['lon'] - lon_clique) < 0.05:
+                    unidade_ativa = und['nome']
+                    break
+
+    # Processamento de Coordenadas e Escopo Regional com base na unidade ativa
+    if unidade_ativa == "Visão Macrorregional (Todos os Polos)":
         lat_centro, lon_centro, zoom_inical = -5.5, -39.0, 6
         df_autos_regiao = df.copy() if uf_selecionada == 'Todos' else df[df['UF_Filtro'] == uf_selecionada]
         nome_regiao = "Malha Global"
-        obs_unidade = "Visão panorâmica da infraestrutura logístico-industrial. Para auditoria pontual de conformidade e acionamento de diretrizes mitigatórias, selecione uma filial específica no painel acima."
+        obs_unidade = "Visão panorâmica da infraestrutura logístico-industrial. Selecione ou clique em uma unidade costeira no mapa para auditar a exposição financeira e diretrizes preventivas da respectiva região."
     else:
-        und_data = df_unidades_mapa[df_unidades_mapa['nome'] == unidade_escolhida].iloc[0]
+        und_data = df_unidades_mapa[df_unidades_mapa['nome'] == unidade_ativa].iloc[0]
         lat_centro, lon_centro, zoom_inical = und_data['lat'], und_data['lon'], 10
         df_autos_regiao = df[df['UF_Filtro'] == und_data['uf']]
-        nome_regiao = f"Polo {und_data['uf']}"
+        nome_regiao = f"Estado: {und_data['uf']}"
         
-        # Diretrizes de Conformidade Rigorosas
+        # Diretriz de compliance clara, técnica e sem repetições
         if "Indústria" in und_data['tipo'] or "Matriz" in und_data['tipo']:
             obs_unidade = f"<b>{und_data['nome']}:</b> Unidade de processamento primário e armazenamento. Risco crítico atrelado à declaração de estoques no Sistema PesqBrasil durante o período de defeso e segregação física em câmaras frigoríficas. Exige due diligence rigorosa na documentação de entrada (NF-e/GTP)."
         else:
             obs_unidade = f"<b>{und_data['nome']}:</b> Posto de captação costeira e transbordo logístico. Risco crítico concentrado no transporte rodoviário e na biometria de espécimes. Obrigatoriedade de validação mensal da vigência do RGP das embarcações fornecedoras e protocolo de vitalidade (70%) pré-embarque."
 
-    # =================================================================
-    # CORREÇÃO CRÍTICA DOS 12 MILHÕES: Deduplicação de Autos na Região
-    # =================================================================
+    # Cálculo Exato dos KPIs Regionais (Deduplicados pela chave do Auto de Infração)
     df_autos_regiao_unicos = df_autos_regiao.drop_duplicates(subset=['Nº A.I.'])
     total_autos_reg = len(df_autos_regiao_unicos)
     val_total_reg = df_autos_regiao_unicos['Valor Multa'].sum()
@@ -598,28 +617,28 @@ with tab_mapa:
     else:
         obj_lider_reg = "Sem registros na região"
 
-    # Preparação dos blocos HTML dos KPIs para serem usados em qualquer layout
+    # Blocos HTML do Relatório Analítico (Limpos e Coerentes)
     kpi1_html = f"""
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_PRIMARIA}; padding:15px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.02); margin-bottom: 10px;">
-            <span style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Volume de Autuações ({nome_regiao})</span><br>
-            <b style="font-size:22px; color:{COR_SECUNDARIA};">{total_autos_reg} Autos(s)</b>
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_PRIMARIA}; padding:14px; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.02); margin-bottom: 10px;">
+            <span style="font-size:10.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Autuações no Estado ({nome_regiao})</span><br>
+            <b style="font-size:20px; color:{COR_SECUNDARIA};">{total_autos_reg} Auto(s)</b>
         </div>
     """
     kpi2_html = f"""
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_DOURADO}; padding:15px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.02); margin-bottom: 10px;">
-            <span style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Objeto Preponderante de Autuação</span><br>
-            <b style="font-size:14.5px; color:#7c1617; display:block; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{obj_lider_reg}</b>
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_DOURADO}; padding:14px; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.02); margin-bottom: 10px;">
+            <span style="font-size:10.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Infração Preponderante na Região</span><br>
+            <b style="font-size:13.5px; color:#7c1617; display:block; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{obj_lider_reg}</b>
         </div>
     """
     kpi3_html = f"""
-        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #475569; padding:15px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.02); margin-bottom: 10px;">
-            <span style="font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;">Exposição Financeira Estimada</span><br>
-            <b style="font-size:22px; color:{COR_SECUNDARIA};">{val_fmt_reg}</b>
+        <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #475569; padding:14px; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.02); margin-bottom: 10px;">
+            <span style="font-size:10.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Exposição Financeira ({nome_regiao})</span><br>
+            <b style="font-size:20px; color:{COR_SECUNDARIA};">{val_fmt_reg}</b>
         </div>
     """
     diretriz_html = f"""
-        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-left:4px solid {COR_PRIMARIA}; padding:14px; border-radius:4px; font-size:12px; color:#334155; line-height:1.5; margin-top:4px; margin-bottom:15px;">
-            <b style="color:{COR_PRIMARIA}; font-size:11.5px; text-transform:uppercase;">Diretriz de Conformidade Operacional:</b><br>
+        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-left:4px solid {COR_PRIMARIA}; padding:14px; border-radius:4px; font-size:11.5px; color:#334155; line-height:1.5; margin-top:4px; margin-bottom:15px;">
+            <b style="color:{COR_PRIMARIA}; font-size:11px; text-transform:uppercase;">Diretriz de Conformidade Operacional:</b><br>
             {obs_unidade}
         </div>
     """
@@ -636,39 +655,26 @@ with tab_mapa:
 
     # CAMADA: MALHA OPERACIONAL PRIME SEAFOOD
     for _, und in df_unidades_mapa.iterrows():
-        und_uf = und['uf']
-        # Corrigindo a duplicidade nos popups também!
-        df_uf_spec = df[df['UF_Filtro'] == und_uf].drop_duplicates(subset=['Nº A.I.'])
-        cnt_autos = len(df_uf_spec)
-        obj_top = df_uf_spec['Objeto Identificado'].mode()[0] if not df_uf_spec.empty and 'Objeto Identificado' in df_uf_spec.columns else "N/D"
-        obs_popup = "Auditar declaração de estoques e bloqueio sistêmico no defeso." if "Indústria" in und['tipo'] else "Auditar biometria no cais e licença de frota parceira."
-        
+        # Popup limpo e estritamente cadastral (Fim da repetição com os cartões de relatório!)
         html_popup = f"""
-        <div style="font-family: 'Inter', sans-serif; width: 270px; padding: 4px;">
-            <b style="color: {COR_PRIMARIA}; font-size: 12.5px; text-transform: uppercase;">{und['nome']}</b><br>
+        <div style="font-family: 'Inter', sans-serif; width: 250px; padding: 4px;">
+            <b style="color: {COR_PRIMARIA}; font-size: 13px; text-transform: uppercase;">{und['nome']}</b><br>
             <span style="background: {und['cor']}; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 9.5px; font-weight: bold; text-transform: uppercase;">{und['tipo']}</span>
             <hr style="margin: 8px 0; border: 0; border-top: 1px solid #e2e8f0;">
             <b style="font-size: 11px; color: #1a1a1a;">CNPJ:</b> <span style="font-size: 11px; color: #475569;">{und['cnpj']}</span><br>
             <b style="font-size: 11px; color: #1a1a1a;">Localização:</b><br>
             <span style="font-size: 10px; color: #64748b; line-height: 1.3;">{und['endereco']}</span>
-            <div style="background: #fdf2f2; border: 1px solid #fecaca; padding: 8px; border-radius: 4px; margin-top: 10px;">
-                <b style="font-size: 10px; color: #991b1b; text-transform: uppercase;">Auditoria Regional ({und_uf}):</b><br>
-                <span style="font-size: 10.5px; color: #1a1a1a;"><b>Volume de Autuações:</b> {cnt_autos} AI(s)</span><br>
-                <span style="font-size: 10.5px; color: #1a1a1a;"><b>Objeto Crítico:</b> {obj_top}</span><br>
-                <hr style="margin: 4px 0; border: 0; border-top: 1px dashed #fca5a5;">
-                <span style="font-size: 10px; color: #7c1617;"><b>Foco Preventivo:</b> {obs_popup}</span>
-            </div>
         </div>
         """
-        destaque_icone = "star" if und['nome'] == unidade_escolhida else und['icone']
+        destaque_icone = "star" if und['nome'] == unidade_ativa else und['icone']
         folium.Marker(
             location=[und['lat'], und['lon']],
-            popup=folium.Popup(html_popup, max_width=300),
-            tooltip=f"Unidade: {und['nome']} | Foco de Auditoria: {obj_top}",
+            popup=folium.Popup(html_popup, max_width=280),
+            tooltip=f"🏢 {und['nome']} | Clique para auditar a região",
             icon=folium.Icon(color="darkred" if und['cor'] == "#7c1617" else ("beige" if und['cor'] == "#c09f52" else "darkblue"), icon=destaque_icone, prefix='fa')
         ).add_to(mapa)
 
-    # CAMADA: CONTENCIOSO ADMINISTRATIVO (IBAMA) - Usa df_unicos para plotar sem pinos repetidos no mesmo local
+    # CAMADA: CONTENCIOSO ADMINISTRATIVO (IBAMA)
     if exibir_camada == "Visão Integrada":
         df_mapa_autos = df.drop_duplicates(subset=['Nº A.I.'])
         for _, auto in df_mapa_autos.iterrows():
@@ -686,27 +692,26 @@ with tab_mapa:
                 folium.CircleMarker(
                     location=[auto['Lat'], auto['Lon']],
                     radius=6, popup=folium.Popup(popup_auto, max_width=280),
-                    tooltip=f"A.I: {auto['Nº A.I.']} | {auto['Objeto Identificado']}",
+                    tooltip=f"🚨 A.I: {auto['Nº A.I.']} | {auto['Objeto Identificado']}",
                     color="#ff2a2a", fill=True, fill_color="#ff2a2a", fill_opacity=0.8
                 ).add_to(mapa)
 
     # =================================================================
-    # RENDERIZAÇÃO CONDICIONAL (BASEADA NO TOGGLE DO USUÁRIO)
+    # RENDERIZAÇÃO E CAPTURA DE CLIQUE NO MAPA
     # =================================================================
-    if not modo_dividido:
-        # Modo Expandido (Tela Cheia) - Relatório fica logo abaixo do menu de cima
-        st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 1.1rem; border-bottom: 2px solid {COR_BORDAS}; padding-bottom: 5px; margin-top: 10px;'>Relatório de Exposição e Conformidade</h3>", unsafe_allow_html=True)
+    if st.session_state["map_fullscreen"]:
+        # MODO EXPANDIDO (Tela Cheia): Relatório em 3 colunas logo acima do mapa
+        st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 1.1rem; border-bottom: 2px solid {COR_BORDAS}; padding-bottom: 5px; margin-top: 5px;'>Relatório Regional de Exposição</h3>", unsafe_allow_html=True)
         col_kpi1, col_kpi2, col_kpi3 = st.columns(3, gap="medium")
         with col_kpi1: st.markdown(kpi1_html, unsafe_allow_html=True)
         with col_kpi2: st.markdown(kpi2_html, unsafe_allow_html=True)
         with col_kpi3: st.markdown(kpi3_html, unsafe_allow_html=True)
         st.markdown(diretriz_html, unsafe_allow_html=True)
         
-        # Mapa 100% de Largura
-        st_folium(mapa, width="100%", height=620)
-        
+        # Renderiza e captura interações do mapa em largura total
+        map_output = st_folium(mapa, width="100%", height=620, key="mapa_full")
     else:
-        # Modo Split (Lado a Lado: Relatório ~35% | Mapa ~65%)
+        # MODO DIVIDIDO (Lado a Lado): Relatório à esquerda, Mapa à direita
         st.markdown("<br>", unsafe_allow_html=True)
         col_relatorio, col_mapa = st.columns([1.1, 2.2], gap="large")
         
@@ -718,7 +723,11 @@ with tab_mapa:
             st.markdown(diretriz_html, unsafe_allow_html=True)
             
         with col_mapa:
-            st_folium(mapa, width="100%", height=550)
+            map_output = st_folium(mapa, width="100%", height=550, key="mapa_split")
+
+    # Atualiza a memória com o último clique real realizado no mapa
+    if map_output and "last_object_clicked" in map_output and map_output["last_object_clicked"]:
+        st.session_state["ultimo_clique_mapa"] = map_output["last_object_clicked"]
 
     # =================================================================
     # 5. BASE DE DADOS ESTRUTURADA INFERIOR
@@ -736,6 +745,7 @@ with tab_mapa:
         use_container_width=True, 
         hide_index=True
     )
+
 # ---------------------------------------------------------
 # ABA 1: AUDITORIA DE OBJETOS E INVESTIGAÇÃO QUALITATIVA
 # ---------------------------------------------------------
