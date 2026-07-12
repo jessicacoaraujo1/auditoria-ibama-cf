@@ -1079,9 +1079,9 @@ def carregar_pdf_seguro(caminho_arquivo):
         return b"Arquivo Pendente"
 
 # ==========================================
-# ABA 6: PLANO DE MITIGAÇÃO (PREVENÇÃO)
+# ABA 7: Acervo Normativo & Compliance
 # ==========================================
-with tab6:
+with tab7:
     # 1. APRESENTAÇÃO EXECUTIVA
     st.markdown(f"""
     <div style="background-color: #ffffff; padding: 25px 30px; border-left: 5px solid {COR_PRIMARIA}; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 25px;">
