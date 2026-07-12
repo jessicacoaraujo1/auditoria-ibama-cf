@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import folium
+import foliumđ
 from streamlit_folium import st_folium
 import plotly.express as px
 import plotly.graph_objects as go
@@ -505,7 +505,7 @@ st.markdown("<p style='font-size: 14px; color: #64748b; margin-bottom: 5px;'>Fer
 
 renderizar_kpis(df)
 
-tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "Mapa Operacional", 
     "Auditoria de Objetos", 
     "Análise Regional", 
@@ -1064,3 +1064,232 @@ with tab6:
             st.markdown("**Enquadramento:** Processo Administrativo Federal.")
             st.markdown("##### 📥 Material Oficial")
             st.download_button("📄 Baixar DOC-05 (PDF)", data=b"temp", file_name="Teses.pdf", use_container_width=True)
+            
+# Inicializa o controle do Leitor de PDF na memória do sistema
+if 'leitor_ativo' not in st.session_state:
+    st.session_state['leitor_ativo'] = None
+
+# Função inteligente para tentar ler o PDF localmente
+def carregar_pdf_seguro(caminho_arquivo):
+    try:
+        with open(caminho_arquivo, "rb") as file:
+            return file.read()
+    except FileNotFoundError:
+        return b"Arquivo Pendente"
+
+# ==========================================
+# ABA 6: PLANO DE MITIGAÇÃO (PREVENÇÃO)
+# ==========================================
+with tab6:
+    # 1. APRESENTAÇÃO EXECUTIVA
+    st.markdown(f"""
+    <div style="background-color: #ffffff; padding: 25px 30px; border-left: 5px solid {COR_PRIMARIA}; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); margin-bottom: 25px;">
+        <p style="margin: 0 0 4px 0; color: {COR_DOURADO}; font-size: 9.5pt; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+            Carvalho & Fadul Advocacia | Governança & Compliance Ambiental
+        </p>
+        <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.5px;">
+            Plano Diretor de Gerenciamento de Riscos e Mitigação
+        </h2>
+        <p style="margin: 0; color: #334155; font-size: 10.5pt; text-align: justify; line-height: 1.6;">
+            Este painel representa a síntese estratégica da auditoria do contencioso administrativo do IBAMA, convertendo o histórico 
+            de autuações em um <b>sistema ativo de prevenção de passivos e blindagem jurídica</b> para a Prime Seafood LTDA. 
+            O plano está estruturado em <b>3 Pilares de Comando</b> (Operacional, Administrativo e Jurídico), cobrindo integralmente as 
+            vulnerabilidades da empresa. Clique em qualquer um dos cards abaixo para expandir o enquadramento legal, auditar as regras 
+            de compliance obrigatórias e fazer o download dos <b>Guias Operacionais e Manuais</b> diagramados para as filiais.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # =================================================================
+    # MOTOR DO LEITOR DE PDF INTERATIVO (Abre apenas se acionado)
+    # =================================================================
+    if st.session_state['leitor_ativo']:
+        st.markdown(f"<div style='background-color: {COR_SECUNDARIA}; padding: 15px; border-radius: 8px 8px 0 0;'>", unsafe_allow_html=True)
+        
+        # Barra de Navegação Superior do Leitor
+        col_fechar, col_titulo, col_proximo = st.columns([1, 2, 1])
+        with col_fechar:
+            if st.button("❌ Fechar Leitor", use_container_width=True):
+                st.session_state['leitor_ativo'] = None
+                st.rerun()
+        with col_titulo:
+            st.markdown(f"<h3 style='color: white; text-align: center; margin: 0; font-size: 16px;'>📖 Lendo: {st.session_state['leitor_ativo']}</h3>", unsafe_allow_html=True)
+        with col_proximo:
+            # INTERATIVIDADE CONECTADA: Se o usuário estiver no DOC 01, oferece para ir para o DOC 02
+            if st.session_state['leitor_ativo'] == "DOC-01: Guia de Bolso do Motorista":
+                if st.button("Ir para DOC-02 ⏭️", use_container_width=True):
+                    st.session_state['leitor_ativo'] = "DOC-02: Triagem de Lagosta"
+                    st.rerun()
+            elif st.session_state['leitor_ativo'] == "DOC-02: Triagem de Lagosta":
+                if st.button("⏮️ Voltar ao DOC-01", use_container_width=True):
+                    st.session_state['leitor_ativo'] = "DOC-01: Guia de Bolso do Motorista"
+                    st.rerun()
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        # Mapeamento do documento solicitado para o nome do arquivo no PC
+        mapa_arquivos = {
+            "DOC-01: Guia de Bolso do Motorista": "Guia_Bolso_Motorista_Prime_Seafood.pdf",
+            "DOC-02: Triagem de Lagosta": "POP_001_Triagem_Lagosta_Prime.pdf"
+        }
+        
+        arquivo_atual = mapa_arquivos.get(st.session_state['leitor_ativo'])
+        
+        # Renderização do PDF na tela usando Base64
+        if arquivo_atual and os.path.exists(arquivo_atual):
+            with open(arquivo_atual, "rb") as f:
+                base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+            # Embebe o PDF via HTML
+            pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}#view=FitH" width="100%" height="800px" type="application/pdf" style="border: none; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></iframe>'
+            st.markdown(pdf_display, unsafe_allow_html=True)
+        else:
+            st.error(f"⚠️ O arquivo `{arquivo_atual}` não foi encontrado na pasta do projeto. Certifique-se de salvá-mo com este nome exato na mesma pasta do código.")
+        
+        st.markdown("<br><hr>", unsafe_allow_html=True)
+
+    # 2. BARRA DE INDICADORES RÁPIDOS
+    c_ind1, c_ind2, c_ind3 = st.columns(3, gap="medium")
+    with c_ind1:
+        st.markdown(f"<div style='background:#f8fafc; padding:12px; border-radius:4px; border:1px solid #e2e8f0; text-align:center;'><span style='font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;'>Frentes de Governança</span><br><b style='font-size:18px; color:{COR_PRIMARIA};'>3 Pilares Estratégicos</b></div>", unsafe_allow_html=True)
+    with c_ind2:
+        st.markdown(f"<div style='background:#f8fafc; padding:12px; border-radius:4px; border:1px solid #e2e8f0; text-align:center;'><span style='font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;'>Manuais Prioritários (Fase 1)</span><br><b style='font-size:18px; color:{COR_DOURADO};'>4 Guias Executivos</b></div>", unsafe_allow_html=True)
+    with c_ind3:
+        st.markdown(f"<div style='background:#f8fafc; padding:12px; border-radius:4px; border:1px solid #e2e8f0; text-align:center;'><span style='font-size:11px; color:#64748b; font-weight:600; text-transform:uppercase;'>Status de Conformidade</span><br><b style='font-size:18px; color:#15803d;'>Protocolos Ativos</b></div>", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 3. MATRIZ DE RISCOS INTERATIVA (OS 3 PILARES COMPLETOS)
+    col_op, col_adm, col_jur = st.columns(3, gap="large")
+
+    # =================================================================
+    # PILAR 1: GESTÃO OPERACIONAL
+    # =================================================================
+    with col_op:
+        st.markdown(f"<h3 style='color: {COR_PRIMARIA}; font-size: 13pt; border-bottom: 2px solid {COR_PRIMARIA}; padding-bottom: 6px; margin-bottom: 12px;'>⚙️ 1. Pilar Operacional & Campo</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:12px; color:#64748b; margin-bottom:15px;'>Mitigação de riscos físicos em biometria, embarque e controle de mar.</p>", unsafe_allow_html=True)
+
+        # CARD 1.1: TRIAGEM DE LAGOSTA
+        with st.expander("🦞 Triagem e Biometria de Lagosta no Cais", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Recepção de lagostas juvenis (abaixo do tamanho legal) ou capturadas por petrechos ilícitos (Rede de Caçoeira), gerando multas por quilograma e embargo de fábrica.
+            
+            **Enquadramento Legal:** Portaria Interministerial MPA/MMA nº 138/2014 e Lei nº 9.605/98. Tolerância zero para Vermelha < 13cm e Verde < 11cm.
+            """)
+            st.markdown("---")
+            
+            col_b1, col_b2 = st.columns(2)
+            with col_b1:
+                st.download_button(
+                    label="📥 Baixar (PDF)",
+                    data=carregar_pdf_seguro("POP_001_Triagem_Lagosta_Prime.pdf"),
+                    file_name="POP_001_Triagem_Lagosta_Prime.pdf",
+                    mime="application/pdf",
+                    key="dl_op_lagosta",
+                    use_container_width=True
+                )
+            with col_b2:
+                if st.button("👁️ Abrir no Leitor", key="ler_doc02", use_container_width=True):
+                    st.session_state['leitor_ativo'] = "DOC-02: Triagem de Lagosta"
+                    st.rerun()
+
+        # CARD 1.2: VMS E PARGO
+        with st.expander("🐟 Monitoramento Digital VMS e Frota (Pargo)", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Incursão de embarcações parceiras em zonas de exclusão costeira (< 50 metros) ou interrupção do sinal de rastreamento por satélite.
+            
+            **Enquadramento Legal:** Instruções Normativas do Plano de Gestão do Pargo (MAPA/IBAMA) e regras do Sistema PREPS/VMS.
+            """)
+            st.markdown("---")
+            st.download_button(
+                label="📥 Baixar Guia VMS (PDF)",
+                data=carregar_pdf_seguro("Guia_VMS_Controle_Frota_Pargo.pdf"),
+                file_name="Guia_VMS_Controle_Frota_Pargo.pdf",
+                mime="application/pdf",
+                key="dl_op_vms",
+                use_container_width=True
+            )
+
+    # =================================================================
+    # PILAR 2: COMPLIANCE ADMINISTRATIVO
+    # =================================================================
+    with col_adm:
+        st.markdown(f"<h3 style='color: {COR_SECUNDARIA}; font-size: 13pt; border-bottom: 2px solid {COR_SECUNDARIA}; padding-bottom: 6px; margin-bottom: 12px;'>🏢 2. Pilar Administrativo</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:12px; color:#64748b; margin-bottom:15px;'>Trava sistêmica, conformidade documental e auditoria aduaneira.</p>", unsafe_allow_html=True)
+
+        # CARD 2.1: DEFESO E ESTOQUES
+        with st.expander("❄️ Declaração de Câmaras Frias no Defeso", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Apreensão integral de estoques congelados por atraso na declaração ou divergência entre volume físico e o sistema oficial do MAPA/IBAMA.
+            """)
+            st.markdown("---")
+            st.download_button(
+                label="📥 Baixar Manual (PDF)",
+                data=carregar_pdf_seguro("Manual_Compliance_Defeso_Estoque.pdf"),
+                file_name="Manual_Compliance_Defeso_Estoque.pdf",
+                mime="application/pdf",
+                key="dl_adm_defeso",
+                use_container_width=True
+            )
+
+        # CARD 2.2: DUE DILIGENCE DE FORNECEDORES
+        with st.expander("🔍 Due Diligence de Fornecedores e RGP", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Aquisição de pescado de embarcações com RGP suspenso ou armadores em embargos públicos do IBAMA.
+            """)
+            st.markdown("---")
+            st.download_button(
+                label="📥 Baixar Procedimento (PDF)",
+                data=carregar_pdf_seguro("Procedimento_Due_Diligence_RGP.pdf"),
+                file_name="Procedimento_Due_Diligence_RGP.pdf",
+                mime="application/pdf",
+                key="dl_adm_rgp",
+                use_container_width=True
+            )
+
+    # =================================================================
+    # PILAR 3: INTELIGÊNCIA JURÍDICA
+    # =================================================================
+    with col_jur:
+        st.markdown(f"<h3 style='color: {COR_DOURADO}; font-size: 13pt; border-bottom: 2px solid {COR_DOURADO}; padding-bottom: 6px; margin-bottom: 12px;'>⚖️ 3. Pilar Jurídico & Resposta</h3>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:12px; color:#64748b; margin-bottom:15px;'>Blindagem rodoviária, gestão de crise e contencioso administrativo.</p>", unsafe_allow_html=True)
+
+        # CARD 3.1: ABORDAGEM FISCAL E TRANSPORTE (COM O LEITOR ATIVADO)
+        with st.expander("🛡️ Protocolo de Abordagem Rodoviária", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Autuações por divergência de peso estimada ("olhômetro") em barreiras e mortalidade de lagosta viva no trânsito.
+            
+            **Enquadramento Legal:** Instruções Normativas IBAMA/PRF e legislação metrológica do INMETRO.
+            """)
+            st.markdown("---")
+            
+            # Aqui estão os botões interativos
+            col_b3, col_b4 = st.columns(2)
+            with col_b3:
+                st.download_button(
+                    label="📥 Baixar (PDF)",
+                    data=carregar_pdf_seguro("Guia_Bolso_Motorista_Prime_Seafood.pdf"),
+                    file_name="Guia_Bolso_Motorista_Prime_Seafood.pdf",
+                    mime="application/pdf",
+                    key="dl_jur_guia_bolso",
+                    use_container_width=True
+                )
+            with col_b4:
+                if st.button("👁️ Abrir no Leitor", key="ler_doc01", use_container_width=True):
+                    # Dispara o comando para o sistema abrir o leitor no topo da tela
+                    st.session_state['leitor_ativo'] = "DOC-01: Guia de Bolso do Motorista"
+                    st.rerun()
+
+        # CARD 3.2: TESES DE DEFESA E SLA 48H
+        with st.expander("⏳ SLA 48h e Matriz de Teses Defensivas", expanded=False):
+            st.markdown("""
+            **Vulnerabilidade Mapeada:** Perda de prazos defensivos curtos e risco de doação sumária de pescado apreendido por falta de medida judicial.
+            """)
+            st.markdown("---")
+            st.download_button(
+                label="📥 Baixar Matriz (PDF)",
+                data=carregar_pdf_seguro("Matriz_Teses_Defensivas_IBAMA.pdf"),
+                file_name="Matriz_Teses_Defensivas_IBAMA.pdf",
+                mime="application/pdf",
+                key="dl_jur_teses",
+                use_container_width=True
+            )
