@@ -513,6 +513,7 @@ tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "Pesquisa Profunda", 
     "Base Consolidada",
     "Plano de Mitigação"
+    "Acervo Normativo & Compliance"
 ])
 
 # CORREÇÃO: Deduplicar exclusivamente pela chave única do Auto de Infração
