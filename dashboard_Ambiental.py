@@ -573,21 +573,21 @@ def renderizar_leitor_nativo(chave_aba):
         
         arquivo_pdf_atual = mapa_arquivos.get(st.session_state['leitor_ativo'])
         
-        st.markdown("<div style='background: linear-gradient(to right, #1e293b, #0f172a); padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); margin-top: 15px; margin-bottom: 30px; border: 1px solid #475569;'>", unsafe_allow_html=True)
+        st.markdown("<div style='background: #0b1121; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-top: 15px; margin-bottom: 30px; border: 1px solid #1e293b;'>", unsafe_allow_html=True)
         
         # Barra Superior do Leitor (Com botão de Fechar e Botão de Download do PDF)
         col_fechar, col_titulo, col_baixar = st.columns([1, 2.5, 1.5])
         with col_fechar:
-            if st.button("❌ Fechar Guia", use_container_width=True, type="primary", key=f"fechar_leitor_{chave_aba}"):
+            if st.button("❌ Fechar Infográfico", use_container_width=True, type="primary", key=f"fechar_leitor_{chave_aba}"):
                 st.session_state['leitor_ativo'] = None
                 st.rerun()
         with col_titulo:
-            st.markdown(f"<h3 style='color: #f8fafc; text-align: center; margin: 0; font-size: 20px; text-transform: uppercase;'>📖 {st.session_state['leitor_ativo']}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='color: #c09f52; text-align: center; margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 2px;'>{st.session_state['leitor_ativo']}</h3>", unsafe_allow_html=True)
         with col_baixar:
             # Botão de Download preservado DENTRO do leitor
             dados_pdf = carregar_pdf_seguro(arquivo_pdf_atual)
             st.download_button(
-                label="📥 Baixar em PDF", 
+                label="📥 Baixar Documento Original (PDF)", 
                 data=dados_pdf, 
                 file_name=arquivo_pdf_atual, 
                 mime="application/pdf", 
@@ -595,63 +595,116 @@ def renderizar_leitor_nativo(chave_aba):
                 use_container_width=True
             )
         
-        st.markdown("<hr style='border-color: #475569; margin: 15px 0;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color: #1e293b; margin: 15px 0 30px 0;'>", unsafe_allow_html=True)
 
         # =================================================================
-        # CONTEÚDO NATIVO DOS GUIAS (HTML INTERATIVO)
+        # CONTEÚDO NATIVO: INFOGRÁFICO 3D (O "SEGUNDO CÉREBRO")
         # =================================================================
         if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
             st.markdown(f"""
-            <div style="background-color: #ffffff; padding: 40px; border-radius: 8px; color: #1a1a1a;">
-                <div style="text-align: center; border-bottom: 3px solid {COR_PRIMARIA}; padding-bottom: 20px; margin-bottom: 30px;">
-                    <h1 style="color: {COR_PRIMARIA}; margin: 0; font-size: 28px; text-transform: uppercase;">Guia de Bolso Executivo</h1>
-                    <h3 style="color: {COR_DOURADO}; margin: 5px 0 0 0; font-size: 16px; text-transform: uppercase; letter-spacing: 2px;">Abordagem Fiscal & Transporte Normativo</h3>
+            <style>
+                .brain-container {{ background: #0f172a; padding: 30px; border-radius: 16px; font-family: 'Inter', sans-serif; position: relative; overflow: hidden; border: 1px solid #1e293b; }}
+                .bg-glow {{ position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,22,23,0.1) 0%, rgba(15,23,42,0) 70%); top: -200px; left: -200px; z-index: 0; }}
+                .brain-header {{ text-align: center; position: relative; z-index: 1; margin-bottom: 40px; }}
+                .brain-title {{ font-size: 36px; font-weight: 900; text-transform: uppercase; margin: 0; background: linear-gradient(90deg, #ffffff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }}
+                .brain-subtitle {{ color: #c09f52; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-top: 5px; }}
+                
+                .mind-map-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; position: relative; z-index: 1; }}
+                
+                /* EFEITO 3D NOS CARTÕES */
+                .node-3d {{ 
+                    background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); 
+                    border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; 
+                    position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+                }}
+                .node-3d:hover {{ transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.7); z-index: 10; }}
+                
+                /* LUZES NEON INTERNAS */
+                .glow-green::after {{ content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: #16a34a; filter: blur(50px); opacity: 0.4; transition: opacity 0.3s; }}
+                .glow-blue::after {{ content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: #0ea5e9; filter: blur(50px); opacity: 0.4; transition: opacity 0.3s; }}
+                .glow-gold::after {{ content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: #c09f52; filter: blur(50px); opacity: 0.4; transition: opacity 0.3s; }}
+                .glow-red::after {{ content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: #dc2626; filter: blur(50px); opacity: 0.4; transition: opacity 0.3s; }}
+                .node-3d:hover::after {{ opacity: 0.8; }}
+
+                .node-icon {{ font-size: 38px; margin-bottom: 15px; display: inline-block; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }}
+                .node-title {{ color: #ffffff; font-size: 17px; font-weight: 800; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 0.5px; }}
+                
+                .data-list {{ list-style: none; padding: 0; margin: 0; }}
+                .data-list li {{ position: relative; padding-left: 28px; margin-bottom: 14px; font-size: 13.5px; color: #cbd5e1; line-height: 1.6; }}
+                .data-list li::before {{ content: '⬡'; position: absolute; left: 0; top: 1px; color: #475569; font-size: 14px; transition: color 0.3s; }}
+                .node-3d:hover .data-list li::before {{ color: #c09f52; }}
+                .data-list b {{ color: #f8fafc; font-weight: 600; }}
+
+                .alert-box {{ background: rgba(220, 38, 38, 0.1); border-left: 3px solid #ef4444; padding: 12px 15px; border-radius: 4px; margin-top: 20px; font-size: 12.5px; color: #fca5a5; font-weight: 500; display: flex; align-items: flex-start; gap: 10px; }}
+            </style>
+
+            <div class="brain-container">
+                <div class="bg-glow"></div>
+                
+                <div class="brain-header">
+                    <h1 class="brain-title">Abordagem Fiscal & Transporte</h1>
+                    <div class="brain-subtitle">Mapeamento Tático Operacional • Prime Seafood</div>
                 </div>
-                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-                    <div style="flex: 1; min-width: 300px;">
-                        <div style="background: #f8fafc; border-left: 4px solid #166534; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
-                            <h4 style="color: #166534; margin-top: 0;">✅ 1. CHECKLIST "SINAL VERDE" (Pré-Embarque)</h4>
-                            <p style="font-size: 14px; color: #475569;">A ausência de qualquer item veta a saída da doca:</p>
-                            <ul style="font-size: 14px; margin-bottom: 0; padding-left: 20px;">
-                                <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
-                                <li><b>GTP:</b> Dentro da validade e assinada (Em defeso, inclua Declaração de Estoque).</li>
-                                <li><b>RGP e CTF:</b> Cópias vigentes da indústria, embarcação e transportadora.</li>
-                            </ul>
-                        </div>
-                        <div style="background: #fdf2f2; border-left: 4px solid {COR_PRIMARIA}; padding: 20px; border-radius: 4px;">
-                            <h4 style="color: {COR_PRIMARIA}; margin-top: 0;">🛑 2. RIGOR DAS ESPÉCIES</h4>
-                            <ul style="font-size: 14px; margin-bottom: 0; padding-left: 20px;">
-                                <li><b>Lagosta Viva:</b> Alerte sobre risco de choque térmico ao abrir o baú. Justifique mortalidade como estresse de transporte.</li>
-                                <li><b>Tamanhos:</b> Vermelha (13cm cauda) | Verde (11cm cauda) - Tolerância Zero.</li>
-                            </ul>
+
+                <div class="mind-map-grid">
+                    
+                    <div class="node-3d glow-green">
+                        <div class="node-icon">🚦</div>
+                        <h3 class="node-title">1. Checklist Pré-Embarque</h3>
+                        <ul class="data-list">
+                            <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido antes de ligar o motor.</li>
+                            <li><b>GTP (Guia de Trânsito):</b> Deve estar dentro da validade e assinada. Em época de defeso, anexe a Declaração de Estoque.</li>
+                            <li><b>Licenças (RGP e CTF/APP):</b> Portar cópias vigentes da indústria, da embarcação e da transportadora.</li>
+                            <li><b>Lacres e Termógrafo:</b> Verifique fisicamente se a numeração bate com a impressa na Nota Fiscal.</li>
+                        </ul>
+                    </div>
+
+                    <div class="node-3d glow-blue">
+                        <div class="node-icon">👮</div>
+                        <h3 class="node-title">2. Conduta na Barreira</h3>
+                        <ul class="data-list">
+                            <li><b>Cordialidade Técnica:</b> O motorista representa a empresa. Responda apenas o necessário e com respeito.</li>
+                            <li><b>Preservação do Lacre:</b> Nunca rompa o lacre sozinho. A abertura do baú só deve ocorrer por ordem e com a presença física do fiscal.</li>
+                            <li><b>Aferição de Peso:</b> Se o fiscal alegar excesso de peso "no olhômetro", exija formalmente a pesagem em balança aferida pelo INMETRO.</li>
+                        </ul>
+                    </div>
+
+                    <div class="node-3d glow-gold">
+                        <div class="node-icon">🦞</div>
+                        <h3 class="node-title">3. Rigor Técnico das Espécies</h3>
+                        <ul class="data-list">
+                            <li><b>Transporte de Lagosta Viva:</b> Alerte os fiscais sobre o risco de choque térmico. Mortalidade deve ser justificada como "estresse de transporte", nunca como "descaudamento ilegal".</li>
+                            <li><b>Tamanhos Mínimos Exigidos:</b> Vermelha (13cm cauda / 22cm total) e Verde (11cm cauda / 19cm total) - Tolerância Zero da base.</li>
+                            <li><b>Transporte de Pargo:</b> Proibido o transporte a granel. Todas as caixas devem estar etiquetadas (Nome científico, lote, RGP).</li>
+                        </ul>
+                    </div>
+
+                    <div class="node-3d glow-red">
+                        <div class="node-icon">🚨</div>
+                        <h3 class="node-title">4. Protocolo de Crise (SLA 48H)</h3>
+                        <ul class="data-list">
+                            <li><b>Recusa de Assinatura:</b> Assine SEMPRE o auto. Recusar assinatura é um erro jurídico grave que anula a boa-fé.</li>
+                            <li><b>A Ressalva Salva:</b> Utilize o campo de observações para escrever a ressalva (Ex: <i>"Pesagem sem balança do INMETRO"</i>).</li>
+                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe o Auto, Termo de Apreensão, Lacres e Painel do Termógrafo.</li>
+                        </ul>
+                        <div class="alert-box">
+                            <span style="font-size: 18px;">📲</span>
+                            <span><b>Acionamento Imediato:</b> Envie todas as imagens via WhatsApp para a base antes mesmo de sair do posto fiscal.</span>
                         </div>
                     </div>
-                    <div style="flex: 1; min-width: 300px;">
-                        <div style="background: #fffbeb; border-left: 4px solid {COR_DOURADO}; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
-                            <h4 style="color: #92400e; margin-top: 0;">👮 3. CONDUTA NA ABORDAGEM</h4>
-                            <ul style="font-size: 14px; margin-bottom: 0; padding-left: 20px;">
-                                <li><b>Nunca rompa o lacre sozinho.</b> Abertura só com presença física do fiscal.</li>
-                                <li>Exija pesagem em balança INMETRO em caso de alegação de excesso.</li>
-                            </ul>
-                        </div>
-                        <div style="background: #1e293b; color: #f8fafc; border-left: 4px solid #ef4444; padding: 20px; border-radius: 4px;">
-                            <h4 style="color: #fca5a5; margin-top: 0;">⏱️ 4. PROTOCOLO DE CRISE (SLA 48H)</h4>
-                            <ul style="font-size: 14px; margin-bottom: 0; padding-left: 20px;">
-                                <li><b>Assine Sempre:</b> Recusar assinatura é um erro grave.</li>
-                                <li><b>Ressalva Técnica:</b> Escreva nas observações da multa (ex: "pesagem sem balança").</li>
-                                <li>Fotografe Auto, Apreensão e Lacres, e envie ao Jurídico.</li>
-                            </ul>
-                        </div>
-                    </div>
+
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
+        elif st.session_state['leitor_ativo'] == "DOC-02: Triagem de Lagosta":
+            st.info("🔄 O Conteúdo Nativo Interativo do DOC-02 (POP Lagosta) está sendo compilado pelo Motor 3D. Utilize o botão 'Baixar Documento Original' acima.")
+            
         else:
-            st.info(f"🔄 O layout nativo para `{st.session_state['leitor_ativo']}` está em diagramação. Você pode utilizar o botão azul 'Baixar em PDF' logo acima para acessar o documento original completo.")
+            st.info(f"🔄 A renderização 3D do módulo `{st.session_state['leitor_ativo']}` está na fila de diagramação inteligente. O arquivo PDF oficial já está disponível para download.")
 
         st.markdown("</div>", unsafe_allow_html=True)
-
 # =====================================================================
 # 2. BLOCO DO MAPA AQUI 
 # =====================================================================
