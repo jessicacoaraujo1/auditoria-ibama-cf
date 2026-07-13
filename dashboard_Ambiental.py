@@ -655,7 +655,7 @@ def renderizar_leitor_nativo(chave_aba):
         # =================================================================
         # 4. CONTEÚDO NATIVO EXATO DO PDF "GUIA DO MOTORISTA"
         # =================================================================
-      if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
+        if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
             st.markdown("""
             <style>
                 .hud-wrapper { background-color: #fcfaf9; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 30px; }
