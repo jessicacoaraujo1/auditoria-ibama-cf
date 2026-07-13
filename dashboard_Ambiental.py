@@ -748,7 +748,7 @@ def renderizar_leitor_nativo(chave_aba):
                 <div class="cf-header">
                     <h1 class="cf-title">Guia de Bolso Executivo</h1>
                     <p class="cf-subtitle">Abordagem Fiscal & Transporte Normativo | Prime Seafood</p>
-                </div>
+            </div>
                 
                 <div class="cf-grid">
                     
@@ -757,7 +757,7 @@ def renderizar_leitor_nativo(chave_aba):
                         <div class="cf-icon-wrapper">
                             <div class="cf-icon">🚦</div>
                             <h3 class="cf-card-title" style="color: #166534;">1. Checklist Operacional<br>"Sinal Verde"</h3>
-                        </div>
+            </div>
                         <p class="cf-card-desc">Antes de dar a partida, audite a pasta da cabine. A ausência de qualquer item abaixo veta a saída da doca:</p>
                         <ul class="cf-list">
                             <li><b>NF-e e DANFE:</b> Confirme a separação exata e clara entre Peso Bruto e Peso Líquido.</li>
@@ -765,42 +765,42 @@ def renderizar_leitor_nativo(chave_aba):
                             <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, da embarcação fornecedora e da transportadora.</li>
                             <li><b>Lacres e Termógrafo:</b> Verifique fisicamente se a numeração bate perfeitamente com o descrito na Nota Fiscal.</li>
                         </ul>
-                    </div>
+            </div>
 
                     <div class="cf-card">
                         <div class="cf-card-top-line cf-line-gray"></div>
                         <div class="cf-icon-wrapper">
                             <div class="cf-icon">👮</div>
                             <h3 class="cf-card-title" style="color: #1a1a1a;">2. Conduta na Abordagem<br>(Cordialidade Técnica)</h3>
-                        </div>
+            </div>
                         <p class="cf-card-desc">O motorista representa legalmente a empresa perante as autoridades (IBAMA, PRF, MAPA):</p>
                         <ul class="cf-list">
                             <li><b>Comunicação:</b> Responda estritamente ao que for perguntado de forma respeitosa. Não discuta biologia, legislação ou regras industriais.</li>
                             <li><b>Preservação da Carga:</b> Nunca rompa o lacre do baú sozinho. A abertura só pode ocorrer por ordem explícita e com a presença física do fiscal.</li>
                             <li><b>Aferição de Peso:</b> Se o fiscal alegar excesso de peso "visual", exija formalmente a pesagem em balança certificada e calibrada pelo INMETRO.</li>
                         </ul>
-                    </div>
+            </div>
 
                     <div class="cf-card">
                         <div class="cf-card-top-line cf-line-gold"></div>
                         <div class="cf-icon-wrapper">
                             <div class="cf-icon">🦞</div>
                             <h3 class="cf-card-title" style="color: #92400e;">3. Rigor das Espécies<br>(Defesa Técnica no Trânsito)</h3>
-                        </div>
+            </div>
                         <p class="cf-card-desc">Argumentos rápidos de linha de frente contra autuações arbitrárias por falta de perícia fiscal:</p>
                         <ul class="cf-list">
                             <li><b>Lagosta Viva:</b> Alerte os fiscais sobre o risco iminente de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse natural do transporte, não por descaudamento ilegal.</li>
                             <li><b>Tamanhos Mínimos (Tolerância Zero):</b> Lagosta Vermelha (22cm total / 13cm cauda). Lagosta Verde (19cm total / 11cm cauda).</li>
                             <li><b>Pargo:</b> Absolutamente todas as caixas devem estar etiquetadas (Nome científico, lote e RGP). É expressamente proibido o transporte a granel.</li>
                         </ul>
-                    </div>
+            </div>
 
                     <div class="cf-card">
                         <div class="cf-card-top-line cf-line-red"></div>
                         <div class="cf-icon-wrapper">
                             <div class="cf-icon">🚨</div>
                             <h3 class="cf-card-title" style="color: #7c1617;">4. Protocolo de Crise<br>(SLA Jurídico de 48H)</h3>
-                        </div>
+            </div>
                         <p class="cf-card-desc">Se a autoridade lavrar o Auto de Infração ou Termo de Apreensão, o tempo é o fator mais crítico:</p>
                         <ul class="cf-list">
                             <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave que anula a boa-fé. Assine e escreva a <b>ressalva técnica</b> no campo de observações (ex: "pesagem sem balança do INMETRO" ou "mortalidade por estresse térmico").</li>
@@ -808,10 +808,10 @@ def renderizar_leitor_nativo(chave_aba):
                         </ul>
                         <div class="cf-alert-box">
                             ⚠️ PLANTÃO JURÍDICO: Envie todo o material fotográfico imediatamente para a base antes mesmo de deixar o posto fiscal.
-                        </div>
-                    </div>
+            </div>
+            </div>
 
-                </div>
+            </div>
             </div>
             """, unsafe_allow_html=True)
             
