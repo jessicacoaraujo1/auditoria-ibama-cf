@@ -520,6 +520,39 @@ tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 
 # =====================================================================
+# CSS AVANÇADO (EFEITOS 3D E CARTÕES FLUTUANTES)
+# =====================================================================
+st.markdown(f"""
+<style>
+    /* Efeito de Elevação 3D para os Paineis */
+    .painel-3d {{
+        background: linear-gradient(145deg, #ffffff, #f8fafc);
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05), 0 6px 6px rgba(0,0,0,0.05), inset 0 -3px 0 0 {COR_PRIMARIA};
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
+    }}
+    .painel-3d:hover {{
+        transform: translateY(-2px);
+        box-shadow: 0 15px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.05), inset 0 -3px 0 0 {COR_DOURADO};
+    }}
+    
+    /* Estilo do Leitor de PDF Imersivo */
+    .leitor-pdf-container {{
+        background-color: #1e293b;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        margin-top: 15px;
+        margin-bottom: 30px;
+        border: 1px solid #475569;
+    }}
+</style>
+""", unsafe_allow_html=True)
+
+# =====================================================================
 # MOTOR GLOBAL DE LEITURA NATIVA (INFOGRÁFICO 3D - SEGUNDO CÉREBRO)
 # =====================================================================
 if 'leitor_ativo' not in st.session_state:
