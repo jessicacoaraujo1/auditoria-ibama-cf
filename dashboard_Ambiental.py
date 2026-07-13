@@ -1120,7 +1120,7 @@ with tab6:
     # 2. Se nenhum documento estiver aberto no Leitor 3D, mostramos o Menu de Botões
     if st.session_state.get('leitor_ativo') is None:
         
-        col_op1, col_op2 = st.columns(2)
+    col_op1, col_op2 = st.columns(2)
         
         with col_op1:
             with st.expander("🚚 DOC-01: Guia do Motorista", expanded=True):
@@ -1155,7 +1155,7 @@ with tab6:
 with tab7:
     st.markdown(f"""
     <div class='painel-3d' style='border-left-color: {COR_DOURADO};'>
-        <p style="margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Backoffice • Sistemas e Tribunais</p>
+        <p style="margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Backoffice • Sistemas • Tribunais</p>
         <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.6rem; font-weight: 800; text-transform: uppercase;">
             Governança Integrada & Inteligência Jurídica
         </h2>
