@@ -1108,6 +1108,18 @@ with tab6:
 # ABA 7: GOVERNANÇA & JURÍDICO
 # ==========================================
 with tab7:
+    st.markdown(f"""
+    <div class='painel-3d' style='border-left-color: {COR_DOURADO};'>
+        <p style="margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Backoffice • Sistemas e Tribunais</p>
+        <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.6rem; font-weight: 800; text-transform: uppercase;">
+            Governança Integrada & Inteligência Jurídica
+        </h2>
+        <p style="margin: 0; color: #475569; font-size: 11pt; text-align: justify; line-height: 1.6;">
+            Este módulo concentra as <b>Barreiras Documentais e de Sistema</b>. Aqui estão hospedados os fluxogramas de Due Diligence para bloquear infrações na fonte, regras aduaneiras e o nosso arsenal de defesa (Teses e SLA de Urgência).
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # 1. Chama a Função do Motor 3D para a Aba 7
     renderizar_leitor_nativo("aba7")
     
