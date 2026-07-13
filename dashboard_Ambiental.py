@@ -1171,6 +1171,9 @@ with tab7:
     # 1. Chama a Função do Motor 3D para a Aba 7
     renderizar_leitor_nativo("aba7")
     
+    # 2. Mostra os botões de menu apenas se o leitor estiver fechado
+    if st.session_state.get('leitor_ativo') is None:
+        
         col_jur1, col_jur2 = st.columns(2)
         
         with col_jur1:
