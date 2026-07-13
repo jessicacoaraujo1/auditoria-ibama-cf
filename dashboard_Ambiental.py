@@ -566,7 +566,8 @@ def carregar_pdf_seguro(caminho_arquivo):
     except FileNotFoundError:
         return b"Arquivo Pendente"
 
-def renderizar_leitor_pdf():
+# ADICIONAMOS 'chave_aba' AQUI PARA NÃO REPETIR O BOTÃO
+def renderizar_leitor_pdf(chave_aba):
     """Desenha a janela de leitura 3D imersiva na tela"""
     if st.session_state['leitor_ativo']:
         st.markdown("<div class='leitor-pdf-container'>", unsafe_allow_html=True)
@@ -574,7 +575,8 @@ def renderizar_leitor_pdf():
         # Barra de Navegação do Leitor
         col_fechar, col_titulo, col_vazio = st.columns([1, 3, 1])
         with col_fechar:
-            if st.button("❌ Fechar Leitor", use_container_width=True, type="primary"):
+            # AQUI ESTÁ A CORREÇÃO (O parâmetro 'key' único):
+            if st.button("❌ Fechar Leitor", use_container_width=True, type="primary", key=f"fechar_leitor_{chave_aba}"):
                 st.session_state['leitor_ativo'] = None
                 st.rerun()
         with col_titulo:
@@ -606,7 +608,7 @@ def renderizar_leitor_pdf():
             pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}#view=FitH" width="100%" height="750px" type="application/pdf" style="border: none; border-radius: 6px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); background-color: #ffffff;"></iframe>'
             st.markdown(pdf_display, unsafe_allow_html=True)
         else:
-            st.warning(f"⚠️ O arquivo PDF `{arquivo_atual}` ainda não foi adicionado à pasta do sistema. Faça o upload do arquivo para visualizar o documento 3D aqui.")
+            st.warning(f"⚠️ O arquivo PDF `{arquivo_atual}` ainda não foi adicionado à pasta do sistema. Faça o upload do arquivo no GitHub para visualizar o documento 3D aqui.")
         
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1005,8 +1007,8 @@ with tab6:
     </div>
     """, unsafe_allow_html=True)
 
-    # 1. Ativa o leitor 3D na aba 6 se solicitado
-    renderizar_leitor_pdf()
+    # 1. Ativa o leitor 3D na aba 6 (PASSANDO A CHAVE 'aba6')
+    renderizar_leitor_pdf("aba6")
 
     # 2. Grid de Cartões (Expansores)
     col_A, col_B = st.columns(2, gap="large")
@@ -1070,8 +1072,8 @@ with tab7:
     </div>
     """, unsafe_allow_html=True)
 
-    # 1. Ativa o leitor 3D na aba 7 se solicitado
-    renderizar_leitor_pdf()
+    # 1. Ativa o leitor 3D na aba 7 (PASSANDO A CHAVE 'aba7')
+    renderizar_leitor_pdf("aba7")
 
     # 2. Grid de Cartões
     col_C, col_D = st.columns(2, gap="large")
