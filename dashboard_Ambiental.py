@@ -1042,56 +1042,55 @@ with tab6:
             Plano de Mitigação: Operacional & Campo
         </h2>
         <p style="margin: 0; color: #475569; font-size: 11pt; text-align: justify; line-height: 1.6;">
-            Esta aba consolida as <b>Barreiras Físicas de Compliance</b>. Aqui estão ancorados os protocolos interativos desenvolvidos para as docas, balanças e frotas de captura, com o objetivo de anular autuações por petrechos proibidos e tamanhos ilícitos.
+            Esta aba consolida as <b>Barreiras Físicas de Compliance</b>. Protocolos interativos para as docas, balanças e frotas de captura, com o objetivo de anular autuações por petrechos proibidos e tamanhos ilícitos.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # 1. Ativa o leitor 3D na aba 6 (PASSANDO A CHAVE 'aba6')
-    renderizar_leitor_pdf("aba6")
+    # Renderiza a Wiki Nativa (Passando a chave 'aba6')
+    renderizar_leitor_nativo("aba6")
 
-    # 2. Grid de Cartões (Expansores)
     col_A, col_B = st.columns(2, gap="large")
 
     with col_A:
         with st.expander("🦞 DOC-02: POP Triagem e Biometria de Lagosta", expanded=False):
-            st.markdown("**Foco Crítico:** Impedir a internalização de lagostas juvenis (< 13cm/11cm) e fêmeas ovadas na balança.")
+            st.markdown("**Foco:** Impedir a internalização de lagostas juvenis e fêmeas ovadas na balança.")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("POP_001_Triagem_Lagosta_Prime.pdf"), "DOC_02_Lagosta.pdf", key="dl_doc2", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("POP_001_Triagem_Lagosta_Prime.pdf"), "DOC_02_Lagosta.pdf", key="dl_card_doc2", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc2", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc2", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-02: Triagem de Lagosta"
                     st.rerun()
 
         with st.expander("🐟 DOC-04: Guia VMS e Navegação (Pargo)", expanded=False):
-            st.markdown("**Foco Crítico:** Regras de telemetria PREPS e proibição inalienável de captura abaixo de 50m de profundidade.")
+            st.markdown("**Foco:** Regras de telemetria PREPS e zonas proibidas de captura.")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("Guia_VMS_Controle_Frota_Pargo.pdf"), "DOC_04_VMS.pdf", key="dl_doc4", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Guia_VMS_Controle_Frota_Pargo.pdf"), "DOC_04_VMS.pdf", key="dl_card_doc4", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc4", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc4", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-04: Guia VMS Pargo"
                     st.rerun()
 
     with col_B:
         with st.expander("🚚 DOC-01: Guia de Bolso do Motorista", expanded=False):
-            st.markdown("**Foco Crítico:** Conduta de blindagem em barreiras fiscais, exigência de balança INMETRO e ressalvas no trânsito.")
+            st.markdown("**Foco:** Conduta em barreiras fiscais, exigência de balança INMETRO e ressalvas no trânsito.")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("Guia_Bolso_Motorista_Prime_Seafood.pdf"), "DOC_01_Motorista.pdf", key="dl_doc1", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Guia_Bolso_Motorista_Prime_Seafood.pdf"), "DOC_01_Motorista.pdf", key="dl_card_doc1", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc1", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc1", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
                     st.rerun()
 
         with st.expander("🛑 DOC-07: Cartilha de Petrechos", expanded=False):
-            st.markdown("**Foco Crítico:** Treinamento visual (Certo vs Errado) para o CQ identificar marcas de estrangulamento por rede de caçoeira.")
+            st.markdown("**Foco:** Treinamento visual (Certo vs Errado) para identificar uso de redes predatórias.")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("Cartilha_Petrechos_Certo_Errado.pdf"), "DOC_07_Petrechos.pdf", key="dl_doc7", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Cartilha_Petrechos_Certo_Errado.pdf"), "DOC_07_Petrechos.pdf", key="dl_card_doc7", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc7", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc7", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-07: Cartilha de Petrechos"
                     st.rerun()
 
@@ -1107,75 +1106,74 @@ with tab7:
             Governança Integrada & Inteligência Jurídica
         </h2>
         <p style="margin: 0; color: #475569; font-size: 11pt; text-align: justify; line-height: 1.6;">
-            Este módulo concentra as <b>Barreiras Documentais e de Sistema</b>. Aqui estão hospedados os fluxogramas de Due Diligence para bloquear infrações na fonte, regras aduaneiras e o nosso arsenal de defesa (Teses e SLA de Urgência).
+            Este módulo concentra as <b>Barreiras Documentais e de Sistema</b>. Aqui estão hospedados os fluxogramas de Due Diligence, regras aduaneiras e o nosso arsenal de defesa (Teses e SLA de Urgência).
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # 1. Ativa o leitor 3D na aba 7 (PASSANDO A CHAVE 'aba7')
-    renderizar_leitor_pdf("aba7")
+    # Renderiza a Wiki Nativa (Passando a chave 'aba7')
+    renderizar_leitor_nativo("aba7")
 
-    # 2. Grid de Cartões
     col_C, col_D = st.columns(2, gap="large")
 
     with col_C:
         with st.expander("❄️ DOC-03: Compliance de Defeso e Estoques", expanded=False):
-            st.markdown("**Foco Crítico:** Trava de ERP D-5, varredura cega em câmaras frias e auditoria do SisRGP contra apreensões.")
+            st.markdown("**Foco:** Trava de ERP D-5, varredura cega em câmaras frias e auditoria do SisRGP.")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("Manual_Compliance_Defeso_Estoque.pdf"), "DOC_03_Defeso.pdf", key="dl_doc3", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Manual_Compliance_Defeso_Estoque.pdf"), "DOC_03_Defeso.pdf", key="dl_card_doc3", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc3", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc3", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-03: Manual do Defeso"
                     st.rerun()
 
         with st.expander("⚖️ DOC-05: Matriz de Teses Defensivas", expanded=False):
-            st.markdown("**Foco Crítico:** SLA Jurídico de 48h para Fiel Depositário e inteligência de conversão de multas (NUCAM).")
+            st.markdown("**Foco:** SLA Jurídico de 48h para Fiel Depositário e conversão de multas (NUCAM).")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("Matriz_Teses_Defensivas_IBAMA.pdf"), "DOC_05_Teses.pdf", key="dl_doc5", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Matriz_Teses_Defensivas_IBAMA.pdf"), "DOC_05_Teses.pdf", key="dl_card_doc5", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc5", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc5", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-05: Teses Defensivas"
                     st.rerun()
 
         with st.expander("📊 DOC-09: Resumo Executivo (Board)", expanded=False):
-            st.markdown("**Foco Crítico:** Relatório consolidado para Diretoria e Investidores atestando o compliance dos 3 pilares.")
+            st.markdown("**Foco:** Relatório consolidado para Diretoria e Investidores.")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("DOC_09_Resumo_Executivo.pdf"), "DOC_09_Resumo.pdf", key="dl_doc9", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("DOC_09_Resumo_Executivo.pdf"), "DOC_09_Resumo.pdf", key="dl_card_doc9", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc9", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc9", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-09: Resumo Executivo"
                     st.rerun()
 
     with col_D:
         with st.expander("🔍 DOC-06: Due Diligence RGP e Fornecedores", expanded=False):
-            st.markdown("**Foco Crítico:** Tripé de segurança (RGP, Lista de Embargos e CTF) para provar 'Adquirente de Boa-Fé'.")
+            st.markdown("**Foco:** Tripé de segurança (RGP, Lista de Embargos e CTF).")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("Procedimento_Due_Diligence_RGP.pdf"), "DOC_06_RGP.pdf", key="dl_doc6", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Procedimento_Due_Diligence_RGP.pdf"), "DOC_06_RGP.pdf", key="dl_card_doc6", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc6", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc6", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-06: Due Diligence RGP"
                     st.rerun()
 
         with st.expander("🚢 DOC-08: Checklist Aduaneiro Sinal Verde", expanded=False):
-            st.markdown("**Foco Crítico:** Pre-clearance portuário, mitigação de Demurrage e atestado sanitário de LPCO.")
+            st.markdown("**Foco:** Pre-clearance portuário, mitigação de Demurrage e LPCO.")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("Checklist_Sinal_Verde_Exportacao.pdf"), "DOC_08_Exportacao.pdf", key="dl_doc8", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Checklist_Sinal_Verde_Exportacao.pdf"), "DOC_08_Exportacao.pdf", key="dl_card_doc8", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc8", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc8", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-08: Checklist Exportação"
                     st.rerun()
 
         with st.expander("📘 DOC-10: E-book Institucional 'Do Mar ao Prato'", expanded=False):
-            st.markdown("**Foco Crítico:** Demonstração visual e narrativa da excelência ESG da marca para o mercado internacional.")
+            st.markdown("**Foco:** Demonstração visual da excelência ESG da marca.")
             st.markdown("---")
             c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF", carregar_pdf_seguro("DOC_10_Ebook_Institucional.pdf"), "DOC_10_Ebook.pdf", key="dl_doc10", use_container_width=True)
+            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("DOC_10_Ebook_Institucional.pdf"), "DOC_10_Ebook.pdf", key="dl_card_doc10", use_container_width=True)
             with c2: 
-                if st.button("👁️ Abrir Leitor 3D", key="ler_doc10", use_container_width=True): 
+                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc10", use_container_width=True): 
                     st.session_state['leitor_ativo'] = "DOC-10: E-book Institucional"
                     st.rerun()
