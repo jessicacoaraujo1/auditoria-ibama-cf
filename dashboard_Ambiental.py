@@ -1208,6 +1208,13 @@ with tab5:
 # ==========================================
 with tab6:
     st.markdown(f"""
+    renderizar_leitor_nativo("aba6")
+    
+    if st.session_state['leitor_ativo'] is None:
+        if st.button("👁️ ABRIR GUIA DO MOTORISTA (3D)"):
+            st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
+            st.rerun()
+    
     <div class='painel-3d'>
         <p style="margin: 0 0 5px 0; color: {COR_DOURADO}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Linha de Frente • Portos e Rodovias</p>
         <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.6rem; font-weight: 800; text-transform: uppercase;">
