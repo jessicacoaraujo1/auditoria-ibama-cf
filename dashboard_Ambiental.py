@@ -1120,7 +1120,7 @@ with tab6:
     # 2. Se nenhum documento estiver aberto no Leitor 3D, mostramos o Menu de Botões
     if st.session_state.get('leitor_ativo') is None:
         
-    col_op1, col_op2 = st.columns(2)
+        col_op1, col_op2 = st.columns(2)
         
         with col_op1:
             with st.expander("🚚 DOC-01: Guia do Motorista", expanded=True):
