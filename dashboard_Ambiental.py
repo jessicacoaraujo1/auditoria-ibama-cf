@@ -1110,7 +1110,7 @@ with tab6:
             Esta aba consolida as <b>Barreiras Físicas de Compliance</b>. Aqui estão ancorados os protocolos interativos desenvolvidos para as docas, balanças e frotas de captura, com o objetivo de anular autuações por petrechos proibidos e tamanhos ilícitos.
         </p>
         </div>
-        <p style="margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Clique em um documento para <b>abrir</b> a versão digital ou fazer o </b>download</b> da versão oficial.</p>
+        <p style="margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Clique em um documento para abrir a versão digital ou fazer o download da versão oficial:</p>
         
     """, unsafe_allow_html=True)
     
@@ -1162,17 +1162,13 @@ with tab7:
         <p style="margin: 0; color: #475569; font-size: 11pt; text-align: justify; line-height: 1.6;">
             Este módulo concentra as <b>Barreiras Documentais e de Sistema</b>. Aqui estão hospedados os fluxogramas de Due Diligence para bloquear infrações na fonte, regras aduaneiras e o nosso arsenal de defesa (Teses e SLA de Urgência).
         </p>
+           <p style="margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Clique aqui para ver o Backoffice e Inteligência para blindagem documental e contencioso administrativo</p>     
     </div>
     """, unsafe_allow_html=True)
     
     # 1. Chama a Função do Motor 3D para a Aba 7
     renderizar_leitor_nativo("aba7")
     
-    # 2. Se nenhum documento estiver aberto, mostramos o Menu
-    if st.session_state.get('leitor_ativo') is None:
-        st.markdown("<h2 style='color: #1a1a1a; margin-bottom: 5px; margin-top: 20px;'>🏢 Governança Integrada & Inteligência Jurídica</h2>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #64748b; margin-bottom: 30px;'>Backoffice e Inteligência para blindagem documental e contencioso administrativo.</p>", unsafe_allow_html=True)
-        
         col_jur1, col_jur2 = st.columns(2)
         
         with col_jur1:
