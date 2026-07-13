@@ -1067,6 +1067,21 @@ with tab5:
 # ABA 6: MITIGAÇÃO OPERACIONAL E CAMPO
 # ==========================================
 with tab6:
+    st.markdown(f"""
+    <div class='painel-3d'>
+        <p style="margin: 0 0 5px 0; color: {COR_DOURADO}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Linha de Frente • Portos e Rodovias</p>
+        <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.6rem; font-weight: 800; text-transform: uppercase;">
+            Plano de Mitigação: Operacional & Campo
+        </h2>
+        <p style="margin: 0; color: #475569; font-size: 11pt; text-align: justify; line-height: 1.6;">
+            Esta aba consolida as <b>Barreiras Físicas de Compliance</b>. Aqui estão ancorados os protocolos interativos desenvolvidos para as docas, balanças e frotas de captura, com o objetivo de anular autuações por petrechos proibidos e tamanhos ilícitos.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 1. Ativa o leitor 3D na aba 6 (PASSANDO A CHAVE 'aba6')
+    renderizar_leitor_pdf("aba6")
+    
     # 1. Chama a Função do Motor 3D (Se houver algo selecionado, a interface escurece a tela)
     renderizar_leitor_nativo("aba6")
     
