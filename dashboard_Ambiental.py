@@ -535,8 +535,8 @@ def carregar_pdf_seguro(caminho_arquivo):
 
 def renderizar_leitor_nativo(chave_aba):
     """
-    Renderiza o Infográfico Vivo (Second Brain) com Glassmorphism 3D.
-    Contém a transcrição exata e interativa dos guias em PDF.
+    Renderiza o Infográfico Vivo com Glassmorphism, Hover 3D e Neon Glow.
+    Contém a transcrição exata e interativa do PDF Original.
     """
     if st.session_state['leitor_ativo']:
         
@@ -555,80 +555,13 @@ def renderizar_leitor_nativo(chave_aba):
         }
         arquivo_pdf_atual = mapa_arquivos.get(st.session_state['leitor_ativo'])
 
-        # 2. INJEÇÃO DE CSS DE ALTA PERFORMANCE (O DESIGN 3D)
-        st.markdown("""
-        <style>
-            /* Container principal escuro e imersivo */
-            .hud-interface { 
-                background: #0b1120; 
-                padding: 35px; 
-                border-radius: 20px; 
-                border: 1px solid #1e293b; 
-                box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); 
-                margin-top: 15px; 
-                margin-bottom: 30px;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            /* Brilho de fundo (Aura de luz central) */
-            .hud-interface::before {
-                content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-                background: radial-gradient(circle, rgba(192,159,82,0.05) 0%, rgba(11,17,32,0) 60%);
-                z-index: 0; pointer-events: none;
-            }
-
-            /* Efeito Vidro (Glassmorphism) para os cartões */
-            .brain-node { 
-                background: rgba(30, 41, 59, 0.4); 
-                backdrop-filter: blur(12px); 
-                -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255,255,255,0.05); 
-                border-radius: 16px; 
-                padding: 25px; 
-                position: relative;
-                z-index: 1;
-                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                height: 100%;
-            }
-            
-            /* Efeito Hover 3D (O cartão salta e acende a luz neon) */
-            .brain-node:hover { 
-                transform: translateY(-8px) scale(1.02); 
-            }
-            
-            /* Cores de Aura Específicas por Cartão */
-            .node-green:hover { border-color: #22c55e; box-shadow: 0 15px 35px rgba(34, 197, 94, 0.2); }
-            .node-blue:hover { border-color: #3b82f6; box-shadow: 0 15px 35px rgba(59, 130, 246, 0.2); }
-            .node-gold:hover { border-color: #c09f52; box-shadow: 0 15px 35px rgba(192, 159, 82, 0.2); }
-            .node-red:hover { border-color: #ef4444; box-shadow: 0 15px 35px rgba(239, 68, 68, 0.2); }
-
-            /* Tipografia Interna */
-            .node-icon { font-size: 28px; margin-bottom: 15px; display: inline-block; }
-            .node-title { color: #f8fafc; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-            .node-list { list-style: none; padding: 0; margin: 0; }
-            .node-list li { color: #cbd5e1; font-size: 13.5px; margin-bottom: 12px; line-height: 1.5; padding-left: 20px; position: relative; }
-            .node-list li::before { content: '⬡'; position: absolute; left: 0; color: #475569; font-size: 12px; transition: color 0.3s; }
-            .brain-node:hover .node-list li::before { color: #c09f52; }
-            .node-list b { color: #ffffff; font-weight: 600; }
-            
-            /* Título Fluorescente da Interface */
-            .title-glow { color: #c09f52; text-align: center; margin: 0; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 15px rgba(192,159,82,0.4); }
-        </style>
-        """, unsafe_allow_html=True)
-
-        st.markdown("<div class='hud-interface'>", unsafe_allow_html=True)
-        
-        # 3. BARRA DE COMANDO SUPERIOR (Botões e Título)
-        c_fechar, c_titulo, c_baixar = st.columns([1, 2.5, 1.5])
+        # 2. MENU SUPERIOR DO LEITOR (Botão Fechar e Botão Download)
+        c_fechar, c_vazio, c_baixar = st.columns([1.5, 2, 1.5])
         with c_fechar:
             if st.button("❌ FECHAR INFOGRÁFICO", use_container_width=True, type="primary", key=f"fechar_{chave_aba}"):
                 st.session_state['leitor_ativo'] = None
                 st.rerun()
-        with c_titulo:
-            st.markdown(f"<h3 class='title-glow'>{st.session_state['leitor_ativo']}</h3>", unsafe_allow_html=True)
         with c_baixar:
-            # Botão de Download Integrado
             dados_pdf = carregar_pdf_seguro(arquivo_pdf_atual)
             st.download_button(
                 label="📥 BAIXAR PDF ORIGINAL", 
@@ -639,96 +572,117 @@ def renderizar_leitor_nativo(chave_aba):
                 use_container_width=True
             )
         
-        st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 20px 0 35px 0; position:relative; z-index:1;'>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # 3. CSS AVANÇADO (GLASSMORPHISM, HOVER 3D, NEON GLOW)
+        st.markdown("""
+        <style>
+            /* Container Tático */
+            .hud-wrapper {
+                background-color: #0b1120; padding: 40px; border-radius: 20px;
+                box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 25px 50px -12px rgba(0,0,0,0.9);
+                border: 1px solid #1e293b; margin-bottom: 30px; position: relative; overflow: hidden;
+            }
+            /* Brilho de fundo militar/tático */
+            .hud-wrapper::before {
+                content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+                background: radial-gradient(circle, rgba(192,159,82,0.05) 0%, rgba(11,17,32,0) 50%);
+                z-index: 0; pointer-events: none;
+            }
+            /* Cabeçalho do HUD */
+            .hud-header { text-align: center; position: relative; z-index: 1; margin-bottom: 40px; }
+            .hud-title { color: #c09f52; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px rgba(192,159,82,0.4); margin: 0; }
+            .hud-subtitle { color: #94a3b8; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+            /* Grid Responsivo para os 4 Módulos */
+            .grid-3d { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; position: relative; z-index: 1; }
+            /* GLASSMORPHISM: Fundos escuros translúcidos */
+            .card-glass {
+                background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 25px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                display: flex; flex-direction: column;
+            }
+            /* HOVER 3D + NEON GLOW */
+            .card-glass:hover { transform: translateY(-10px) scale(1.03); z-index: 10; }
+            .glow-green:hover { border-color: #22c55e; box-shadow: 0 15px 40px rgba(34, 197, 94, 0.3), inset 0 0 20px rgba(34, 197, 94, 0.1); }
+            .glow-blue:hover { border-color: #3b82f6; box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3), inset 0 0 20px rgba(59, 130, 246, 0.1); }
+            .glow-gold:hover { border-color: #c09f52; box-shadow: 0 15px 40px rgba(192, 159, 82, 0.3), inset 0 0 20px rgba(192, 159, 82, 0.1); }
+            .glow-red:hover { border-color: #ef4444; box-shadow: 0 15px 40px rgba(239, 68, 68, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.1); }
+            /* Tipografia Interna */
+            .card-icon { font-size: 32px; margin-bottom: 10px; }
+            .card-title { color: #f8fafc; font-size: 16px; font-weight: 800; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+            .card-list { list-style: none; padding: 0; margin: 0; }
+            .card-list li { color: #cbd5e1; font-size: 13.5px; margin-bottom: 12px; line-height: 1.5; padding-left: 20px; position: relative; }
+            .card-list li::before { content: '⬡'; position: absolute; left: 0; color: #64748b; font-size: 12px; transition: color 0.3s; }
+            .card-glass:hover .card-list li::before { color: #c09f52; }
+            .card-list b { color: #ffffff; font-weight: 600; }
+        </style>
+        """, unsafe_allow_html=True)
 
         # =================================================================
-        # 4. CONTEÚDO NATIVO EXTREMAMENTE DETALHADO (O "SEGUNDO CÉREBRO")
+        # 4. CONTEÚDO NATIVO EXATO DO PDF "GUIA DO MOTORISTA"
         # =================================================================
-        
         if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
-            
-            # Cabeçalho do Infográfico
             st.markdown("""
-            <div style='text-align: center; position: relative; z-index: 1; margin-bottom: 40px;'>
-                <h1 style='color: white; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px;'>ABORDAGEM FISCAL & TRANSPORTE</h1>
-                <p style='color: #94a3b8; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;'>Matriz de Conduta Rodoviária Oficial</p>
+            <div class="hud-wrapper">
+                <div class="hud-header">
+                    <h1 class="hud-title">Guia de Bolso Executivo</h1>
+                    <div class="hud-subtitle">Abordagem Fiscal & Transporte Normativo | Carvalho & Fadul</div>
+                </div>
+                <div class="grid-3d">
+                    <div class="card-glass glow-green">
+                        <div class="card-icon">🚦</div>
+                        <h3 class="card-title" style="color: #22c55e;">1. SINAL VERDE (PRÉ-EMBARQUE)</h3>
+                        <p style="color: #94a3b8; font-size: 12.5px; margin-top: -5px;">Antes de dar a partida, audite a pasta da cabine. A ausência de qualquer item veta a saída:</p>
+                        <ul class="card-list">
+                            <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
+                            <li><b>GTP (Guia de Transporte):</b> Dentro da validade e assinada. (Em defeso, inclua a Declaração de Estoque).</li>
+                            <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, embarcação e transportadora.</li>
+                            <li><b>Lacres e Termógrafo:</b> Verifique se a numeração física bate com a Nota Fiscal.</li>
+                        </ul>
+                    </div>
+                    <div class="card-glass glow-blue">
+                        <div class="card-icon">👮</div>
+                        <h3 class="card-title" style="color: #3b82f6;">2. CONDUTA NA ABORDAGEM</h3>
+                        <p style="color: #94a3b8; font-size: 12.5px; margin-top: -5px;">O motorista representa legalmente a empresa perante as autoridades:</p>
+                        <ul class="card-list">
+                            <li><b>Cordialidade Técnica:</b> Responda estritamente ao que for perguntado de forma respeitosa. Não discuta biologia ou regras industriais.</li>
+                            <li><b>Preservação:</b> Nunca rompa o lacre sozinho. A abertura só ocorre por ordem e presença física do fiscal.</li>
+                            <li><b>Exigência:</b> Se alegarem excesso de peso, exija a pesagem em balança certificada e calibrada pelo INMETRO.</li>
+                        </ul>
+                    </div>
+                    <div class="card-glass glow-gold">
+                        <div class="card-icon">🦞</div>
+                        <h3 class="card-title" style="color: #c09f52;">3. RIGOR DAS ESPÉCIES</h3>
+                        <p style="color: #94a3b8; font-size: 12.5px; margin-top: -5px;">Argumentos rápidos contra autuações arbitrárias por falta de perícia fiscal:</p>
+                        <ul class="card-list">
+                            <li><b>Lagosta Viva:</b> Alerte sobre o risco de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse natural do transporte, não por descaudamento ilegal.</li>
+                            <li><b>Tamanhos Mínimos:</b> Vermelha (22 cm total/13 cm cauda) | Verde (19 cm total/11 cm cauda) - Tolerância Zero.</li>
+                            <li><b>Pargo:</b> Todas as caixas devem estar etiquetadas (Nome científico, lote e RGP). É proibido o transporte a granel.</li>
+                        </ul>
+                    </div>
+                    <div class="card-glass glow-red">
+                        <div class="card-icon">🚨</div>
+                        <h3 class="card-title" style="color: #ef4444;">4. PROTOCOLO DE CRISE (SLA 48H)</h3>
+                        <p style="color: #94a3b8; font-size: 12.5px; margin-top: -5px;">Se a autoridade lavrar o Auto de Infração, o tempo é o fator mais crítico:</p>
+                        <ul class="card-list">
+                            <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave. Assine e escreva a ressalva técnica (ex: "pesagem sem balança do INMETRO" ou "mortalidade por estresse térmico") no campo de observações.</li>
+                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto, Termo de Apreensão, os lacres e o painel do termógrafo.</li>
+                            <li><b>Plantão Jurídico:</b> Envie todo o material imediatamente para o corpo jurídico da empresa.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
             
-            # GRID 3D PARA OS 4 MÓDULOS (Linha 1)
-            col1, col2 = st.columns(2, gap="large")
-            
-            with col1:
-                st.markdown("""
-                <div class='brain-node node-green'>
-                    <div class='node-icon'>🚦</div>
-                    <div class='node-title' style='border-bottom-color: rgba(34,197,94,0.3);'>1. SINAL VERDE (PRÉ-EMBARQUE)</div>
-                    <p style='color:#94a3b8; font-size:12px; margin-top:-5px;'>A ausência de qualquer item veta a saída da doca:</p>
-                    <ul class='node-list'>
-                        <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
-                        <li><b>GTP (Guia de Transporte):</b> Vigente e assinada. Em período de defeso, anexe a Declaração de Estoque.</li>
-                        <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, da embarcação de origem e da transportadora.</li>
-                        <li><b>Lacres e Termógrafo:</b> Verifique fisicamente se a numeração bate rigorosamente com a Nota Fiscal.</li>
-                    </ul>
-                </div>
-                """, unsafe_allow_html=True)
-                
-            with col2:
-                st.markdown("""
-                <div class='brain-node node-blue'>
-                    <div class='node-icon'>👮</div>
-                    <div class='node-title' style='border-bottom-color: rgba(59,130,246,0.3);'>2. CONDUTA NA ABORDAGEM</div>
-                    <p style='color:#94a3b8; font-size:12px; margin-top:-5px;'>O motorista é o representante legal no ato fiscal:</p>
-                    <ul class='node-list'>
-                        <li><b>Cordialidade Técnica:</b> Responda estritamente ao que for perguntado. Não discuta biologia ou regras industriais.</li>
-                        <li><b>Preservação do Lacre:</b> Nunca rompa o lacre sozinho. A abertura do baú só ocorre por ordem e com presença física do fiscal.</li>
-                        <li><b>Aferição de Peso:</b> Se alegarem excesso de peso "no olhômetro", exija formalmente a pesagem em balança certificada e calibrada pelo INMETRO.</li>
-                    </ul>
-                </div>
-                """, unsafe_allow_html=True)
-                
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            # GRID 3D PARA OS 4 MÓDULOS (Linha 2)
-            col3, col4 = st.columns(2, gap="large")
-            
-            with col3:
-                st.markdown("""
-                <div class='brain-node node-gold'>
-                    <div class='node-icon'>🦞</div>
-                    <div class='node-title' style='border-bottom-color: rgba(192,159,82,0.3);'>3. RIGOR TÉCNICO DAS ESPÉCIES</div>
-                    <p style='color:#94a3b8; font-size:12px; margin-top:-5px;'>Defesa técnica imediata no trânsito:</p>
-                    <ul class='node-list'>
-                        <li><b>Lagosta Viva:</b> Alerte sobre o risco de choque térmico ao abrir o baú. Justifique eventual mortalidade como "estresse natural do transporte", não como descaudamento ilegal.</li>
-                        <li><b>Tamanhos Mínimos (Tolerância Zero):</b> Vermelha (22cm total / 13cm cauda) | Verde (19cm total / 11cm cauda).</li>
-                        <li><b>Transporte de Pargo:</b> Todas as caixas etiquetadas (Nome científico, lote e RGP). Proibido o transporte a granel.</li>
-                    </ul>
-                </div>
-                """, unsafe_allow_html=True)
-                
-            with col4:
-                st.markdown("""
-                <div class='brain-node node-red'>
-                    <div class='node-icon'>🚨</div>
-                    <div class='node-title' style='border-bottom-color: rgba(239,68,68,0.3);'>4. PROTOCOLO DE CRISE (SLA 48H)</div>
-                    <p style='color:#94a3b8; font-size:12px; margin-top:-5px;'>Se a autoridade lavrar o Auto, o tempo é crítico:</p>
-                    <ul class='node-list'>
-                        <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave que retira a boa-fé.</li>
-                        <li><b>A Ressalva Salva:</b> Escreva a ressalva técnica (ex: <i>"Pesagem sem balança INMETRO"</i> ou <i>"Mortalidade por estresse térmico"</i>) no campo de observações.</li>
-                        <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto, o Termo de Apreensão, os Lacres e o painel do Termógrafo e acione o plantão jurídico.</li>
-                    </ul>
-                </div>
-                """, unsafe_allow_html=True)
-
-        elif st.session_state['leitor_ativo'] == "DOC-02: Triagem de Lagosta":
-            st.markdown("<h2 style='color: white; text-align: center; position: relative; z-index: 1;'>🚧 Módulo Interativo em Construção</h2>", unsafe_allow_html=True)
-            st.info("A matriz 3D para o POP de Triagem de Lagosta será inserida aqui em breve. Por favor, utilize o botão de Download para acessar o PDF oficial.")
-            
         else:
-            st.markdown(f"<h2 style='color: white; text-align: center; position: relative; z-index: 1;'>🚧 Módulo {st.session_state['leitor_ativo']}</h2>", unsafe_allow_html=True)
-            st.info("O conteúdo interativo deste documento está na fila de desenvolvimento do painel. Utilize o botão de download acima para baixar o arquivo original completo.")
-
-        st.markdown("</div>", unsafe_allow_html=True)
+            # Placeholder para os outros documentos enquanto não fazemos o layout deles
+            st.markdown(f"""
+            <div class='hud-wrapper'>
+                <h2 style='color: white; text-align: center;'>🚧 Módulo {st.session_state['leitor_ativo']}</h2>
+                <p style='color: #94a3b8; text-align: center;'>O infográfico vivo deste documento está na fila de desenvolvimento. Utilize o botão <b>BAIXAR PDF ORIGINAL</b> acima para acessar o arquivo oficial na íntegra.</p>
+            </div>
+            """, unsafe_allow_html=True)
         
 # =====================================================================
 # 2. BLOCO DO MAPA AQUI 
@@ -1109,170 +1063,95 @@ with tab5:
     st.download_button(label="📥 Exportar Matriz Analítica (CSV)", data=csv, file_name='Auditoria_IBAMA.csv', mime='text/csv')
 
 
-# =====================================================================
-# ABA 6: MITIGAÇÃO OPERACIONAL E CAMPO (VERSIONAMENTO 3D)
-# =====================================================================
+# ==========================================
+# ABA 6: MITIGAÇÃO OPERACIONAL E CAMPO
+# ==========================================
 with tab6:
-    # --- CSS DE ESTILO 3D & GLASSMORPHISM ---
-    st.markdown("""
-    <style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
-            margin-bottom: 20px;
-        }
-        .hud-title {
-            color: #c09f52; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("## ⚙️ Plano de Mitigação: Operacional & Campo")
+    # 1. Chama a Função do Motor 3D (Se houver algo selecionado, a interface escurece a tela)
+    renderizar_leitor_nativo("aba6")
     
-    # MOTOR DE ESTADO DA ABA 6
-    if 'leitor_aba6' not in st.session_state: st.session_state['leitor_aba6'] = None
-
-    # Lógica do "Segundo Cérebro" (Renderizador de Conteúdo Vivo)
-    if st.session_state['leitor_aba6']:
-        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        col_f, col_t = st.columns([1, 5])
-        with col_f:
-            if st.button("⬅️ VOLTAR AO MENU", use_container_width=True):
-                st.session_state['leitor_aba6'] = None
-                st.rerun()
+    # 2. Se nenhum documento estiver aberto no Leitor 3D, mostramos o Menu de Botões
+    if st.session_state.get('leitor_ativo') is None:
+        st.markdown("<h2 style='color: #1a1a1a; margin-bottom: 5px; margin-top: 20px;'>⚙️ Plano de Mitigação: Operacional & Campo</h2>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #64748b; margin-bottom: 30px;'>Clique em um documento para abrir o HUD Interativo ou fazer o download da versão oficial.</p>", unsafe_allow_html=True)
         
-        # RENDENRIZAÇÃO DO INFOGRÁFICO VIVO (O "MAPA MENTAL")
-        if st.session_state['leitor_aba6'] == "DOC-01":
-            st.markdown("""
-            # 🚛 GUIA DE BOLSO: MOTORISTA
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div style="border-left: 4px solid #166534; padding-left: 15px;">
-                    <h3 style="color:#166534">✅ SINAL VERDE (PRÉ-EMBARQUE)</h3>
-                    <ul>
-                        <li><b>NF-e/DANFE:</b> Separar bruto/líquido.</li>
-                        <li><b>GTP:</b> Assinada e válida.</li>
-                        <li><b>RGP:</b> Cópia da indústria e embarcação.</li>
-                    </ul>
-                </div>
-                <div style="border-left: 4px solid #dc2626; padding-left: 15px;">
-                    <h3 style="color:#dc2626">👮 CONDUTA NA ABORDAGEM</h3>
-                    <ul>
-                        <li>Não romper lacre sozinho.</li>
-                        <li>Exigir balança INMETRO.</li>
-                        <li>Fotografar tudo (Roteiro 30min).</li>
-                    </ul>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Guia_Bolso_Motorista_Prime_Seafood.pdf"), "DOC_01.pdf", use_container_width=True)
+        col_op1, col_op2 = st.columns(2)
         
-        # ... Você pode replicar esse bloco 'if' para outros documentos ...
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    else:
-        # MENU INTERATIVO DE ACESSO
-        cols = st.columns(4)
-        guias = [
-            ("🦞 Triagem Lagosta", "DOC-02", "POP_001_Triagem_Lagosta_Prime.pdf"),
-            ("🐟 Guia VMS (Pargo)", "DOC-04", "Guia_VMS_Controle_Frota_Pargo.pdf"),
-            ("🚚 Guia Motorista", "DOC-01", "Guia_Bolso_Motorista_Prime_Seafood.pdf"),
-            ("🛑 Cartilha Petrechos", "DOC-07", "Cartilha_Petrechos_Certo_Errado.pdf")
-        ]
-        
-        for i, (titulo, id_doc, arquivo) in enumerate(guias):
-            with cols[i]:
-                if st.button(f"✨ Abrir {titulo}", key=f"btn_{id_doc}", use_container_width=True):
-                    st.session_state['leitor_aba6'] = id_doc
+        with col_op1:
+            with st.expander("🚚 DOC-01: Guia do Motorista", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Conduta em barreiras fiscais e exigência de balança INMETRO.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc1", use_container_width=True):
+                    st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
                     st.rerun()
-                # Botão secundário de download fixo
-                st.download_button(f"📥 Baixar {id_doc}", carregar_pdf_seguro(arquivo), f"{id_doc}.pdf", use_container_width=True)
+                    
+            with st.expander("🦞 DOC-02: POP Triagem Lagosta", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Tolerância zero para tamanhos mínimos e fêmeas ovadas.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc2", use_container_width=True):
+                    st.session_state['leitor_ativo'] = "DOC-02: Triagem de Lagosta"
+                    st.rerun()
 
-    st.markdown("---")
-    st.info("💡 **Dica:** Clique em 'Abrir' para acessar o infográfico interativo ou 'Baixar' para o arquivo original.")
+        with col_op2:
+            with st.expander("🐟 DOC-04: Guia VMS Pargo", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Zonas de exclusão costeira e monitoramento PREPS.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc4", use_container_width=True):
+                    st.session_state['leitor_ativo'] = "DOC-04: Guia VMS Pargo"
+                    st.rerun()
+                    
+            with st.expander("🛑 DOC-07: Cartilha Petrechos", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Identificação visual de capturas ilegais (Rede de Caçoeira).</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc7", use_container_width=True):
+                    st.session_state['leitor_ativo'] = "DOC-07: Cartilha de Petrechos"
+                    st.rerun()
+
 
 # ==========================================
-# ABA 7: GOVERNANÇA, ADMINISTRATIVO & JURÍDICO
+# ABA 7: GOVERNANÇA & JURÍDICO
 # ==========================================
 with tab7:
-    st.markdown(f"""
-    <div class='painel-3d' style='border-left-color: {COR_DOURADO};'>
-        <p style="margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Backoffice • Sistemas e Tribunais</p>
-        <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.6rem; font-weight: 800; text-transform: uppercase;">
-            Governança Integrada & Inteligência Jurídica
-        </h2>
-        <p style="margin: 0; color: #475569; font-size: 11pt; text-align: justify; line-height: 1.6;">
-            Este módulo concentra as <b>Barreiras Documentais e de Sistema</b>. Aqui estão hospedados os fluxogramas de Due Diligence, regras aduaneiras e o nosso arsenal de defesa (Teses e SLA de Urgência).
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Renderiza a Wiki Nativa (Passando a chave 'aba7')
+    # 1. Chama a Função do Motor 3D para a Aba 7
     renderizar_leitor_nativo("aba7")
-
-    col_C, col_D = st.columns(2, gap="large")
-
-    with col_C:
-        with st.expander("❄️ DOC-03: Compliance de Defeso e Estoques", expanded=False):
-            st.markdown("**Foco:** Trava de ERP D-5, varredura cega em câmaras frias e auditoria do SisRGP.")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Manual_Compliance_Defeso_Estoque.pdf"), "DOC_03_Defeso.pdf", key="dl_card_doc3", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc3", use_container_width=True): 
+    
+    # 2. Se nenhum documento estiver aberto, mostramos o Menu
+    if st.session_state.get('leitor_ativo') is None:
+        st.markdown("<h2 style='color: #1a1a1a; margin-bottom: 5px; margin-top: 20px;'>🏢 Governança Integrada & Inteligência Jurídica</h2>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #64748b; margin-bottom: 30px;'>Backoffice e Inteligência para blindagem documental e contencioso administrativo.</p>", unsafe_allow_html=True)
+        
+        col_jur1, col_jur2 = st.columns(2)
+        
+        with col_jur1:
+            with st.expander("❄️ DOC-03: Manual do Defeso", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Trava de ERP, inventário cego e declaração oficial de estoques.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc3", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-03: Manual do Defeso"
                     st.rerun()
-
-        with st.expander("⚖️ DOC-05: Matriz de Teses Defensivas", expanded=False):
-            st.markdown("**Foco:** SLA Jurídico de 48h para Fiel Depositário e conversão de multas (NUCAM).")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Matriz_Teses_Defensivas_IBAMA.pdf"), "DOC_05_Teses.pdf", key="dl_card_doc5", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc5", use_container_width=True): 
+                    
+            with st.expander("⚖️ DOC-05: Teses Defensivas", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Matriz de respostas rápidas (SLA 48h) e conversão via NUCAM.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc5", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-05: Teses Defensivas"
                     st.rerun()
-
-        with st.expander("📊 DOC-09: Resumo Executivo (Board)", expanded=False):
-            st.markdown("**Foco:** Relatório consolidado para Diretoria e Investidores.")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("DOC_09_Resumo_Executivo.pdf"), "DOC_09_Resumo.pdf", key="dl_card_doc9", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc9", use_container_width=True): 
+                    
+            with st.expander("📊 DOC-09: Resumo Executivo", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Relatório de Governança para Board e Investidores.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc9", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-09: Resumo Executivo"
                     st.rerun()
 
-    with col_D:
-        with st.expander("🔍 DOC-06: Due Diligence RGP e Fornecedores", expanded=False):
-            st.markdown("**Foco:** Tripé de segurança (RGP, Lista de Embargos e CTF).")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Procedimento_Due_Diligence_RGP.pdf"), "DOC_06_RGP.pdf", key="dl_card_doc6", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc6", use_container_width=True): 
+        with col_jur2:
+            with st.expander("🔍 DOC-06: Due Diligence RGP", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Triagem rigorosa de fornecedores e armadores embargados.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc6", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-06: Due Diligence RGP"
                     st.rerun()
-
-        with st.expander("🚢 DOC-08: Checklist Aduaneiro Sinal Verde", expanded=False):
-            st.markdown("**Foco:** Pre-clearance portuário, mitigação de Demurrage e LPCO.")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Checklist_Sinal_Verde_Exportacao.pdf"), "DOC_08_Exportacao.pdf", key="dl_card_doc8", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc8", use_container_width=True): 
+                    
+            with st.expander("🚢 DOC-08: Checklist Aduaneiro", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Liberação aduaneira (Sinal Verde) e controle de NCMs/LPCO.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc8", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-08: Checklist Exportação"
                     st.rerun()
-
-        with st.expander("📘 DOC-10: E-book Institucional 'Do Mar ao Prato'", expanded=False):
-            st.markdown("**Foco:** Demonstração visual da excelência ESG da marca.")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("DOC_10_Ebook_Institucional.pdf"), "DOC_10_Ebook.pdf", key="dl_card_doc10", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc10", use_container_width=True): 
+                    
+            with st.expander("📘 DOC-10: E-book Institucional", expanded=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Apresentação da cultura ESG e Compliance da Prime Seafood.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc10", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-10: E-book Institucional"
                     st.rerun()
