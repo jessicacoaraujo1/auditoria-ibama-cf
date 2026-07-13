@@ -520,6 +520,71 @@ tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 
 # =====================================================================
+# MOTOR DE INFOGRÁFICO VIVO (3D GLASSMORPHISM)
+# =====================================================================
+# Este motor controla a transição entre o Menu e o Infográfico 3D
+if 'leitor_ativo' not in st.session_state: st.session_state['leitor_ativo'] = None
+
+def renderizar_hub_3d(lista_documentos, chave_origem):
+    """
+    Motor que renderiza o Infográfico Vivo (Second Brain) e a lista de documentos.
+    'lista_documentos' é uma lista de dicionários com os detalhes de cada guia.
+    """
+    
+    # CSS de design imersivo
+    st.markdown("""
+    <style>
+        .hud-container { background: #0b1121; padding: 40px; border-radius: 24px; border: 1px solid #1e293b; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .node-3d { 
+            background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 20px;
+        }
+        .node-3d:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.7); border-color: #c09f52; }
+        .text-neon { color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .btn-interativo { border: 1px solid #c09f52 !important; color: #c09f52 !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Se um guia estiver aberto, mostramos a interface imersiva
+    if st.session_state['leitor_ativo']:
+        st.markdown("<div class='hud-container'>", unsafe_allow_html=True)
+        
+        c_nav1, c_nav2 = st.columns([1, 4])
+        with c_nav1:
+            if st.button("⬅️ VOLTAR AO MENU", use_container_width=True, type="primary"):
+                st.session_state['leitor_ativo'] = None
+                st.rerun()
+        with c_nav2:
+            st.markdown(f"<h2 style='color: #c09f52; margin:0;'>{st.session_state['leitor_ativo']}</h2>", unsafe_allow_html=True)
+        
+        st.markdown("<hr style='border-color: #1e293b;'>", unsafe_allow_html=True)
+
+        # AQUI VOCÊ PODE CUSTOMIZAR O INFOGRÁFICO DE CADA DOC
+        if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
+            st.markdown("<h1 class='text-neon'>GUIA TÁTICO: MOTORISTA</h1>", unsafe_allow_html=True)
+            col1, col2 = st.columns(2)
+            col1.markdown("<div class='node-3d'><h3>✅ Checklist Sinal Verde</h3><p>NF-e, GTP, RGP e Lacres.</p></div>", unsafe_allow_html=True)
+            col2.markdown("<div class='node-3d'><h3>🚨 Protocolo de Crise</h3><p>SLA 48h, ressalvas e fotos.</p></div>", unsafe_allow_html=True)
+        
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.download_button("📥 BAIXAR PDF ORIGINAL", carregar_pdf_seguro(lista_documentos[0]['arquivo']), "documento.pdf", use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+    else:
+        # Se nada estiver aberto, mostramos os cartões de acesso
+        st.markdown(f"<h3>Biblioteca de Compliance</h3>", unsafe_allow_html=True)
+        for doc in lista_documentos:
+            with st.expander(f"📖 {doc['titulo']}"):
+                col_a, col_b = st.columns([3, 1])
+                with col_a: st.write(doc['descricao'])
+                with col_b:
+                    if st.button(f"👁️ Abrir Interativo", key=f"open_{doc['id']}"):
+                        st.session_state['leitor_ativo'] = doc['titulo']
+                        st.rerun()
+
+# =====================================================================
 # CSS AVANÇADO (EFEITOS 3D E CARTÕES FLUTUANTES)
 # =====================================================================
 st.markdown(f"""
