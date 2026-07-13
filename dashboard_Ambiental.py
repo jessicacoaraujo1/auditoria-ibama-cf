@@ -662,11 +662,12 @@ def renderizar_leitor_nativo(chave_aba):
                     <h1 class="hud-title">Guia de Bolso Executivo</h1>
                     <div class="hud-subtitle">Abordagem Fiscal & Transporte Normativo | Carvalho & Fadul</div>
                 </div>
+                
                 <div class="grid-3d">
-                    <div class="card-glass glow-green">
+                    <div class="card-glass b-verde">
                         <div class="card-icon">🚦</div>
-                        <h3 class="card-title" style="color: #22c55e;">1. SINAL VERDE (PRÉ-EMBARQUE)</h3>
-                        <p style="color: #94a3b8; font-size: 12.5px; margin-top: -5px;">Antes de dar a partida, audite a pasta da cabine. A ausência de qualquer item veta a saída:</p>
+                        <h3 class="card-title" style="color: #166534;">1. SINAL VERDE (PRÉ-EMBARQUE)</h3>
+                        <p class="card-desc">Antes de dar a partida, audite a pasta da cabine. A ausência de qualquer item veta a saída:</p>
                         <ul class="card-list">
                             <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
                             <li><b>GTP (Guia de Transporte):</b> Dentro da validade e assinada. (Em defeso, inclua a Declaração de Estoque).</li>
@@ -674,32 +675,35 @@ def renderizar_leitor_nativo(chave_aba):
                             <li><b>Lacres e Termógrafo:</b> Verifique se a numeração física bate com a Nota Fiscal.</li>
                         </ul>
                     </div>
-                    <div class="card-glass glow-blue">
+                    
+                    <div class="card-glass b-chumbo">
                         <div class="card-icon">👮</div>
-                        <h3 class="card-title" style="color: #3b82f6;">2. CONDUTA NA ABORDAGEM</h3>
-                        <p style="color: #94a3b8; font-size: 12.5px; margin-top: -5px;">O motorista representa legalmente a empresa perante as autoridades:</p>
+                        <h3 class="card-title">2. CONDUTA NA ABORDAGEM</h3>
+                        <p class="card-desc">O motorista representa legalmente a empresa perante as autoridades fiscais:</p>
                         <ul class="card-list">
                             <li><b>Cordialidade Técnica:</b> Responda estritamente ao que for perguntado de forma respeitosa. Não discuta biologia ou regras industriais.</li>
                             <li><b>Preservação:</b> Nunca rompa o lacre sozinho. A abertura só ocorre por ordem e presença física do fiscal.</li>
-                            <li><b>Exigência:</b> Se alegarem excesso de peso, exija a pesagem em balança certificada e calibrada pelo INMETRO.</li>
+                            <li><b>Exigência Técnica:</b> Se alegarem excesso de peso, exija a pesagem em balança certificada e calibrada pelo INMETRO.</li>
                         </ul>
                     </div>
-                    <div class="card-glass glow-gold">
+                    
+                    <div class="card-glass b-dourado">
                         <div class="card-icon">🦞</div>
-                        <h3 class="card-title" style="color: #c09f52;">3. RIGOR DAS ESPÉCIES</h3>
-                        <p style="color: #94a3b8; font-size: 12.5px; margin-top: -5px;">Argumentos rápidos contra autuações arbitrárias por falta de perícia fiscal:</p>
+                        <h3 class="card-title" style="color: #92400e;">3. RIGOR DAS ESPÉCIES</h3>
+                        <p class="card-desc">Argumentos rápidos contra autuações arbitrárias por falta de perícia fiscal:</p>
                         <ul class="card-list">
-                            <li><b>Lagosta Viva:</b> Alerte sobre o risco de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse natural do transporte, não por descaudamento ilegal.</li>
+                            <li><b>Lagosta Viva:</b> Alerte sobre o risco de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse natural do transporte.</li>
                             <li><b>Tamanhos Mínimos:</b> Vermelha (22 cm total/13 cm cauda) | Verde (19 cm total/11 cm cauda) - Tolerância Zero.</li>
                             <li><b>Pargo:</b> Todas as caixas devem estar etiquetadas (Nome científico, lote e RGP). É proibido o transporte a granel.</li>
                         </ul>
                     </div>
-                    <div class="card-glass glow-red">
+                    
+                    <div class="card-glass b-vermelho">
                         <div class="card-icon">🚨</div>
-                        <h3 class="card-title" style="color: #ef4444;">4. PROTOCOLO DE CRISE (SLA 48H)</h3>
-                        <p style="color: #94a3b8; font-size: 12.5px; margin-top: -5px;">Se a autoridade lavrar o Auto de Infração, o tempo é o fator mais crítico:</p>
+                        <h3 class="card-title" style="color: #7c1617;">4. PROTOCOLO DE CRISE (SLA 48H)</h3>
+                        <p class="card-desc">Se a autoridade lavrar o Auto de Infração, o tempo é o fator mais crítico:</p>
                         <ul class="card-list">
-                            <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave. Assine e escreva a ressalva técnica (ex: "pesagem sem balança do INMETRO" ou "mortalidade por estresse térmico") no campo de observações.</li>
+                            <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave. Assine e escreva a ressalva técnica (ex: "pesagem sem balança") no campo de observações.</li>
                             <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto, Termo de Apreensão, os lacres e o painel do termógrafo.</li>
                             <li><b>Plantão Jurídico:</b> Envie todo o material imediatamente para o corpo jurídico da empresa.</li>
                         </ul>
@@ -709,11 +713,10 @@ def renderizar_leitor_nativo(chave_aba):
             """, unsafe_allow_html=True)
             
         else:
-            # Placeholder para os outros documentos enquanto não fazemos o layout deles
             st.markdown(f"""
             <div class='hud-wrapper'>
-                <h2 style='color: white; text-align: center;'>🚧 Módulo {st.session_state['leitor_ativo']}</h2>
-                <p style='color: #94a3b8; text-align: center;'>O infográfico vivo deste documento está na fila de desenvolvimento. Utilize o botão <b>BAIXAR PDF ORIGINAL</b> acima para acessar o arquivo oficial na íntegra.</p>
+                <h2 style='color: {COR_PRIMARIA}; text-align: center;'>🚧 Módulo {st.session_state['leitor_ativo']}</h2>
+                <p style='color: #64748b; text-align: center;'>O infográfico vivo deste documento está na fila de desenvolvimento. Utilize o botão <b>BAIXAR PDF ORIGINAL</b> acima para acessar o arquivo oficial na íntegra.</p>
             </div>
             """, unsafe_allow_html=True)
         
