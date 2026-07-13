@@ -505,7 +505,7 @@ st.markdown("<p style='font-size: 14px; color: #64748b; margin-bottom: 5px;'>Fer
 
 renderizar_kpis(df)
 
-tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+tab_mapa, tab1, tab2, tab3, tab4, tab5, , tab7 = st.tabs([
     "🗺️ Mapa Operacional", 
     "📊 Auditoria de Objetos", 
     "📍 Análise Regional", 
@@ -1084,69 +1084,90 @@ with tab5:
     st.download_button(label="📥 Exportar Matriz Analítica (CSV)", data=csv, file_name='Auditoria_IBAMA.csv', mime='text/csv')
 
 
-# ==========================================
-# ABA 6: MITIGAÇÃO OPERACIONAL E CAMPO
-# ==========================================
+# =====================================================================
+# ABA 6: MITIGAÇÃO OPERACIONAL E CAMPO (VERSIONAMENTO 3D)
+# =====================================================================
 with tab6:
-    st.markdown(f"""
-    <div class='painel-3d'>
-        <p style="margin: 0 0 5px 0; color: {COR_DOURADO}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Linha de Frente • Portos e Rodovias</p>
-        <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.6rem; font-weight: 800; text-transform: uppercase;">
-            Plano de Mitigação: Operacional & Campo
-        </h2>
-        <p style="margin: 0; color: #475569; font-size: 11pt; text-align: justify; line-height: 1.6;">
-            Esta aba consolida as <b>Barreiras Físicas de Compliance</b>. Protocolos interativos para as docas, balanças e frotas de captura, com o objetivo de anular autuações por petrechos proibidos e tamanhos ilícitos.
-        </p>
-    </div>
+    # --- CSS DE ESTILO 3D & GLASSMORPHISM ---
+    st.markdown("""
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+            margin-bottom: 20px;
+        }
+        .hud-title {
+            color: #c09f52; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+        }
+    </style>
     """, unsafe_allow_html=True)
 
-    # Renderiza a Wiki Nativa (Passando a chave 'aba6')
-    renderizar_leitor_nativo("aba6")
+    st.markdown("## ⚙️ Plano de Mitigação: Operacional & Campo")
+    
+    # MOTOR DE ESTADO DA ABA 6
+    if 'leitor_aba6' not in st.session_state: st.session_state['leitor_aba6'] = None
 
-    col_A, col_B = st.columns(2, gap="large")
+    # Lógica do "Segundo Cérebro" (Renderizador de Conteúdo Vivo)
+    if st.session_state['leitor_aba6']:
+        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+        col_f, col_t = st.columns([1, 5])
+        with col_f:
+            if st.button("⬅️ VOLTAR AO MENU", use_container_width=True):
+                st.session_state['leitor_aba6'] = None
+                st.rerun()
+        
+        # RENDENRIZAÇÃO DO INFOGRÁFICO VIVO (O "MAPA MENTAL")
+        if st.session_state['leitor_aba6'] == "DOC-01":
+            st.markdown("""
+            # 🚛 GUIA DE BOLSO: MOTORISTA
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="border-left: 4px solid #166534; padding-left: 15px;">
+                    <h3 style="color:#166534">✅ SINAL VERDE (PRÉ-EMBARQUE)</h3>
+                    <ul>
+                        <li><b>NF-e/DANFE:</b> Separar bruto/líquido.</li>
+                        <li><b>GTP:</b> Assinada e válida.</li>
+                        <li><b>RGP:</b> Cópia da indústria e embarcação.</li>
+                    </ul>
+                </div>
+                <div style="border-left: 4px solid #dc2626; padding-left: 15px;">
+                    <h3 style="color:#dc2626">👮 CONDUTA NA ABORDAGEM</h3>
+                    <ul>
+                        <li>Não romper lacre sozinho.</li>
+                        <li>Exigir balança INMETRO.</li>
+                        <li>Fotografar tudo (Roteiro 30min).</li>
+                    </ul>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Guia_Bolso_Motorista_Prime_Seafood.pdf"), "DOC_01.pdf", use_container_width=True)
+        
+        # ... Você pode replicar esse bloco 'if' para outros documentos ...
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    with col_A:
-        with st.expander("🦞 DOC-02: POP Triagem e Biometria de Lagosta", expanded=False):
-            st.markdown("**Foco:** Impedir a internalização de lagostas juvenis e fêmeas ovadas na balança.")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("POP_001_Triagem_Lagosta_Prime.pdf"), "DOC_02_Lagosta.pdf", key="dl_card_doc2", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc2", use_container_width=True): 
-                    st.session_state['leitor_ativo'] = "DOC-02: Triagem de Lagosta"
+    else:
+        # MENU INTERATIVO DE ACESSO
+        cols = st.columns(4)
+        guias = [
+            ("🦞 Triagem Lagosta", "DOC-02", "POP_001_Triagem_Lagosta_Prime.pdf"),
+            ("🐟 Guia VMS (Pargo)", "DOC-04", "Guia_VMS_Controle_Frota_Pargo.pdf"),
+            ("🚚 Guia Motorista", "DOC-01", "Guia_Bolso_Motorista_Prime_Seafood.pdf"),
+            ("🛑 Cartilha Petrechos", "DOC-07", "Cartilha_Petrechos_Certo_Errado.pdf")
+        ]
+        
+        for i, (titulo, id_doc, arquivo) in enumerate(guias):
+            with cols[i]:
+                if st.button(f"✨ Abrir {titulo}", key=f"btn_{id_doc}", use_container_width=True):
+                    st.session_state['leitor_aba6'] = id_doc
                     st.rerun()
+                # Botão secundário de download fixo
+                st.download_button(f"📥 Baixar {id_doc}", carregar_pdf_seguro(arquivo), f"{id_doc}.pdf", use_container_width=True)
 
-        with st.expander("🐟 DOC-04: Guia VMS e Navegação (Pargo)", expanded=False):
-            st.markdown("**Foco:** Regras de telemetria PREPS e zonas proibidas de captura.")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Guia_VMS_Controle_Frota_Pargo.pdf"), "DOC_04_VMS.pdf", key="dl_card_doc4", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc4", use_container_width=True): 
-                    st.session_state['leitor_ativo'] = "DOC-04: Guia VMS Pargo"
-                    st.rerun()
-
-    with col_B:
-        with st.expander("🚚 DOC-01: Guia de Bolso do Motorista", expanded=False):
-            st.markdown("**Foco:** Conduta em barreiras fiscais, exigência de balança INMETRO e ressalvas no trânsito.")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Guia_Bolso_Motorista_Prime_Seafood.pdf"), "DOC_01_Motorista.pdf", key="dl_card_doc1", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc1", use_container_width=True): 
-                    st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
-                    st.rerun()
-
-        with st.expander("🛑 DOC-07: Cartilha de Petrechos", expanded=False):
-            st.markdown("**Foco:** Treinamento visual (Certo vs Errado) para identificar uso de redes predatórias.")
-            st.markdown("---")
-            c1, c2 = st.columns(2)
-            with c1: st.download_button("📥 Baixar PDF Original", carregar_pdf_seguro("Cartilha_Petrechos_Certo_Errado.pdf"), "DOC_07_Petrechos.pdf", key="dl_card_doc7", use_container_width=True)
-            with c2: 
-                if st.button("👁️ Abrir Guia Interativo", key="ler_card_doc7", use_container_width=True): 
-                    st.session_state['leitor_ativo'] = "DOC-07: Cartilha de Petrechos"
-                    st.rerun()
-
+    st.markdown("---")
+    st.info("💡 **Dica:** Clique em 'Abrir' para acessar o infográfico interativo ou 'Baixar' para o arquivo original.")
 
 # ==========================================
 # ABA 7: GOVERNANÇA, ADMINISTRATIVO & JURÍDICO
