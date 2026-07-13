@@ -652,84 +652,165 @@ def renderizar_leitor_nativo(chave_aba):
         </style>
         """, unsafe_allow_html=True)
 
-        # =================================================================
+       # =================================================================
         # 4. CONTEÚDO NATIVO EXATO DO PDF "GUIA DO MOTORISTA"
         # =================================================================
         if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
             st.markdown("""
             <style>
-                .hud-wrapper { background-color: #fcfaf9; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 30px; }
-                .hud-header { text-align: center; margin-bottom: 35px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; }
-                .hud-title { color: #7c1617; font-size: 28px; font-weight: 800; text-transform: uppercase; margin: 0; }
-                .hud-subtitle { color: #c09f52; font-size: 14px; font-weight: 600; text-transform: uppercase; margin-top: 5px; }
-                .grid-3d { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-                .card-glass { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.03); transition: all 0.3s ease; display: flex; flex-direction: column;}
-                .card-glass:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(124, 22, 23, 0.08); border-color: #c09f52; }
-                .b-verde { border-top: 4px solid #166534; }
-                .b-chumbo { border-top: 4px solid #1a1a1a; }
-                .b-dourado { border-top: 4px solid #c09f52; }
-                .b-vermelho { border-top: 4px solid #7c1617; }
-                .card-icon { font-size: 26px; margin-bottom: 10px; }
-                .card-title { color: #1a1a1a; font-size: 15px; font-weight: 800; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; }
-                .card-desc { color: #64748b; font-size: 12.5px; margin-top: -5px; margin-bottom: 15px; font-weight: 500; }
-                .card-list { list-style: none; padding: 0; margin: 0; }
-                .card-list li { color: #334155; font-size: 13.5px; margin-bottom: 12px; line-height: 1.6; padding-left: 20px; position: relative; }
-                .card-list li::before { content: '■'; position: absolute; left: 0; top: 3px; color: #c09f52; font-size: 10px; transition: color 0.3s; }
-                .card-glass:hover .card-list li::before { color: #7c1617; }
+                /* Blindagem CSS para garantir que o Streamlit renderize como UI Avançada */
+                .cf-hud-wrapper {
+                    background-color: #fcfaf9;
+                    padding: 45px;
+                    border-radius: 16px;
+                    box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+                    border: 1px solid #e2e8f0;
+                    margin-bottom: 30px;
+                    font-family: 'Inter', sans-serif;
+                }
+                .cf-header {
+                    text-align: center;
+                    margin-bottom: 45px;
+                    border-bottom: 2px solid #e2e8f0;
+                    padding-bottom: 25px;
+                }
+                .cf-title {
+                    color: #7c1617;
+                    font-size: 34px;
+                    font-weight: 900;
+                    text-transform: uppercase;
+                    margin: 0 0 10px 0;
+                    letter-spacing: 1px;
+                }
+                .cf-subtitle {
+                    color: #c09f52;
+                    font-size: 15px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    margin: 0;
+                }
+                .cf-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                    gap: 30px;
+                }
+                .cf-card {
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    padding: 30px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    position: relative;
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .cf-card:hover {
+                    transform: translateY(-10px);
+                    box-shadow: 0 20px 40px rgba(124, 22, 23, 0.1);
+                    border-color: #c09f52;
+                }
+                .cf-card-top-line {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 5px;
+                }
+                /* Cores de Identificação 3D no topo de cada cartão */
+                .cf-line-green { background: linear-gradient(90deg, #166534, #22c55e); }
+                .cf-line-gray { background: linear-gradient(90deg, #1a1a1a, #475569); }
+                .cf-line-gold { background: linear-gradient(90deg, #92400e, #c09f52); }
+                .cf-line-red { background: linear-gradient(90deg, #7c1617, #dc2626); }
+                
+                .cf-icon-wrapper {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    margin-bottom: 20px;
+                    border-bottom: 1px solid #f1f5f9;
+                    padding-bottom: 15px;
+                }
+                .cf-icon { font-size: 32px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+                .cf-card-title { color: #1a1a1a; font-size: 16px; font-weight: 800; margin: 0; text-transform: uppercase; line-height: 1.3; }
+                .cf-card-desc { color: #64748b; font-size: 13px; margin: 0 0 20px 0; font-weight: 500; line-height: 1.5; }
+                .cf-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+                .cf-list li { color: #334155; font-size: 13.5px; margin-bottom: 15px; line-height: 1.6; padding-left: 24px; position: relative; }
+                .cf-list li::before { content: '❖'; position: absolute; left: 0; top: 2px; color: #c09f52; font-size: 12px; transition: color 0.3s ease; }
+                .cf-card:hover .cf-list li::before { color: #7c1617; }
+                .cf-list b { color: #1a1a1a; font-weight: 700; }
+                .cf-alert-box { background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid #e11d48; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 12px; color: #9f1239; font-weight: 600; line-height: 1.5; }
             </style>
 
-            <div class="hud-wrapper">
-                <div class="hud-header">
-                    <h1 class="hud-title">Guia de Bolso Executivo</h1>
-                    <div class="hud-subtitle">Abordagem Fiscal & Transporte Normativo | Carvalho & Fadul</div>
+            <div class="cf-hud-wrapper">
+                <div class="cf-header">
+                    <h1 class="cf-title">Guia de Bolso Executivo</h1>
+                    <p class="cf-subtitle">Abordagem Fiscal & Transporte Normativo | Prime Seafood</p>
                 </div>
-                <div class="grid-3d">
+                
+                <div class="cf-grid">
                     
-                    <div class="card-glass b-verde">
-                        <div class="card-icon">🚦</div>
-                        <h3 class="card-title" style="color: #166534;">1. SINAL VERDE (PRÉ-EMBARQUE)</h3>
-                        <p class="card-desc">Antes de dar a partida, audite a pasta da cabine. A ausência de qualquer item veta a saída:</p>
-                        <ul class="card-list">
-                            <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
-                            <li><b>GTP:</b> Dentro da validade e assinada. (Em defeso, inclua a Declaração de Estoque).</li>
-                            <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, embarcação e transportadora.</li>
-                            <li><b>Lacres e Termógrafo:</b> Verifique se a numeração física bate com a Nota Fiscal.</li>
+                    <div class="cf-card">
+                        <div class="cf-card-top-line cf-line-green"></div>
+                        <div class="cf-icon-wrapper">
+                            <div class="cf-icon">🚦</div>
+                            <h3 class="cf-card-title" style="color: #166534;">1. Checklist Operacional<br>"Sinal Verde"</h3>
+                        </div>
+                        <p class="cf-card-desc">Antes de dar a partida, audite a pasta da cabine. A ausência de qualquer item abaixo veta a saída da doca:</p>
+                        <ul class="cf-list">
+                            <li><b>NF-e e DANFE:</b> Confirme a separação exata e clara entre Peso Bruto e Peso Líquido.</li>
+                            <li><b>GTP (Guia de Trânsito):</b> Dentro da validade e assinada. (Em período de defeso, inclua obrigatoriamente a Declaração de Estoque).</li>
+                            <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, da embarcação fornecedora e da transportadora.</li>
+                            <li><b>Lacres e Termógrafo:</b> Verifique fisicamente se a numeração bate perfeitamente com o descrito na Nota Fiscal.</li>
                         </ul>
                     </div>
-                    
-                    <div class="card-glass b-chumbo">
-                        <div class="card-icon">👮</div>
-                        <h3 class="card-title">2. CONDUTA NA ABORDAGEM</h3>
-                        <p class="card-desc">O motorista representa legalmente a empresa perante as autoridades fiscais:</p>
-                        <ul class="card-list">
-                            <li><b>Cordialidade Técnica:</b> Responda estritamente ao que for perguntado de forma respeitosa. Não discuta biologia.</li>
-                            <li><b>Preservação:</b> Nunca rompa o lacre sozinho. A abertura só ocorre com a presença do fiscal.</li>
-                            <li><b>Exigência Técnica:</b> Se alegarem excesso de peso, exija a pesagem em balança certificada pelo INMETRO.</li>
+
+                    <div class="cf-card">
+                        <div class="cf-card-top-line cf-line-gray"></div>
+                        <div class="cf-icon-wrapper">
+                            <div class="cf-icon">👮</div>
+                            <h3 class="cf-card-title" style="color: #1a1a1a;">2. Conduta na Abordagem<br>(Cordialidade Técnica)</h3>
+                        </div>
+                        <p class="cf-card-desc">O motorista representa legalmente a empresa perante as autoridades (IBAMA, PRF, MAPA):</p>
+                        <ul class="cf-list">
+                            <li><b>Comunicação:</b> Responda estritamente ao que for perguntado de forma respeitosa. Não discuta biologia, legislação ou regras industriais.</li>
+                            <li><b>Preservação da Carga:</b> Nunca rompa o lacre do baú sozinho. A abertura só pode ocorrer por ordem explícita e com a presença física do fiscal.</li>
+                            <li><b>Aferição de Peso:</b> Se o fiscal alegar excesso de peso "visual", exija formalmente a pesagem em balança certificada e calibrada pelo INMETRO.</li>
                         </ul>
                     </div>
-                    
-                    <div class="card-glass b-dourado">
-                        <div class="card-icon">🦞</div>
-                        <h3 class="card-title" style="color: #92400e;">3. RIGOR DAS ESPÉCIES</h3>
-                        <p class="card-desc">Argumentos rápidos contra autuações arbitrárias por falta de perícia fiscal:</p>
-                        <ul class="card-list">
-                            <li><b>Lagosta Viva:</b> Alerte sobre o risco de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse de transporte.</li>
-                            <li><b>Tamanhos Mínimos:</b> Vermelha (22cm total/13cm cauda) | Verde (19cm total/11cm cauda) - Tolerância Zero.</li>
-                            <li><b>Pargo:</b> Todas as caixas etiquetadas. Proibido o transporte a granel.</li>
+
+                    <div class="cf-card">
+                        <div class="cf-card-top-line cf-line-gold"></div>
+                        <div class="cf-icon-wrapper">
+                            <div class="cf-icon">🦞</div>
+                            <h3 class="cf-card-title" style="color: #92400e;">3. Rigor das Espécies<br>(Defesa Técnica no Trânsito)</h3>
+                        </div>
+                        <p class="cf-card-desc">Argumentos rápidos de linha de frente contra autuações arbitrárias por falta de perícia fiscal:</p>
+                        <ul class="cf-list">
+                            <li><b>Lagosta Viva:</b> Alerte os fiscais sobre o risco iminente de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse natural do transporte, não por descaudamento ilegal.</li>
+                            <li><b>Tamanhos Mínimos (Tolerância Zero):</b> Lagosta Vermelha (22cm total / 13cm cauda). Lagosta Verde (19cm total / 11cm cauda).</li>
+                            <li><b>Pargo:</b> Absolutamente todas as caixas devem estar etiquetadas (Nome científico, lote e RGP). É expressamente proibido o transporte a granel.</li>
                         </ul>
                     </div>
-                    
-                    <div class="card-glass b-vermelho">
-                        <div class="card-icon">🚨</div>
-                        <h3 class="card-title" style="color: #7c1617;">4. PROTOCOLO DE CRISE (SLA 48H)</h3>
-                        <p class="card-desc">Se a autoridade lavrar o Auto de Infração, o tempo é o fator mais crítico:</p>
-                        <ul class="card-list">
-                            <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave. Assine e escreva a ressalva técnica no campo de observações.</li>
-                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto, Termo de Apreensão, lacres e painel do termógrafo.</li>
-                            <li><b>Plantão Jurídico:</b> Envie todo o material imediatamente para o corpo jurídico da empresa.</li>
+
+                    <div class="cf-card">
+                        <div class="cf-card-top-line cf-line-red"></div>
+                        <div class="cf-icon-wrapper">
+                            <div class="cf-icon">🚨</div>
+                            <h3 class="cf-card-title" style="color: #7c1617;">4. Protocolo de Crise<br>(SLA Jurídico de 48H)</h3>
+                        </div>
+                        <p class="cf-card-desc">Se a autoridade lavrar o Auto de Infração ou Termo de Apreensão, o tempo é o fator mais crítico:</p>
+                        <ul class="cf-list">
+                            <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave que anula a boa-fé. Assine e escreva a <b>ressalva técnica</b> no campo de observações (ex: "pesagem sem balança do INMETRO" ou "mortalidade por estresse térmico").</li>
+                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto de Infração, Termo de Apreensão, todos os lacres e o painel de temperatura do termógrafo.</li>
                         </ul>
+                        <div class="cf-alert-box">
+                            ⚠️ PLANTÃO JURÍDICO: Envie todo o material fotográfico imediatamente para a base antes mesmo de deixar o posto fiscal.
+                        </div>
                     </div>
-                    
+
                 </div>
             </div>
             """, unsafe_allow_html=True)
