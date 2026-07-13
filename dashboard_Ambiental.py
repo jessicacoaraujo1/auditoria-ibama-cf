@@ -506,107 +506,21 @@ st.markdown("<p style='font-size: 14px; color: #64748b; margin-bottom: 5px;'>Fer
 renderizar_kpis(df)
 
 tab_mapa, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-    "🗺️ Mapa Operacional", 
-    "📊 Auditoria de Objetos", 
-    "📍 Análise Regional", 
-    "🔍 Tipologia e Sanções", 
-    "🔎 Pesquisa Profunda", 
-    "📁 Base Consolidada",
-    "⚙️ Mitigação Operacional", 
-    "🏢 Governança & Jurídico"
+    "Mapa Operacional", 
+    "Auditoria de Objetos", 
+    "Análise Regional", 
+    "Tipologia e Sanções", 
+    "Pesquisa Profunda", 
+    "Base Consolidada",
+    "Mitigação Operacional", 
+    "Governança & Jurídico"
 ])
 
 # Deduplicar exclusivamente pela chave única do Auto de Infração
 df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 
 # =====================================================================
-# MOTOR DE INFOGRÁFICO VIVO (3D GLASSMORPHISM)
-# =====================================================================
-# Este motor controla a transição entre o Menu e o Infográfico 3D
-if 'leitor_ativo' not in st.session_state: st.session_state['leitor_ativo'] = None
-
-def renderizar_hub_3d(lista_documentos, chave_origem):
-    """
-    Motor que renderiza o Infográfico Vivo (Second Brain) e a lista de documentos.
-    'lista_documentos' é uma lista de dicionários com os detalhes de cada guia.
-    """
-    
-    # CSS de design imersivo
-    st.markdown("""
-    <style>
-        .hud-container { background: #0b1121; padding: 40px; border-radius: 24px; border: 1px solid #1e293b; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .node-3d { 
-            background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-bottom: 20px;
-        }
-        .node-3d:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.7); border-color: #c09f52; }
-        .text-neon { color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
-        .btn-interativo { border: 1px solid #c09f52 !important; color: #c09f52 !important; }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # Se um guia estiver aberto, mostramos a interface imersiva
-    if st.session_state['leitor_ativo']:
-        st.markdown("<div class='hud-container'>", unsafe_allow_html=True)
-        
-        c_nav1, c_nav2 = st.columns([1, 4])
-        with c_nav1:
-            if st.button("⬅️ VOLTAR AO MENU", use_container_width=True, type="primary"):
-                st.session_state['leitor_ativo'] = None
-                st.rerun()
-        with c_nav2:
-            st.markdown(f"<h2 style='color: #c09f52; margin:0;'>{st.session_state['leitor_ativo']}</h2>", unsafe_allow_html=True)
-        
-        st.markdown("<hr style='border-color: #1e293b;'>", unsafe_allow_html=True)
-
-        # AQUI VOCÊ PODE CUSTOMIZAR O INFOGRÁFICO DE CADA DOC
-        if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
-            st.markdown("<h1 class='text-neon'>GUIA TÁTICO: MOTORISTA</h1>", unsafe_allow_html=True)
-            col1, col2 = st.columns(2)
-            col1.markdown("<div class='node-3d'><h3>✅ Checklist Sinal Verde</h3><p>NF-e, GTP, RGP e Lacres.</p></div>", unsafe_allow_html=True)
-            col2.markdown("<div class='node-3d'><h3>🚨 Protocolo de Crise</h3><p>SLA 48h, ressalvas e fotos.</p></div>", unsafe_allow_html=True)
-        
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.download_button("📥 BAIXAR PDF ORIGINAL", carregar_pdf_seguro(lista_documentos[0]['arquivo']), "documento.pdf", use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-    else:
-        # Se nada estiver aberto, mostramos os cartões de acesso
-        st.markdown(f"<h3>Biblioteca de Compliance</h3>", unsafe_allow_html=True)
-        for doc in lista_documentos:
-            with st.expander(f"📖 {doc['titulo']}"):
-                col_a, col_b = st.columns([3, 1])
-                with col_a: st.write(doc['descricao'])
-                with col_b:
-                    if st.button(f"👁️ Abrir Interativo", key=f"open_{doc['id']}"):
-                        st.session_state['leitor_ativo'] = doc['titulo']
-                        st.rerun()
-
-# =====================================================================
-# CSS AVANÇADO (EFEITOS 3D E CARTÕES FLUTUANTES)
-# =====================================================================
-st.markdown(f"""
-<style>
-    .painel-3d {{
-        background: linear-gradient(145deg, #ffffff, #f8fafc);
-        border: 1px solid #cbd5e1;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05), 0 6px 6px rgba(0,0,0,0.05), inset 0 -3px 0 0 {COR_PRIMARIA};
-        margin-bottom: 25px;
-        transition: all 0.3s ease;
-    }}
-    .painel-3d:hover {{
-        transform: translateY(-2px);
-        box-shadow: 0 15px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.05), inset 0 -3px 0 0 {COR_DOURADO};
-    }}
-</style>
-""", unsafe_allow_html=True)
-
-# =====================================================================
-# MOTOR GLOBAL DE LEITURA NATIVA COM DOWNLOAD DE PDF
+# MOTOR GLOBAL DE LEITURA NATIVA (INFOGRÁFICO 3D - SEGUNDO CÉREBRO)
 # =====================================================================
 if 'leitor_ativo' not in st.session_state:
     st.session_state['leitor_ativo'] = None
@@ -620,9 +534,13 @@ def carregar_pdf_seguro(caminho_arquivo):
         return b"Arquivo Pendente"
 
 def renderizar_leitor_nativo(chave_aba):
-    """Renderiza a Wiki Nativa interativa E oferece o botão para baixar o PDF original"""
+    """
+    Renderiza o Infográfico Vivo (Second Brain) com Glassmorphism 3D.
+    Contém a transcrição exata e interativa dos guias em PDF.
+    """
     if st.session_state['leitor_ativo']:
-        # Dicionário com os nomes exatos dos PDFs salvos na sua pasta
+        
+        # 1. MAPEAMENTO OFICIAL DOS ARQUIVOS PDF (Para o botão de download)
         mapa_arquivos = {
             "DOC-01: Guia do Motorista": "Guia_Bolso_Motorista_Prime_Seafood.pdf",
             "DOC-02: Triagem de Lagosta": "POP_001_Triagem_Lagosta_Prime.pdf",
@@ -635,141 +553,183 @@ def renderizar_leitor_nativo(chave_aba):
             "DOC-09: Resumo Executivo": "DOC_09_Resumo_Executivo.pdf",
             "DOC-10: E-book Institucional": "DOC_10_Ebook_Institucional.pdf"
         }
-        
         arquivo_pdf_atual = mapa_arquivos.get(st.session_state['leitor_ativo'])
+
+        # 2. INJEÇÃO DE CSS DE ALTA PERFORMANCE (O DESIGN 3D)
+        st.markdown("""
+        <style>
+            /* Container principal escuro e imersivo */
+            .hud-interface { 
+                background: #0b1120; 
+                padding: 35px; 
+                border-radius: 20px; 
+                border: 1px solid #1e293b; 
+                box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); 
+                margin-top: 15px; 
+                margin-bottom: 30px;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            /* Brilho de fundo (Aura de luz central) */
+            .hud-interface::before {
+                content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+                background: radial-gradient(circle, rgba(192,159,82,0.05) 0%, rgba(11,17,32,0) 60%);
+                z-index: 0; pointer-events: none;
+            }
+
+            /* Efeito Vidro (Glassmorphism) para os cartões */
+            .brain-node { 
+                background: rgba(30, 41, 59, 0.4); 
+                backdrop-filter: blur(12px); 
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255,255,255,0.05); 
+                border-radius: 16px; 
+                padding: 25px; 
+                position: relative;
+                z-index: 1;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                height: 100%;
+            }
+            
+            /* Efeito Hover 3D (O cartão salta e acende a luz neon) */
+            .brain-node:hover { 
+                transform: translateY(-8px) scale(1.02); 
+            }
+            
+            /* Cores de Aura Específicas por Cartão */
+            .node-green:hover { border-color: #22c55e; box-shadow: 0 15px 35px rgba(34, 197, 94, 0.2); }
+            .node-blue:hover { border-color: #3b82f6; box-shadow: 0 15px 35px rgba(59, 130, 246, 0.2); }
+            .node-gold:hover { border-color: #c09f52; box-shadow: 0 15px 35px rgba(192, 159, 82, 0.2); }
+            .node-red:hover { border-color: #ef4444; box-shadow: 0 15px 35px rgba(239, 68, 68, 0.2); }
+
+            /* Tipografia Interna */
+            .node-icon { font-size: 28px; margin-bottom: 15px; display: inline-block; }
+            .node-title { color: #f8fafc; font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+            .node-list { list-style: none; padding: 0; margin: 0; }
+            .node-list li { color: #cbd5e1; font-size: 13.5px; margin-bottom: 12px; line-height: 1.5; padding-left: 20px; position: relative; }
+            .node-list li::before { content: '⬡'; position: absolute; left: 0; color: #475569; font-size: 12px; transition: color 0.3s; }
+            .brain-node:hover .node-list li::before { color: #c09f52; }
+            .node-list b { color: #ffffff; font-weight: 600; }
+            
+            /* Título Fluorescente da Interface */
+            .title-glow { color: #c09f52; text-align: center; margin: 0; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 15px rgba(192,159,82,0.4); }
+        </style>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<div class='hud-interface'>", unsafe_allow_html=True)
         
-        st.markdown("<div style='background: #0b1121; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-top: 15px; margin-bottom: 30px; border: 1px solid #1e293b;'>", unsafe_allow_html=True)
-        
-        # Barra Superior do Leitor (Com botão de Fechar e Botão de Download do PDF)
-        col_fechar, col_titulo, col_baixar = st.columns([1, 2.5, 1.5])
-        with col_fechar:
-            if st.button("❌ Fechar Infográfico", use_container_width=True, type="primary", key=f"fechar_leitor_{chave_aba}"):
+        # 3. BARRA DE COMANDO SUPERIOR (Botões e Título)
+        c_fechar, c_titulo, c_baixar = st.columns([1, 2.5, 1.5])
+        with c_fechar:
+            if st.button("❌ FECHAR INFOGRÁFICO", use_container_width=True, type="primary", key=f"fechar_{chave_aba}"):
                 st.session_state['leitor_ativo'] = None
                 st.rerun()
-        with col_titulo:
-            st.markdown(f"<h3 style='color: #c09f52; text-align: center; margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 2px;'>{st.session_state['leitor_ativo']}</h3>", unsafe_allow_html=True)
-        with col_baixar:
-            # Botão de Download preservado DENTRO do leitor
+        with c_titulo:
+            st.markdown(f"<h3 class='title-glow'>{st.session_state['leitor_ativo']}</h3>", unsafe_allow_html=True)
+        with c_baixar:
+            # Botão de Download Integrado
             dados_pdf = carregar_pdf_seguro(arquivo_pdf_atual)
             st.download_button(
-                label="📥 Baixar Documento Original (PDF)", 
+                label="📥 BAIXAR PDF ORIGINAL", 
                 data=dados_pdf, 
                 file_name=arquivo_pdf_atual, 
                 mime="application/pdf", 
-                key=f"dl_interno_{chave_aba}",
+                key=f"dl_{chave_aba}",
                 use_container_width=True
             )
         
-        st.markdown("<hr style='border-color: #1e293b; margin: 15px 0 30px 0;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 20px 0 35px 0; position:relative; z-index:1;'>", unsafe_allow_html=True)
 
         # =================================================================
-        # CONTEÚDO NATIVO: INFOGRÁFICO 3D (O "SEGUNDO CÉREBRO")
+        # 4. CONTEÚDO NATIVO EXTREMAMENTE DETALHADO (O "SEGUNDO CÉREBRO")
         # =================================================================
+        
         if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
-            st.markdown(f"""
-            <style>
-                .brain-container {{ background: #0f172a; padding: 30px; border-radius: 16px; font-family: 'Inter', sans-serif; position: relative; overflow: hidden; border: 1px solid #1e293b; }}
-                .bg-glow {{ position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,22,23,0.1) 0%, rgba(15,23,42,0) 70%); top: -200px; left: -200px; z-index: 0; }}
-                .brain-header {{ text-align: center; position: relative; z-index: 1; margin-bottom: 40px; }}
-                .brain-title {{ font-size: 36px; font-weight: 900; text-transform: uppercase; margin: 0; background: linear-gradient(90deg, #ffffff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }}
-                .brain-subtitle {{ color: #c09f52; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-top: 5px; }}
-                
-                .mind-map-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; position: relative; z-index: 1; }}
-                
-                /* EFEITO 3D NOS CARTÕES */
-                .node-3d {{ 
-                    background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); 
-                    border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; 
-                    position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-                }}
-                .node-3d:hover {{ transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.7); z-index: 10; }}
-                
-                /* LUZES NEON INTERNAS */
-                .glow-green::after {{ content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: #16a34a; filter: blur(50px); opacity: 0.4; transition: opacity 0.3s; }}
-                .glow-blue::after {{ content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: #0ea5e9; filter: blur(50px); opacity: 0.4; transition: opacity 0.3s; }}
-                .glow-gold::after {{ content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: #c09f52; filter: blur(50px); opacity: 0.4; transition: opacity 0.3s; }}
-                .glow-red::after {{ content: ''; position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: #dc2626; filter: blur(50px); opacity: 0.4; transition: opacity 0.3s; }}
-                .node-3d:hover::after {{ opacity: 0.8; }}
-
-                .node-icon {{ font-size: 38px; margin-bottom: 15px; display: inline-block; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }}
-                .node-title {{ color: #ffffff; font-size: 17px; font-weight: 800; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 0.5px; }}
-                
-                .data-list {{ list-style: none; padding: 0; margin: 0; }}
-                .data-list li {{ position: relative; padding-left: 28px; margin-bottom: 14px; font-size: 13.5px; color: #cbd5e1; line-height: 1.6; }}
-                .data-list li::before {{ content: '⬡'; position: absolute; left: 0; top: 1px; color: #475569; font-size: 14px; transition: color 0.3s; }}
-                .node-3d:hover .data-list li::before {{ color: #c09f52; }}
-                .data-list b {{ color: #f8fafc; font-weight: 600; }}
-
-                .alert-box {{ background: rgba(220, 38, 38, 0.1); border-left: 3px solid #ef4444; padding: 12px 15px; border-radius: 4px; margin-top: 20px; font-size: 12.5px; color: #fca5a5; font-weight: 500; display: flex; align-items: flex-start; gap: 10px; }}
-            </style>
-
-            <div class="brain-container">
-                <div class="bg-glow"></div>
-                
-                <div class="brain-header">
-                    <h1 class="brain-title">Abordagem Fiscal & Transporte</h1>
-                    <div class="brain-subtitle">Mapeamento Tático Operacional • Prime Seafood</div>
-                </div>
-
-                <div class="mind-map-grid">
-                    
-                    <div class="node-3d glow-green">
-                        <div class="node-icon">🚦</div>
-                        <h3 class="node-title">1. Checklist Pré-Embarque</h3>
-                        <ul class="data-list">
-                            <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido antes de ligar o motor.</li>
-                            <li><b>GTP (Guia de Trânsito):</b> Deve estar dentro da validade e assinada. Em época de defeso, anexe a Declaração de Estoque.</li>
-                            <li><b>Licenças (RGP e CTF/APP):</b> Portar cópias vigentes da indústria, da embarcação e da transportadora.</li>
-                            <li><b>Lacres e Termógrafo:</b> Verifique fisicamente se a numeração bate com a impressa na Nota Fiscal.</li>
-                        </ul>
-                    </div>
-
-                    <div class="node-3d glow-blue">
-                        <div class="node-icon">👮</div>
-                        <h3 class="node-title">2. Conduta na Barreira</h3>
-                        <ul class="data-list">
-                            <li><b>Cordialidade Técnica:</b> O motorista representa a empresa. Responda apenas o necessário e com respeito.</li>
-                            <li><b>Preservação do Lacre:</b> Nunca rompa o lacre sozinho. A abertura do baú só deve ocorrer por ordem e com a presença física do fiscal.</li>
-                            <li><b>Aferição de Peso:</b> Se o fiscal alegar excesso de peso "no olhômetro", exija formalmente a pesagem em balança aferida pelo INMETRO.</li>
-                        </ul>
-                    </div>
-
-                    <div class="node-3d glow-gold">
-                        <div class="node-icon">🦞</div>
-                        <h3 class="node-title">3. Rigor Técnico das Espécies</h3>
-                        <ul class="data-list">
-                            <li><b>Transporte de Lagosta Viva:</b> Alerte os fiscais sobre o risco de choque térmico. Mortalidade deve ser justificada como "estresse de transporte", nunca como "descaudamento ilegal".</li>
-                            <li><b>Tamanhos Mínimos Exigidos:</b> Vermelha (13cm cauda / 22cm total) e Verde (11cm cauda / 19cm total) - Tolerância Zero da base.</li>
-                            <li><b>Transporte de Pargo:</b> Proibido o transporte a granel. Todas as caixas devem estar etiquetadas (Nome científico, lote, RGP).</li>
-                        </ul>
-                    </div>
-
-                    <div class="node-3d glow-red">
-                        <div class="node-icon">🚨</div>
-                        <h3 class="node-title">4. Protocolo de Crise (SLA 48H)</h3>
-                        <ul class="data-list">
-                            <li><b>Recusa de Assinatura:</b> Assine SEMPRE o auto. Recusar assinatura é um erro jurídico grave que anula a boa-fé.</li>
-                            <li><b>A Ressalva Salva:</b> Utilize o campo de observações para escrever a ressalva (Ex: <i>"Pesagem sem balança do INMETRO"</i>).</li>
-                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe o Auto, Termo de Apreensão, Lacres e Painel do Termógrafo.</li>
-                        </ul>
-                        <div class="alert-box">
-                            <span style="font-size: 18px;">📲</span>
-                            <span><b>Acionamento Imediato:</b> Envie todas as imagens via WhatsApp para a base antes mesmo de sair do posto fiscal.</span>
-                        </div>
-                    </div>
-
-                </div>
+            
+            # Cabeçalho do Infográfico
+            st.markdown("""
+            <div style='text-align: center; position: relative; z-index: 1; margin-bottom: 40px;'>
+                <h1 style='color: white; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px;'>ABORDAGEM FISCAL & TRANSPORTE</h1>
+                <p style='color: #94a3b8; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;'>Matriz de Conduta Rodoviária Oficial</p>
             </div>
             """, unsafe_allow_html=True)
             
+            # GRID 3D PARA OS 4 MÓDULOS (Linha 1)
+            col1, col2 = st.columns(2, gap="large")
+            
+            with col1:
+                st.markdown("""
+                <div class='brain-node node-green'>
+                    <div class='node-icon'>🚦</div>
+                    <div class='node-title' style='border-bottom-color: rgba(34,197,94,0.3);'>1. SINAL VERDE (PRÉ-EMBARQUE)</div>
+                    <p style='color:#94a3b8; font-size:12px; margin-top:-5px;'>A ausência de qualquer item veta a saída da doca:</p>
+                    <ul class='node-list'>
+                        <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
+                        <li><b>GTP (Guia de Transporte):</b> Vigente e assinada. Em período de defeso, anexe a Declaração de Estoque.</li>
+                        <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, da embarcação de origem e da transportadora.</li>
+                        <li><b>Lacres e Termógrafo:</b> Verifique fisicamente se a numeração bate rigorosamente com a Nota Fiscal.</li>
+                    </ul>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with col2:
+                st.markdown("""
+                <div class='brain-node node-blue'>
+                    <div class='node-icon'>👮</div>
+                    <div class='node-title' style='border-bottom-color: rgba(59,130,246,0.3);'>2. CONDUTA NA ABORDAGEM</div>
+                    <p style='color:#94a3b8; font-size:12px; margin-top:-5px;'>O motorista é o representante legal no ato fiscal:</p>
+                    <ul class='node-list'>
+                        <li><b>Cordialidade Técnica:</b> Responda estritamente ao que for perguntado. Não discuta biologia ou regras industriais.</li>
+                        <li><b>Preservação do Lacre:</b> Nunca rompa o lacre sozinho. A abertura do baú só ocorre por ordem e com presença física do fiscal.</li>
+                        <li><b>Aferição de Peso:</b> Se alegarem excesso de peso "no olhômetro", exija formalmente a pesagem em balança certificada e calibrada pelo INMETRO.</li>
+                    </ul>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # GRID 3D PARA OS 4 MÓDULOS (Linha 2)
+            col3, col4 = st.columns(2, gap="large")
+            
+            with col3:
+                st.markdown("""
+                <div class='brain-node node-gold'>
+                    <div class='node-icon'>🦞</div>
+                    <div class='node-title' style='border-bottom-color: rgba(192,159,82,0.3);'>3. RIGOR TÉCNICO DAS ESPÉCIES</div>
+                    <p style='color:#94a3b8; font-size:12px; margin-top:-5px;'>Defesa técnica imediata no trânsito:</p>
+                    <ul class='node-list'>
+                        <li><b>Lagosta Viva:</b> Alerte sobre o risco de choque térmico ao abrir o baú. Justifique eventual mortalidade como "estresse natural do transporte", não como descaudamento ilegal.</li>
+                        <li><b>Tamanhos Mínimos (Tolerância Zero):</b> Vermelha (22cm total / 13cm cauda) | Verde (19cm total / 11cm cauda).</li>
+                        <li><b>Transporte de Pargo:</b> Todas as caixas etiquetadas (Nome científico, lote e RGP). Proibido o transporte a granel.</li>
+                    </ul>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with col4:
+                st.markdown("""
+                <div class='brain-node node-red'>
+                    <div class='node-icon'>🚨</div>
+                    <div class='node-title' style='border-bottom-color: rgba(239,68,68,0.3);'>4. PROTOCOLO DE CRISE (SLA 48H)</div>
+                    <p style='color:#94a3b8; font-size:12px; margin-top:-5px;'>Se a autoridade lavrar o Auto, o tempo é crítico:</p>
+                    <ul class='node-list'>
+                        <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave que retira a boa-fé.</li>
+                        <li><b>A Ressalva Salva:</b> Escreva a ressalva técnica (ex: <i>"Pesagem sem balança INMETRO"</i> ou <i>"Mortalidade por estresse térmico"</i>) no campo de observações.</li>
+                        <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto, o Termo de Apreensão, os Lacres e o painel do Termógrafo e acione o plantão jurídico.</li>
+                    </ul>
+                </div>
+                """, unsafe_allow_html=True)
+
         elif st.session_state['leitor_ativo'] == "DOC-02: Triagem de Lagosta":
-            st.info("🔄 O Conteúdo Nativo Interativo do DOC-02 (POP Lagosta) está sendo compilado pelo Motor 3D. Utilize o botão 'Baixar Documento Original' acima.")
+            st.markdown("<h2 style='color: white; text-align: center; position: relative; z-index: 1;'>🚧 Módulo Interativo em Construção</h2>", unsafe_allow_html=True)
+            st.info("A matriz 3D para o POP de Triagem de Lagosta será inserida aqui em breve. Por favor, utilize o botão de Download para acessar o PDF oficial.")
             
         else:
-            st.info(f"🔄 A renderização 3D do módulo `{st.session_state['leitor_ativo']}` está na fila de diagramação inteligente. O arquivo PDF oficial já está disponível para download.")
+            st.markdown(f"<h2 style='color: white; text-align: center; position: relative; z-index: 1;'>🚧 Módulo {st.session_state['leitor_ativo']}</h2>", unsafe_allow_html=True)
+            st.info("O conteúdo interativo deste documento está na fila de desenvolvimento do painel. Utilize o botão de download acima para baixar o arquivo original completo.")
 
         st.markdown("</div>", unsafe_allow_html=True)
+        
 # =====================================================================
 # 2. BLOCO DO MAPA AQUI 
 # =====================================================================
