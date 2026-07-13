@@ -524,7 +524,6 @@ df_unicos = df.drop_duplicates(subset=['Nº A.I.'])
 # =====================================================================
 st.markdown(f"""
 <style>
-    /* Efeito de Elevação 3D para os Paineis */
     .painel-3d {{
         background: linear-gradient(145deg, #ffffff, #f8fafc);
         border: 1px solid #cbd5e1;
@@ -538,22 +537,11 @@ st.markdown(f"""
         transform: translateY(-2px);
         box-shadow: 0 15px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.05), inset 0 -3px 0 0 {COR_DOURADO};
     }}
-    
-    /* Estilo do Leitor de PDF Imersivo */
-    .leitor-pdf-container {{
-        background-color: #1e293b;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        margin-top: 15px;
-        margin-bottom: 30px;
-        border: 1px solid #475569;
-    }}
 </style>
 """, unsafe_allow_html=True)
 
 # =====================================================================
-# MOTOR GLOBAL DO LEITOR DE PDF INTERATIVO
+# MOTOR GLOBAL DE LEITURA NATIVA COM DOWNLOAD DE PDF
 # =====================================================================
 if 'leitor_ativo' not in st.session_state:
     st.session_state['leitor_ativo'] = None
@@ -566,25 +554,10 @@ def carregar_pdf_seguro(caminho_arquivo):
     except FileNotFoundError:
         return b"Arquivo Pendente"
 
-# ADICIONAMOS 'chave_aba' AQUI PARA NÃO REPETIR O BOTÃO
-def renderizar_leitor_pdf(chave_aba):
-    """Desenha a janela de leitura 3D imersiva na tela"""
+def renderizar_leitor_nativo(chave_aba):
+    """Renderiza a Wiki Nativa interativa E oferece o botão para baixar o PDF original"""
     if st.session_state['leitor_ativo']:
-        st.markdown("<div class='leitor-pdf-container'>", unsafe_allow_html=True)
-        
-        # Barra de Navegação do Leitor
-        col_fechar, col_titulo, col_vazio = st.columns([1, 3, 1])
-        with col_fechar:
-            # AQUI ESTÁ A CORREÇÃO (O parâmetro 'key' único):
-            if st.button("❌ Fechar Leitor", use_container_width=True, type="primary", key=f"fechar_leitor_{chave_aba}"):
-                st.session_state['leitor_ativo'] = None
-                st.rerun()
-        with col_titulo:
-            st.markdown(f"<h3 style='color: #f8fafc; text-align: center; margin: 0; font-size: 18px; text-shadow: 1px 1px 2px black;'>📖 Lendo Agora: {st.session_state['leitor_ativo']}</h3>", unsafe_allow_html=True)
-        
-        st.markdown("<hr style='border-color: #475569; margin-top: 10px; margin-bottom: 20px;'>", unsafe_allow_html=True)
-
-        # Mapeamento oficial dos 10 Documentos
+        # Dicionário com os nomes exatos dos PDFs salvos na sua pasta
         mapa_arquivos = {
             "DOC-01: Guia do Motorista": "Guia_Bolso_Motorista_Prime_Seafood.pdf",
             "DOC-02: Triagem de Lagosta": "POP_001_Triagem_Lagosta_Prime.pdf",
@@ -598,18 +571,85 @@ def renderizar_leitor_pdf(chave_aba):
             "DOC-10: E-book Institucional": "DOC_10_Ebook_Institucional.pdf"
         }
         
-        arquivo_atual = mapa_arquivos.get(st.session_state['leitor_ativo'])
+        arquivo_pdf_atual = mapa_arquivos.get(st.session_state['leitor_ativo'])
         
-        import os
-        if arquivo_atual and os.path.exists(arquivo_atual):
-            with open(arquivo_atual, "rb") as f:
-                base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-            # iFrame com sombra interna para parecer uma tela de tablet
-            pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}#view=FitH" width="100%" height="750px" type="application/pdf" style="border: none; border-radius: 6px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); background-color: #ffffff;"></iframe>'
-            st.markdown(pdf_display, unsafe_allow_html=True)
+        st.markdown("<div style='background: linear-gradient(to right, #1e293b, #0f172a); padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); margin-top: 15px; margin-bottom: 30px; border: 1px solid #475569;'>", unsafe_allow_html=True)
+        
+        # Barra Superior do Leitor (Com botão de Fechar e Botão de Download do PDF)
+        col_fechar, col_titulo, col_baixar = st.columns([1, 2.5, 1.5])
+        with col_fechar:
+            if st.button("❌ Fechar Guia", use_container_width=True, type="primary", key=f"fechar_leitor_{chave_aba}"):
+                st.session_state['leitor_ativo'] = None
+                st.rerun()
+        with col_titulo:
+            st.markdown(f"<h3 style='color: #f8fafc; text-align: center; margin: 0; font-size: 20px; text-transform: uppercase;'>📖 {st.session_state['leitor_ativo']}</h3>", unsafe_allow_html=True)
+        with col_baixar:
+            # Botão de Download preservado DENTRO do leitor
+            dados_pdf = carregar_pdf_seguro(arquivo_pdf_atual)
+            st.download_button(
+                label="📥 Baixar em PDF", 
+                data=dados_pdf, 
+                file_name=arquivo_pdf_atual, 
+                mime="application/pdf", 
+                key=f"dl_interno_{chave_aba}",
+                use_container_width=True
+            )
+        
+        st.markdown("<hr style='border-color: #475569; margin: 15px 0;'>", unsafe_allow_html=True)
+
+        # =================================================================
+        # CONTEÚDO NATIVO DOS GUIAS (HTML INTERATIVO)
+        # =================================================================
+        if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
+            st.markdown(f"""
+            <div style="background-color: #ffffff; padding: 40px; border-radius: 8px; color: #1a1a1a;">
+                <div style="text-align: center; border-bottom: 3px solid {COR_PRIMARIA}; padding-bottom: 20px; margin-bottom: 30px;">
+                    <h1 style="color: {COR_PRIMARIA}; margin: 0; font-size: 28px; text-transform: uppercase;">Guia de Bolso Executivo</h1>
+                    <h3 style="color: {COR_DOURADO}; margin: 5px 0 0 0; font-size: 16px; text-transform: uppercase; letter-spacing: 2px;">Abordagem Fiscal & Transporte Normativo</h3>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    <div style="flex: 1; min-width: 300px;">
+                        <div style="background: #f8fafc; border-left: 4px solid #166534; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+                            <h4 style="color: #166534; margin-top: 0;">✅ 1. CHECKLIST "SINAL VERDE" (Pré-Embarque)</h4>
+                            <p style="font-size: 14px; color: #475569;">A ausência de qualquer item veta a saída da doca:</p>
+                            <ul style="font-size: 14px; margin-bottom: 0; padding-left: 20px;">
+                                <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
+                                <li><b>GTP:</b> Dentro da validade e assinada (Em defeso, inclua Declaração de Estoque).</li>
+                                <li><b>RGP e CTF:</b> Cópias vigentes da indústria, embarcação e transportadora.</li>
+                            </ul>
+                        </div>
+                        <div style="background: #fdf2f2; border-left: 4px solid {COR_PRIMARIA}; padding: 20px; border-radius: 4px;">
+                            <h4 style="color: {COR_PRIMARIA}; margin-top: 0;">🛑 2. RIGOR DAS ESPÉCIES</h4>
+                            <ul style="font-size: 14px; margin-bottom: 0; padding-left: 20px;">
+                                <li><b>Lagosta Viva:</b> Alerte sobre risco de choque térmico ao abrir o baú. Justifique mortalidade como estresse de transporte.</li>
+                                <li><b>Tamanhos:</b> Vermelha (13cm cauda) | Verde (11cm cauda) - Tolerância Zero.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 300px;">
+                        <div style="background: #fffbeb; border-left: 4px solid {COR_DOURADO}; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+                            <h4 style="color: #92400e; margin-top: 0;">👮 3. CONDUTA NA ABORDAGEM</h4>
+                            <ul style="font-size: 14px; margin-bottom: 0; padding-left: 20px;">
+                                <li><b>Nunca rompa o lacre sozinho.</b> Abertura só com presença física do fiscal.</li>
+                                <li>Exija pesagem em balança INMETRO em caso de alegação de excesso.</li>
+                            </ul>
+                        </div>
+                        <div style="background: #1e293b; color: #f8fafc; border-left: 4px solid #ef4444; padding: 20px; border-radius: 4px;">
+                            <h4 style="color: #fca5a5; margin-top: 0;">⏱️ 4. PROTOCOLO DE CRISE (SLA 48H)</h4>
+                            <ul style="font-size: 14px; margin-bottom: 0; padding-left: 20px;">
+                                <li><b>Assine Sempre:</b> Recusar assinatura é um erro grave.</li>
+                                <li><b>Ressalva Técnica:</b> Escreva nas observações da multa (ex: "pesagem sem balança").</li>
+                                <li>Fotografe Auto, Apreensão e Lacres, e envie ao Jurídico.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
         else:
-            st.warning(f"⚠️ O arquivo PDF `{arquivo_atual}` ainda não foi adicionado à pasta do sistema. Faça o upload do arquivo no GitHub para visualizar o documento 3D aqui.")
-        
+            st.info(f"🔄 O layout nativo para `{st.session_state['leitor_ativo']}` está em diagramação. Você pode utilizar o botão azul 'Baixar em PDF' logo acima para acessar o documento original completo.")
+
         st.markdown("</div>", unsafe_allow_html=True)
 
 # =====================================================================
