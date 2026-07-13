@@ -655,22 +655,43 @@ def renderizar_leitor_nativo(chave_aba):
         # =================================================================
         # 4. CONTEÚDO NATIVO EXATO DO PDF "GUIA DO MOTORISTA"
         # =================================================================
-        if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
+      if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
             st.markdown("""
+            <style>
+                .hud-wrapper { background-color: #fcfaf9; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 30px; }
+                .hud-header { text-align: center; margin-bottom: 35px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; }
+                .hud-title { color: #7c1617; font-size: 28px; font-weight: 800; text-transform: uppercase; margin: 0; }
+                .hud-subtitle { color: #c09f52; font-size: 14px; font-weight: 600; text-transform: uppercase; margin-top: 5px; }
+                .grid-3d { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+                .card-glass { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.03); transition: all 0.3s ease; display: flex; flex-direction: column;}
+                .card-glass:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(124, 22, 23, 0.08); border-color: #c09f52; }
+                .b-verde { border-top: 4px solid #166534; }
+                .b-chumbo { border-top: 4px solid #1a1a1a; }
+                .b-dourado { border-top: 4px solid #c09f52; }
+                .b-vermelho { border-top: 4px solid #7c1617; }
+                .card-icon { font-size: 26px; margin-bottom: 10px; }
+                .card-title { color: #1a1a1a; font-size: 15px; font-weight: 800; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; }
+                .card-desc { color: #64748b; font-size: 12.5px; margin-top: -5px; margin-bottom: 15px; font-weight: 500; }
+                .card-list { list-style: none; padding: 0; margin: 0; }
+                .card-list li { color: #334155; font-size: 13.5px; margin-bottom: 12px; line-height: 1.6; padding-left: 20px; position: relative; }
+                .card-list li::before { content: '■'; position: absolute; left: 0; top: 3px; color: #c09f52; font-size: 10px; transition: color 0.3s; }
+                .card-glass:hover .card-list li::before { color: #7c1617; }
+            </style>
+
             <div class="hud-wrapper">
                 <div class="hud-header">
                     <h1 class="hud-title">Guia de Bolso Executivo</h1>
                     <div class="hud-subtitle">Abordagem Fiscal & Transporte Normativo | Carvalho & Fadul</div>
                 </div>
-                
                 <div class="grid-3d">
+                    
                     <div class="card-glass b-verde">
                         <div class="card-icon">🚦</div>
                         <h3 class="card-title" style="color: #166534;">1. SINAL VERDE (PRÉ-EMBARQUE)</h3>
                         <p class="card-desc">Antes de dar a partida, audite a pasta da cabine. A ausência de qualquer item veta a saída:</p>
                         <ul class="card-list">
                             <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
-                            <li><b>GTP (Guia de Transporte):</b> Dentro da validade e assinada. (Em defeso, inclua a Declaração de Estoque).</li>
+                            <li><b>GTP:</b> Dentro da validade e assinada. (Em defeso, inclua a Declaração de Estoque).</li>
                             <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, embarcação e transportadora.</li>
                             <li><b>Lacres e Termógrafo:</b> Verifique se a numeração física bate com a Nota Fiscal.</li>
                         </ul>
@@ -681,9 +702,9 @@ def renderizar_leitor_nativo(chave_aba):
                         <h3 class="card-title">2. CONDUTA NA ABORDAGEM</h3>
                         <p class="card-desc">O motorista representa legalmente a empresa perante as autoridades fiscais:</p>
                         <ul class="card-list">
-                            <li><b>Cordialidade Técnica:</b> Responda estritamente ao que for perguntado de forma respeitosa. Não discuta biologia ou regras industriais.</li>
-                            <li><b>Preservação:</b> Nunca rompa o lacre sozinho. A abertura só ocorre por ordem e presença física do fiscal.</li>
-                            <li><b>Exigência Técnica:</b> Se alegarem excesso de peso, exija a pesagem em balança certificada e calibrada pelo INMETRO.</li>
+                            <li><b>Cordialidade Técnica:</b> Responda estritamente ao que for perguntado de forma respeitosa. Não discuta biologia.</li>
+                            <li><b>Preservação:</b> Nunca rompa o lacre sozinho. A abertura só ocorre com a presença do fiscal.</li>
+                            <li><b>Exigência Técnica:</b> Se alegarem excesso de peso, exija a pesagem em balança certificada pelo INMETRO.</li>
                         </ul>
                     </div>
                     
@@ -692,9 +713,9 @@ def renderizar_leitor_nativo(chave_aba):
                         <h3 class="card-title" style="color: #92400e;">3. RIGOR DAS ESPÉCIES</h3>
                         <p class="card-desc">Argumentos rápidos contra autuações arbitrárias por falta de perícia fiscal:</p>
                         <ul class="card-list">
-                            <li><b>Lagosta Viva:</b> Alerte sobre o risco de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse natural do transporte.</li>
-                            <li><b>Tamanhos Mínimos:</b> Vermelha (22 cm total/13 cm cauda) | Verde (19 cm total/11 cm cauda) - Tolerância Zero.</li>
-                            <li><b>Pargo:</b> Todas as caixas devem estar etiquetadas (Nome científico, lote e RGP). É proibido o transporte a granel.</li>
+                            <li><b>Lagosta Viva:</b> Alerte sobre o risco de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse de transporte.</li>
+                            <li><b>Tamanhos Mínimos:</b> Vermelha (22cm total/13cm cauda) | Verde (19cm total/11cm cauda) - Tolerância Zero.</li>
+                            <li><b>Pargo:</b> Todas as caixas etiquetadas. Proibido o transporte a granel.</li>
                         </ul>
                     </div>
                     
@@ -703,15 +724,16 @@ def renderizar_leitor_nativo(chave_aba):
                         <h3 class="card-title" style="color: #7c1617;">4. PROTOCOLO DE CRISE (SLA 48H)</h3>
                         <p class="card-desc">Se a autoridade lavrar o Auto de Infração, o tempo é o fator mais crítico:</p>
                         <ul class="card-list">
-                            <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave. Assine e escreva a ressalva técnica (ex: "pesagem sem balança") no campo de observações.</li>
-                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto, Termo de Apreensão, os lacres e o painel do termógrafo.</li>
+                            <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave. Assine e escreva a ressalva técnica no campo de observações.</li>
+                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto, Termo de Apreensão, lacres e painel do termógrafo.</li>
                             <li><b>Plantão Jurídico:</b> Envie todo o material imediatamente para o corpo jurídico da empresa.</li>
                         </ul>
                     </div>
+                    
                 </div>
             </div>
             """, unsafe_allow_html=True)
-            
+          
         else:
             st.markdown(f"""
             <div class='hud-wrapper'>
