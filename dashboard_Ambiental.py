@@ -1109,7 +1109,9 @@ with tab6:
         <p style="margin: 0; color: #475569; font-size: 11pt; text-align: justify; line-height: 1.6;">
             Esta aba consolida as <b>Barreiras Físicas de Compliance</b>. Aqui estão ancorados os protocolos interativos desenvolvidos para as docas, balanças e frotas de captura, com o objetivo de anular autuações por petrechos proibidos e tamanhos ilícitos.
         </p>
-<p style="margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Clique em um documento para <b>abrir</b> a versão digital ou fazer o </b>download</b> da versão oficial.</p>
+        
+        st.markdown("<p style='margin: 0 0 5px 0; color: {COR_PRIMARIA}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Clique em um documento para <b>abrir</b> a versão digital ou fazer o </b>download</b> da versão oficial.</p>"", unsafe_allow_html=True)
+
         </div>
     """, unsafe_allow_html=True)
     
