@@ -1078,9 +1078,6 @@ with tab6:
         </p>
     </div>
     """, unsafe_allow_html=True)
-
-    # 1. Ativa o leitor 3D na aba 6 (PASSANDO A CHAVE 'aba6')
-    renderizar_leitor_pdf("aba6")
     
     # 1. Chama a Função do Motor 3D (Se houver algo selecionado, a interface escurece a tela)
     renderizar_leitor_nativo("aba6")
