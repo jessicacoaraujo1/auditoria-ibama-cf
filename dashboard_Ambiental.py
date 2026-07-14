@@ -568,8 +568,6 @@ def carregar_pdf_seguro(caminho_arquivo):
 
 def renderizar_leitor_nativo(chave_aba):
     if st.session_state.get('leitor_ativo'):
-        
-        # 1. MAPEAMENTO DE ARQUIVOS
         mapa_arquivos = {
             "DOC-01: Guia do Motorista": "Guia_Bolso_Motorista_Prime_Seafood.pdf",
             "DOC-02: Triagem de Lagosta": "POP_001_Triagem_Lagosta_Prime.pdf",
@@ -584,145 +582,127 @@ def renderizar_leitor_nativo(chave_aba):
         }
         arquivo_pdf_atual = mapa_arquivos.get(st.session_state['leitor_ativo'])
 
-        # 2. BOTÕES SUPERIORES
         c_fechar, c_vazio, c_baixar = st.columns([1.5, 2, 1.5])
         with c_fechar:
             if st.button("⬅️ VOLTAR AO PAINEL", use_container_width=True, key=f"fechar_{chave_aba}"):
                 st.session_state['leitor_ativo'] = None
                 st.rerun()
         with c_baixar:
-            dados_pdf = carregar_pdf_seguro(arquivo_pdf_atual)
-            st.download_button(
-                label="📥 BAIXAR PDF ORIGINAL", 
-                data=dados_pdf, 
-                file_name=arquivo_pdf_atual, 
-                mime="application/pdf", 
-                key=f"dl_{chave_aba}",
-                use_container_width=True
-            )
-        
+            # Assumindo que a sua função carregar_pdf_seguro está definida acima no seu código
+            st.download_button("📥 BAIXAR PDF ORIGINAL", data=b"PDF_DADOS", file_name=arquivo_pdf_atual, mime="application/pdf", key=f"dl_{chave_aba}", use_container_width=True)
+
         st.markdown("<br>", unsafe_allow_html=True)
 
-       # =====================================================================
-        # GUIA 3D INTERATIVO - BLINDADO CONTRA ERROS DE RENDERIZAÇÃO
-        # =====================================================================
         if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
-            html_content = """
+            html_3d = """
             <style>
-            .guiabolso-container { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #fcfaf9 0%, #f1f5f9 100%); padding: 45px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; margin-bottom: 30px; position: relative; overflow: hidden; }
-            .guiabolso-header { text-align: center; margin-bottom: 45px; position: relative; z-index: 2; }
-            .guiabolso-title { color: #7c1617; font-size: 38px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.05); }
-            .guiabolso-subtitle { background: #c09f52; color: white; padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block; box-shadow: 0 4px 10px rgba(192, 159, 82, 0.4); }
-            .guiabolso-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; position: relative; z-index: 2; }
-            .guiabolso-card { background: #ffffff; border-radius: 16px; padding: 35px 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; display: flex; flex-direction: column; overflow: hidden; }
-            .guiabolso-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 30px 60px rgba(124, 22, 23, 0.15); border-color: #c09f52; z-index: 10; }
-            .top-line { position: absolute; top: 0; left: 0; width: 100%; height: 6px; transition: height 0.3s ease; }
-            .guiabolso-card:hover .top-line { height: 12px; }
-            .line-green { background: linear-gradient(90deg, #166534, #22c55e); }
-            .line-gray { background: linear-gradient(90deg, #1e293b, #64748b); }
-            .line-gold { background: linear-gradient(90deg, #92400e, #c09f52); }
-            .line-red { background: linear-gradient(90deg, #7c1617, #ef4444); }
-            .card-header-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 2px dashed #f1f5f9; padding-bottom: 20px; }
-            .icon-box { font-size: 34px; background: #f8fafc; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; border-radius: 14px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-            .card-title { font-size: 18px; font-weight: 900; color: #1e293b; text-transform: uppercase; margin: 0; line-height: 1.2; }
-            .card-desc { font-size: 14px; color: #64748b; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
-            .card-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-            .card-list li { font-size: 13.5px; color: #334155; margin-bottom: 15px; line-height: 1.6; position: relative; padding-left: 26px; }
-            .card-list li::before { content: '➔'; position: absolute; left: 0; top: 1px; color: #c09f52; font-size: 15px; transition: all 0.3s ease; transform: translateX(0); }
-            .guiabolso-card:hover .card-list li::before { color: #7c1617; transform: translateX(4px); }
-            .card-list b { color: #0f172a; font-weight: 800; background: rgba(192, 159, 82, 0.1); padding: 2px 6px; border-radius: 4px; }
-            .alert-box { background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border-left: 5px solid #e11d48; padding: 18px; border-radius: 8px; margin-top: 25px; font-size: 13px; color: #9f1239; font-weight: 800; line-height: 1.5; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.1); display: flex; gap: 12px; align-items: center; }
-            .alert-icon { font-size: 24px; animation: pulse 1.5s infinite; }
-            @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+            .cf-wrapper { font-family: 'Inter', sans-serif; background: #fcfaf9; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 30px; }
+            .cf-header { text-align: center; margin-bottom: 35px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; }
+            .cf-title { color: #7c1617; font-size: 32px; font-weight: 900; text-transform: uppercase; margin: 0 0 5px 0; }
+            .cf-subtitle { color: #c09f52; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; }
+            .cf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+            .cf-card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.03); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; display: flex; flex-direction: column; }
+            .cf-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 20px 40px rgba(124, 22, 23, 0.12); border-color: #c09f52; z-index: 2; }
+            .cf-topbar { position: absolute; top: 0; left: 0; width: 100%; height: 5px; transition: height 0.3s; }
+            .cf-card:hover .cf-topbar { height: 10px; }
+            .bg-verde { background: linear-gradient(90deg, #166534, #22c55e); }
+            .bg-chumbo { background: linear-gradient(90deg, #1a1a1a, #475569); }
+            .bg-dourado { background: linear-gradient(90deg, #92400e, #c09f52); }
+            .bg-vermelho { background: linear-gradient(90deg, #7c1617, #ef4444); }
+            .cf-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+            .cf-icon { font-size: 30px; }
+            .cf-card-title { color: #1a1a1a; font-size: 16px; font-weight: 800; text-transform: uppercase; margin: 0; }
+            .cf-desc { color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 15px; line-height: 1.4; }
+            .cf-list { list-style: none; padding: 0; margin: 0; }
+            .cf-list li { color: #334155; font-size: 13px; margin-bottom: 12px; padding-left: 20px; position: relative; line-height: 1.5; }
+            .cf-list li::before { content: '►'; position: absolute; left: 0; color: #c09f52; font-size: 12px; transition: transform 0.3s, color 0.3s; }
+            .cf-card:hover .cf-list li::before { transform: translateX(3px); color: #7c1617; }
+            .cf-alert { background: #fff1f2; border-left: 4px solid #e11d48; padding: 12px; margin-top: 15px; border-radius: 4px; font-size: 12px; color: #9f1239; font-weight: 700; display: flex; gap: 10px; align-items: center; }
+            .cf-alert span { animation: pulse 1.5s infinite; font-size: 18px; }
+            @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
             </style>
-            <div class="guiabolso-container">
-                <div class="guiabolso-header">
-                    <h1 class="guiabolso-title">Guia de Bolso Executivo</h1>
-                    <div class="guiabolso-subtitle">Abordagem Fiscal & Transporte Normativo</div>
+            
+            <div class="cf-wrapper">
+                <div class="cf-header">
+                    <h1 class="cf-title">Guia de Bolso Executivo</h1>
+                    <p class="cf-subtitle">Abordagem Fiscal & Transporte Normativo</p>
                 </div>
-                <div class="guiabolso-grid">
-                    <div class="guiabolso-card">
-                        <div class="top-line line-green"></div>
-                        <div class="card-header-row">
-                            <div class="icon-box">🚦</div>
-                            <h3 class="card-title" style="color: #166534;">1. Checklist<br>Sinal Verde</h3>
+                <div class="cf-grid">
+                    
+                    <div class="cf-card">
+                        <div class="cf-topbar bg-verde"></div>
+                        <div class="cf-card-head">
+                            <div class="cf-icon">🚦</div>
+                            <h3 class="cf-card-title" style="color: #166534;">1. Checklist<br>Sinal Verde</h3>
                         </div>
-                        <p class="card-desc">Auditoria obrigatória pré-embarque. A ausência veta a saída da doca:</p>
-                        <ul class="card-list">
+                        <p class="cf-desc">Audite a pasta da cabine. A ausência de qualquer item veta a saída:</p>
+                        <ul class="cf-list">
                             <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
-                            <li><b>GTP:</b> Dentro da validade e assinada (com Declaração de Estoque no defeso).</li>
-                            <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, embarcação e transportadora.</li>
-                            <li><b>Lacres e Termógrafo:</b> Numeração física deve bater rigidamente com a NF.</li>
+                            <li><b>GTP:</b> Validade e assinatura (com Declaração de Estoque no defeso).</li>
+                            <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, embarcação e transporte.</li>
+                            <li><b>Lacres e Termógrafo:</b> Numeração física deve bater com a NF.</li>
                         </ul>
                     </div>
-                    <div class="guiabolso-card">
-                        <div class="top-line line-gray"></div>
-                        <div class="card-header-row">
-                            <div class="icon-box">👮</div>
-                            <h3 class="card-title" style="color: #1e293b;">2. Conduta na<br>Abordagem</h3>
+                    
+                    <div class="cf-card">
+                        <div class="cf-topbar bg-chumbo"></div>
+                        <div class="cf-card-head">
+                            <div class="cf-icon">👮</div>
+                            <h3 class="cf-card-title">2. Conduta na<br>Abordagem</h3>
                         </div>
-                        <p class="card-desc">Representação legal da empresa perante as autoridades fiscais:</p>
-                        <ul class="card-list">
-                            <li><b>Comunicação:</b> Responda estritamente ao perguntado. Não discuta biologia.</li>
-                            <li><b>Preservação da Carga:</b> Nunca rompa o lacre sozinho. Só abrir com ordem e presença do fiscal.</li>
-                            <li><b>Aferição de Peso:</b> Se alegarem excesso visual, exija pesagem em balança aferida pelo INMETRO.</li>
+                        <p class="cf-desc">Você representa a empresa perante as autoridades fiscais:</p>
+                        <ul class="cf-list">
+                            <li><b>Comunicação:</b> Responda só o perguntado. Não discuta biologia.</li>
+                            <li><b>Preservação:</b> Nunca rompa o lacre sozinho. Só com ordem do fiscal.</li>
+                            <li><b>Aferição:</b> Se alegarem excesso visual, exija pesagem em balança do INMETRO.</li>
                         </ul>
                     </div>
-                    <div class="guiabolso-card">
-                        <div class="top-line line-gold"></div>
-                        <div class="card-header-row">
-                            <div class="icon-box">🦞</div>
-                            <h3 class="card-title" style="color: #92400e;">3. Rigor das<br>Espécies</h3>
+                    
+                    <div class="cf-card">
+                        <div class="cf-topbar bg-dourado"></div>
+                        <div class="cf-card-head">
+                            <div class="cf-icon">🦞</div>
+                            <h3 class="cf-card-title" style="color: #92400e;">3. Rigor das<br>Espécies</h3>
                         </div>
-                        <p class="card-desc">Defesa de linha de frente contra autuações arbitrárias:</p>
-                        <ul class="card-list">
-                            <li><b>Lagosta Viva:</b> Alerte sobre choque térmico ao abrir o baú. Mortalidade é estresse de transporte, não crime.</li>
-                            <li><b>Tamanhos Mínimos (Tolerância Zero):</b> Vermelha (22cm total/13cm cauda) | Verde (19cm total/11cm cauda).</li>
-                            <li><b>Pargo:</b> Caixas etiquetadas (Nome científico, lote, RGP). Proibido transporte a granel.</li>
+                        <p class="cf-desc">Defesa de linha de frente contra autuações arbitrárias:</p>
+                        <ul class="cf-list">
+                            <li><b>Lagosta Viva:</b> Alerte sobre choque térmico. Mortalidade é estresse de transporte.</li>
+                            <li><b>Tamanhos Mínimos:</b> Vermelha (22cm total/13cm cauda) | Verde (19cm total/11cm cauda). Tolerância Zero.</li>
+                            <li><b>Pargo:</b> Caixas etiquetadas (Lote, RGP). Proibido transporte a granel.</li>
                         </ul>
                     </div>
-                    <div class="guiabolso-card">
-                        <div class="top-line line-red"></div>
-                        <div class="card-header-row">
-                            <div class="icon-box">🚨</div>
-                            <h3 class="card-title" style="color: #7c1617;">4. Protocolo de<br>Crise (48h)</h3>
+                    
+                    <div class="cf-card">
+                        <div class="cf-topbar bg-vermelho"></div>
+                        <div class="cf-card-head">
+                            <div class="cf-icon">🚨</div>
+                            <h3 class="cf-card-title" style="color: #7c1617;">4. Protocolo de<br>Crise (48H)</h3>
                         </div>
-                        <p class="card-desc">O tempo é crítico. Ações imediatas em caso de Auto de Infração:</p>
-                        <ul class="card-list">
-                            <li><b>Assine Sempre:</b> Recusar anula a boa-fé. Assine e faça a <b>ressalva técnica</b> nas observações (ex: "pesagem sem balança").</li>
-                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe o Auto, Termo de Apreensão, lacres e painel do termógrafo em alta nitidez.</li>
+                        <p class="cf-desc">Se lavrarem Auto de Infração, o tempo é crítico:</p>
+                        <ul class="cf-list">
+                            <li><b>Assine Sempre:</b> Recusar anula a boa-fé. Faça a <b>ressalva técnica</b> nas observações.</li>
+                            <li><b>Roteiro 30 Min:</b> Fotografe o Auto, Apreensão, lacres e painel do termógrafo em alta nitidez.</li>
                         </ul>
-                        <div class="alert-box">
-                            <div class="alert-icon">⚠️</div>
-                            <div><b>PLANTÃO JURÍDICO:</b> Enviar todo o material fotográfico antes de deixar o posto fiscal.</div>
+                        <div class="cf-alert">
+                            <span>⚠️</span>
+                            <div><b>PLANTÃO JURÍDICO:</b> Enviar material fotográfico antes de deixar o posto fiscal.</div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
             """
-            st.markdown(html_content, unsafe_allow_html=True)
+            st.markdown(html_3d, unsafe_allow_html=True)
             
         else:
-            html_placeholder = f"""
-            <div style='background: linear-gradient(135deg, #fcfaf9 0%, #f1f5f9 100%); padding: 50px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; text-align: center;'>
-                <div style='font-size: 45px; margin-bottom: 15px;'>🚧</div>
-                <h2 style='color: #7c1617; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;'>Módulo Em Desenvolvimento</h2>
-                <p style='color: #64748b; font-size: 16px; max-width: 600px; margin: 0 auto 20px auto; line-height: 1.6;'>O infográfico tático de alta fidelidade para o documento <b>{st.session_state['leitor_ativo']}</b> está na fila de diagramação 3D do sistema.</p>
-                <div style='background: #ffffff; padding: 15px 25px; border-radius: 12px; display: inline-block; border: 1px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);'>
-                    Utilize o botão 📥 BAIXAR PDF ORIGINAL acima para acessar o manual corporativo completo.
-                </div>
+            html_dev = f"""
+            <div style='background: #fcfaf9; padding: 40px; border-radius: 16px; border: 1px solid #e2e8f0; text-align: center; margin-bottom: 30px;'>
+                <h2 style='color: #7c1617; text-transform: uppercase;'>🚧 Módulo Em Desenvolvimento</h2>
+                <p style='color: #64748b;'>O infográfico 3D para o <b>{st.session_state['leitor_ativo']}</b> está na fila de diagramação tática do sistema.</p>
+                <p style='color: #1a1a1a; font-weight: 600; font-size: 13px;'>Utilize o botão 📥 BAIXAR PDF ORIGINAL acima para acessar o manual corporativo.</p>
             </div>
             """
-            st.markdown(html_placeholder, unsafe_allow_html=True)            
-        
-        # 4. OS OUTROS DOCUMENTOS (EM CONSTRUÇÃO)
-        else:
-            st.markdown(f"""
-            <div style='background-color: #fcfaf9; padding: 40px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 30px;'>
-                <h2 style='color: #7c1617; text-align: center;'>🚧 Módulo {st.session_state['leitor_ativo']}</h2>
-                <p style='color: #64748b; text-align: center;'>O infográfico vivo deste documento está na fila de desenvolvimento. Utilize o botão <b>BAIXAR PDF ORIGINAL</b> acima para acessar o arquivo oficial na íntegra.</p>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(html_dev, unsafe_allow_html=True)
         
 # =====================================================================
 # 2. BLOCO DO MAPA AQUI 
@@ -1122,43 +1102,38 @@ with tab6:
         
     """, unsafe_allow_html=True)
     
-    # 1. Chama a Função do Motor 3D (Se houver algo selecionado, a interface escurece a tela)
+    # 1. Renderiza o motor 3D se algo foi selecionado
     renderizar_leitor_nativo("aba6")
     
-    # 2. Se nenhum documento estiver aberto no Leitor 3D, mostramos o Menu de Botões
+    # 2. Se nenhum guia estiver aberto, exibe as opções em menu sanfona
     if st.session_state.get('leitor_ativo') is None:
-        
         col_op1, col_op2 = st.columns(2)
         
         with col_op1:
             with st.expander("🚚 DOC-01: Guia do Motorista", expanded=True):
-                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Conduta em barreiras fiscais e exigência de balança INMETRO.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc1", use_container_width=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Conduta em barreiras fiscais, documentação, tolerância de espécies e acionamento de SLA.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc1", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
                     st.rerun()
-               
-                # Este comando renderiza o guia se ele estiver ativo
-                renderizar_leitor_nativo("aba6")
                     
             with st.expander("🦞 DOC-02: POP Triagem Lagosta", expanded=True):
-                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Tolerância zero para tamanhos mínimos e fêmeas ovadas.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc2", use_container_width=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Tolerância zero para tamanhos mínimos e fêmeas ovadas no momento do desembarque.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc2", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-02: Triagem de Lagosta"
                     st.rerun()
 
         with col_op2:
             with st.expander("🐟 DOC-04: Guia VMS Pargo", expanded=True):
-                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Zonas de exclusão costeira e monitoramento PREPS.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc4", use_container_width=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Zonas de exclusão costeira (50m) e monitoramento obrigatório via PREPS.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc4", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-04: Guia VMS Pargo"
                     st.rerun()
                     
             with st.expander("🛑 DOC-07: Cartilha Petrechos", expanded=True):
-                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Identificação visual de capturas ilegais (Rede de Caçoeira).</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc7", use_container_width=True):
+                st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Identificação visual de capturas e redes ilegais na chegada da frota.</p>", unsafe_allow_html=True)
+                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc7", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-07: Cartilha de Petrechos"
                     st.rerun()
-
 
 # ==========================================
 # ABA 7: GOVERNANÇA & JURÍDICO
