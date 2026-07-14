@@ -567,13 +567,9 @@ def carregar_pdf_seguro(caminho_arquivo):
         return b"Arquivo Pendente"
 
 def renderizar_leitor_nativo(chave_aba):
-    """
-    Renderiza o Infográfico Vivo com Glassmorphism, Hover 3D e Neon Glow.
-    Contém a transcrição exata e interativa do PDF Original.
-    """
-    if st.session_state['leitor_ativo']:
+    if st.session_state.get('leitor_ativo'):
         
-        # 1. MAPEAMENTO OFICIAL DOS ARQUIVOS PDF (Para o botão de download)
+        # 1. MAPEAMENTO DE ARQUIVOS
         mapa_arquivos = {
             "DOC-01: Guia do Motorista": "Guia_Bolso_Motorista_Prime_Seafood.pdf",
             "DOC-02: Triagem de Lagosta": "POP_001_Triagem_Lagosta_Prime.pdf",
@@ -588,10 +584,10 @@ def renderizar_leitor_nativo(chave_aba):
         }
         arquivo_pdf_atual = mapa_arquivos.get(st.session_state['leitor_ativo'])
 
-        # 2. MENU SUPERIOR DO LEITOR (Botão Fechar e Botão Download)
+        # 2. BOTÕES SUPERIORES
         c_fechar, c_vazio, c_baixar = st.columns([1.5, 2, 1.5])
         with c_fechar:
-            if st.button("❌ FECHAR INFOGRÁFICO", use_container_width=True, type="primary", key=f"fechar_{chave_aba}"):
+            if st.button("⬅️ VOLTAR AO PAINEL", use_container_width=True, key=f"fechar_{chave_aba}"):
                 st.session_state['leitor_ativo'] = None
                 st.rerun()
         with c_baixar:
@@ -607,217 +603,118 @@ def renderizar_leitor_nativo(chave_aba):
         
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # 3. CSS AVANÇADO (GLASSMORPHISM, HOVER 3D, NEON GLOW)
-        st.markdown("""
-        <style>
-            /* Container Tático */
-            .hud-wrapper {
-                background-color: #0b1120; padding: 40px; border-radius: 20px;
-                box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 25px 50px -12px rgba(0,0,0,0.9);
-                border: 1px solid #1e293b; margin-bottom: 30px; position: relative; overflow: hidden;
-            }
-            /* Brilho de fundo militar/tático */
-            .hud-wrapper::before {
-                content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-                background: radial-gradient(circle, rgba(192,159,82,0.05) 0%, rgba(11,17,32,0) 50%);
-                z-index: 0; pointer-events: none;
-            }
-            /* Cabeçalho do HUD */
-            .hud-header { text-align: center; position: relative; z-index: 1; margin-bottom: 40px; }
-            .hud-title { color: #c09f52; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px rgba(192,159,82,0.4); margin: 0; }
-            .hud-subtitle { color: #94a3b8; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
-            /* Grid Responsivo para os 4 Módulos */
-            .grid-3d { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; position: relative; z-index: 1; }
-            /* GLASSMORPHISM: Fundos escuros translúcidos */
-            .card-glass {
-                background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 25px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                display: flex; flex-direction: column;
-            }
-            /* HOVER 3D + NEON GLOW */
-            .card-glass:hover { transform: translateY(-10px) scale(1.03); z-index: 10; }
-            .glow-green:hover { border-color: #22c55e; box-shadow: 0 15px 40px rgba(34, 197, 94, 0.3), inset 0 0 20px rgba(34, 197, 94, 0.1); }
-            .glow-blue:hover { border-color: #3b82f6; box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3), inset 0 0 20px rgba(59, 130, 246, 0.1); }
-            .glow-gold:hover { border-color: #c09f52; box-shadow: 0 15px 40px rgba(192, 159, 82, 0.3), inset 0 0 20px rgba(192, 159, 82, 0.1); }
-            .glow-red:hover { border-color: #ef4444; box-shadow: 0 15px 40px rgba(239, 68, 68, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.1); }
-            /* Tipografia Interna */
-            .card-icon { font-size: 32px; margin-bottom: 10px; }
-            .card-title { color: #f8fafc; font-size: 16px; font-weight: 800; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-            .card-list { list-style: none; padding: 0; margin: 0; }
-            .card-list li { color: #cbd5e1; font-size: 13.5px; margin-bottom: 12px; line-height: 1.5; padding-left: 20px; position: relative; }
-            .card-list li::before { content: '⬡'; position: absolute; left: 0; color: #64748b; font-size: 12px; transition: color 0.3s; }
-            .card-glass:hover .card-list li::before { color: #c09f52; }
-            .card-list b { color: #ffffff; font-weight: 600; }
-        </style>
-        """, unsafe_allow_html=True)
-
-       # =================================================================
-        # 4. CONTEÚDO NATIVO EXATO DO PDF "GUIA DO MOTORISTA"
-        # =================================================================
-        def renderizar_leitor_nativo(chave_aba):
-        
+       # =====================================================================
+        # GUIA 3D INTERATIVO - BLINDADO CONTRA ERROS DE RENDERIZAÇÃO
+        # =====================================================================
         if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
-            
-            st.markdown("""
+            html_content = """
             <style>
-                /* Blindagem CSS para garantir que o Streamlit renderize como UI Avançada */
-                .cf-hud-wrapper {
-                    background-color: #fcfaf9;
-                    padding: 45px;
-                    border-radius: 16px;
-                    box-shadow: 0 15px 40px rgba(0,0,0,0.06);
-                    border: 1px solid #e2e8f0;
-                    margin-bottom: 30px;
-                    font-family: 'Inter', sans-serif;
-                }
-                .cf-header {
-                    text-align: center;
-                    margin-bottom: 45px;
-                    border-bottom: 2px solid #e2e8f0;
-                    padding-bottom: 25px;
-                }
-                .cf-title {
-                    color: #7c1617;
-                    font-size: 34px;
-                    font-weight: 900;
-                    text-transform: uppercase;
-                    margin: 0 0 10px 0;
-                    letter-spacing: 1px;
-                }
-                .cf-subtitle {
-                    color: #c09f52;
-                    font-size: 15px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 2px;
-                    margin: 0;
-                }
-                .cf-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                    gap: 30px;
-                }
-                .cf-card {
-                    background: #ffffff;
-                    border: 1px solid #e2e8f0;
-                    border-radius: 12px;
-                    padding: 30px;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                    position: relative;
-                    overflow: hidden;
-                    display: flex;
-                    flex-direction: column;
-                }
-                .cf-card:hover {
-                    transform: translateY(-10px);
-                    box-shadow: 0 20px 40px rgba(124, 22, 23, 0.1);
-                    border-color: #c09f52;
-                }
-                .cf-card-top-line {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 5px;
-                }
-                /* Cores de Identificação 3D no topo de cada cartão */
-                .cf-line-green { background: linear-gradient(90deg, #166534, #22c55e); }
-                .cf-line-gray { background: linear-gradient(90deg, #1a1a1a, #475569); }
-                .cf-line-gold { background: linear-gradient(90deg, #92400e, #c09f52); }
-                .cf-line-red { background: linear-gradient(90deg, #7c1617, #dc2626); }
-                
-                .cf-icon-wrapper {
-                    display: flex;
-                    align-items: center;
-                    gap: 15px;
-                    margin-bottom: 20px;
-                    border-bottom: 1px solid #f1f5f9;
-                    padding-bottom: 15px;
-                }
-                .cf-icon { font-size: 32px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
-                .cf-card-title { color: #1a1a1a; font-size: 16px; font-weight: 800; margin: 0; text-transform: uppercase; line-height: 1.3; }
-                .cf-card-desc { color: #64748b; font-size: 13px; margin: 0 0 20px 0; font-weight: 500; line-height: 1.5; }
-                .cf-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-                .cf-list li { color: #334155; font-size: 13.5px; margin-bottom: 15px; line-height: 1.6; padding-left: 24px; position: relative; }
-                .cf-list li::before { content: '❖'; position: absolute; left: 0; top: 2px; color: #c09f52; font-size: 12px; transition: color 0.3s ease; }
-                .cf-card:hover .cf-list li::before { color: #7c1617; }
-                .cf-list b { color: #1a1a1a; font-weight: 700; }
-                .cf-alert-box { background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid #e11d48; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 12px; color: #9f1239; font-weight: 600; line-height: 1.5; }
+            .guiabolso-container { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #fcfaf9 0%, #f1f5f9 100%); padding: 45px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; margin-bottom: 30px; position: relative; overflow: hidden; }
+            .guiabolso-header { text-align: center; margin-bottom: 45px; position: relative; z-index: 2; }
+            .guiabolso-title { color: #7c1617; font-size: 38px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; margin-bottom: 12px; text-shadow: 2px 2px 4px rgba(0,0,0,0.05); }
+            .guiabolso-subtitle { background: #c09f52; color: white; padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block; box-shadow: 0 4px 10px rgba(192, 159, 82, 0.4); }
+            .guiabolso-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; position: relative; z-index: 2; }
+            .guiabolso-card { background: #ffffff; border-radius: 16px; padding: 35px 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; display: flex; flex-direction: column; overflow: hidden; }
+            .guiabolso-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 30px 60px rgba(124, 22, 23, 0.15); border-color: #c09f52; z-index: 10; }
+            .top-line { position: absolute; top: 0; left: 0; width: 100%; height: 6px; transition: height 0.3s ease; }
+            .guiabolso-card:hover .top-line { height: 12px; }
+            .line-green { background: linear-gradient(90deg, #166534, #22c55e); }
+            .line-gray { background: linear-gradient(90deg, #1e293b, #64748b); }
+            .line-gold { background: linear-gradient(90deg, #92400e, #c09f52); }
+            .line-red { background: linear-gradient(90deg, #7c1617, #ef4444); }
+            .card-header-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 2px dashed #f1f5f9; padding-bottom: 20px; }
+            .icon-box { font-size: 34px; background: #f8fafc; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; border-radius: 14px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+            .card-title { font-size: 18px; font-weight: 900; color: #1e293b; text-transform: uppercase; margin: 0; line-height: 1.2; }
+            .card-desc { font-size: 14px; color: #64748b; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+            .card-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+            .card-list li { font-size: 13.5px; color: #334155; margin-bottom: 15px; line-height: 1.6; position: relative; padding-left: 26px; }
+            .card-list li::before { content: '➔'; position: absolute; left: 0; top: 1px; color: #c09f52; font-size: 15px; transition: all 0.3s ease; transform: translateX(0); }
+            .guiabolso-card:hover .card-list li::before { color: #7c1617; transform: translateX(4px); }
+            .card-list b { color: #0f172a; font-weight: 800; background: rgba(192, 159, 82, 0.1); padding: 2px 6px; border-radius: 4px; }
+            .alert-box { background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border-left: 5px solid #e11d48; padding: 18px; border-radius: 8px; margin-top: 25px; font-size: 13px; color: #9f1239; font-weight: 800; line-height: 1.5; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.1); display: flex; gap: 12px; align-items: center; }
+            .alert-icon { font-size: 24px; animation: pulse 1.5s infinite; }
+            @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
             </style>
-
-            <div class="cf-hud-wrapper">
-                <div class="cf-header">
-                    <h1 class="cf-title">Guia de Bolso Executivo</h1>
-                    <p class="cf-subtitle">Abordagem Fiscal & Transporte Normativo | Prime Seafood</p>
-            </div>
-                
-                <div class="cf-grid">
-                    
-                    <div class="cf-card">
-                        <div class="cf-card-top-line cf-line-green"></div>
-                        <div class="cf-icon-wrapper">
-                            <div class="cf-icon">🚦</div>
-                            <h3 class="cf-card-title" style="color: #166534;">1. Checklist Operacional<br>"Sinal Verde"</h3>
-            </div>
-                        <p class="cf-card-desc">Antes de dar a partida, audite a pasta da cabine. A ausência de qualquer item abaixo veta a saída da doca:</p>
-                        <ul class="cf-list">
-                            <li><b>NF-e e DANFE:</b> Confirme a separação exata e clara entre Peso Bruto e Peso Líquido.</li>
-                            <li><b>GTP (Guia de Trânsito):</b> Dentro da validade e assinada. (Em período de defeso, inclua obrigatoriamente a Declaração de Estoque).</li>
-                            <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, da embarcação fornecedora e da transportadora.</li>
-                            <li><b>Lacres e Termógrafo:</b> Verifique fisicamente se a numeração bate perfeitamente com o descrito na Nota Fiscal.</li>
+            <div class="guiabolso-container">
+                <div class="guiabolso-header">
+                    <h1 class="guiabolso-title">Guia de Bolso Executivo</h1>
+                    <div class="guiabolso-subtitle">Abordagem Fiscal & Transporte Normativo</div>
+                </div>
+                <div class="guiabolso-grid">
+                    <div class="guiabolso-card">
+                        <div class="top-line line-green"></div>
+                        <div class="card-header-row">
+                            <div class="icon-box">🚦</div>
+                            <h3 class="card-title" style="color: #166534;">1. Checklist<br>Sinal Verde</h3>
+                        </div>
+                        <p class="card-desc">Auditoria obrigatória pré-embarque. A ausência veta a saída da doca:</p>
+                        <ul class="card-list">
+                            <li><b>NF-e e DANFE:</b> Confirme a separação exata entre Peso Bruto e Líquido.</li>
+                            <li><b>GTP:</b> Dentro da validade e assinada (com Declaração de Estoque no defeso).</li>
+                            <li><b>RGP e CTF/APP:</b> Cópias vigentes da indústria, embarcação e transportadora.</li>
+                            <li><b>Lacres e Termógrafo:</b> Numeração física deve bater rigidamente com a NF.</li>
                         </ul>
-            </div>
-
-                    <div class="cf-card">
-                        <div class="cf-card-top-line cf-line-gray"></div>
-                        <div class="cf-icon-wrapper">
-                            <div class="cf-icon">👮</div>
-                            <h3 class="cf-card-title" style="color: #1a1a1a;">2. Conduta na Abordagem<br>(Cordialidade Técnica)</h3>
-            </div>
-                        <p class="cf-card-desc">O motorista representa legalmente a empresa perante as autoridades (IBAMA, PRF, MAPA):</p>
-                        <ul class="cf-list">
-                            <li><b>Comunicação:</b> Responda estritamente ao que for perguntado de forma respeitosa. Não discuta biologia, legislação ou regras industriais.</li>
-                            <li><b>Preservação da Carga:</b> Nunca rompa o lacre do baú sozinho. A abertura só pode ocorrer por ordem explícita e com a presença física do fiscal.</li>
-                            <li><b>Aferição de Peso:</b> Se o fiscal alegar excesso de peso "visual", exija formalmente a pesagem em balança certificada e calibrada pelo INMETRO.</li>
+                    </div>
+                    <div class="guiabolso-card">
+                        <div class="top-line line-gray"></div>
+                        <div class="card-header-row">
+                            <div class="icon-box">👮</div>
+                            <h3 class="card-title" style="color: #1e293b;">2. Conduta na<br>Abordagem</h3>
+                        </div>
+                        <p class="card-desc">Representação legal da empresa perante as autoridades fiscais:</p>
+                        <ul class="card-list">
+                            <li><b>Comunicação:</b> Responda estritamente ao perguntado. Não discuta biologia.</li>
+                            <li><b>Preservação da Carga:</b> Nunca rompa o lacre sozinho. Só abrir com ordem e presença do fiscal.</li>
+                            <li><b>Aferição de Peso:</b> Se alegarem excesso visual, exija pesagem em balança aferida pelo INMETRO.</li>
                         </ul>
-            </div>
-
-                    <div class="cf-card">
-                        <div class="cf-card-top-line cf-line-gold"></div>
-                        <div class="cf-icon-wrapper">
-                            <div class="cf-icon">🦞</div>
-                            <h3 class="cf-card-title" style="color: #92400e;">3. Rigor das Espécies<br>(Defesa Técnica no Trânsito)</h3>
-            </div>
-                        <p class="cf-card-desc">Argumentos rápidos de linha de frente contra autuações arbitrárias por falta de perícia fiscal:</p>
-                        <ul class="cf-list">
-                            <li><b>Lagosta Viva:</b> Alerte os fiscais sobre o risco iminente de choque térmico ao abrir o baú. Justifique eventual mortalidade como estresse natural do transporte, não por descaudamento ilegal.</li>
-                            <li><b>Tamanhos Mínimos (Tolerância Zero):</b> Lagosta Vermelha (22cm total / 13cm cauda). Lagosta Verde (19cm total / 11cm cauda).</li>
-                            <li><b>Pargo:</b> Absolutamente todas as caixas devem estar etiquetadas (Nome científico, lote e RGP). É expressamente proibido o transporte a granel.</li>
+                    </div>
+                    <div class="guiabolso-card">
+                        <div class="top-line line-gold"></div>
+                        <div class="card-header-row">
+                            <div class="icon-box">🦞</div>
+                            <h3 class="card-title" style="color: #92400e;">3. Rigor das<br>Espécies</h3>
+                        </div>
+                        <p class="card-desc">Defesa de linha de frente contra autuações arbitrárias:</p>
+                        <ul class="card-list">
+                            <li><b>Lagosta Viva:</b> Alerte sobre choque térmico ao abrir o baú. Mortalidade é estresse de transporte, não crime.</li>
+                            <li><b>Tamanhos Mínimos (Tolerância Zero):</b> Vermelha (22cm total/13cm cauda) | Verde (19cm total/11cm cauda).</li>
+                            <li><b>Pargo:</b> Caixas etiquetadas (Nome científico, lote, RGP). Proibido transporte a granel.</li>
                         </ul>
-            </div>
-
-                    <div class="cf-card">
-                        <div class="cf-card-top-line cf-line-red"></div>
-                        <div class="cf-icon-wrapper">
-                            <div class="cf-icon">🚨</div>
-                            <h3 class="cf-card-title" style="color: #7c1617;">4. Protocolo de Crise<br>(SLA Jurídico de 48H)</h3>
-            </div>
-                        <p class="cf-card-desc">Se a autoridade lavrar o Auto de Infração ou Termo de Apreensão, o tempo é o fator mais crítico:</p>
-                        <ul class="cf-list">
-                            <li><b>Assine Sempre:</b> Recusar a assinatura é um erro grave que anula a boa-fé. Assine e escreva a <b>ressalva técnica</b> no campo de observações (ex: "pesagem sem balança do INMETRO" ou "mortalidade por estresse térmico").</li>
-                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe em alta nitidez o Auto de Infração, Termo de Apreensão, todos os lacres e o painel de temperatura do termógrafo.</li>
+                    </div>
+                    <div class="guiabolso-card">
+                        <div class="top-line line-red"></div>
+                        <div class="card-header-row">
+                            <div class="icon-box">🚨</div>
+                            <h3 class="card-title" style="color: #7c1617;">4. Protocolo de<br>Crise (48h)</h3>
+                        </div>
+                        <p class="card-desc">O tempo é crítico. Ações imediatas em caso de Auto de Infração:</p>
+                        <ul class="card-list">
+                            <li><b>Assine Sempre:</b> Recusar anula a boa-fé. Assine e faça a <b>ressalva técnica</b> nas observações (ex: "pesagem sem balança").</li>
+                            <li><b>Roteiro dos 30 Minutos:</b> Fotografe o Auto, Termo de Apreensão, lacres e painel do termógrafo em alta nitidez.</li>
                         </ul>
-                        <div class="cf-alert-box">
-                            ⚠️ PLANTÃO JURÍDICO: Envie todo o material fotográfico imediatamente para a base antes mesmo de deixar o posto fiscal.
+                        <div class="alert-box">
+                            <div class="alert-icon">⚠️</div>
+                            <div><b>PLANTÃO JURÍDICO:</b> Enviar todo o material fotográfico antes de deixar o posto fiscal.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            </div>
-
-            </div>
-            </div>
-            """, unsafe_allow_html=True)
+            """
+            st.markdown(html_content, unsafe_allow_html=True)
             
+        else:
+            html_placeholder = f"""
+            <div style='background: linear-gradient(135deg, #fcfaf9 0%, #f1f5f9 100%); padding: 50px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; text-align: center;'>
+                <div style='font-size: 45px; margin-bottom: 15px;'>🚧</div>
+                <h2 style='color: #7c1617; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;'>Módulo Em Desenvolvimento</h2>
+                <p style='color: #64748b; font-size: 16px; max-width: 600px; margin: 0 auto 20px auto; line-height: 1.6;'>O infográfico tático de alta fidelidade para o documento <b>{st.session_state['leitor_ativo']}</b> está na fila de diagramação 3D do sistema.</p>
+                <div style='background: #ffffff; padding: 15px 25px; border-radius: 12px; display: inline-block; border: 1px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);'>
+                    Utilize o botão 📥 BAIXAR PDF ORIGINAL acima para acessar o manual corporativo completo.
+                </div>
+            </div>
+            """
+            st.markdown(html_placeholder, unsafe_allow_html=True)            
+        
         # 4. OS OUTROS DOCUMENTOS (EM CONSTRUÇÃO)
         else:
             st.markdown(f"""
