@@ -1210,11 +1210,6 @@ with tab6:
     st.markdown(f"""
     renderizar_leitor_nativo("aba6")
     
-    if st.session_state['leitor_ativo'] is None:
-        if st.button("👁️ ABRIR GUIA DO MOTORISTA (3D)"):
-            st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
-            st.rerun()
-    
     <div class='painel-3d'>
         <p style="margin: 0 0 5px 0; color: {COR_DOURADO}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Linha de Frente • Portos e Rodovias</p>
         <h2 style="margin: 0 0 10px 0; color: {COR_SECUNDARIA}; font-size: 1.6rem; font-weight: 800; text-transform: uppercase;">
@@ -1242,6 +1237,8 @@ with tab6:
                 if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc1", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
                     st.rerun()
+                # Este comando renderiza o guia se ele estiver ativo
+                renderizar_leitor_nativo("aba6")
                     
             with st.expander("🦞 DOC-02: POP Triagem Lagosta", expanded=True):
                 st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Tolerância zero para tamanhos mínimos e fêmeas ovadas.</p>", unsafe_allow_html=True)
