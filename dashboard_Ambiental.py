@@ -656,8 +656,9 @@ def renderizar_leitor_nativo(chave_aba):
         # 4. CONTEÚDO NATIVO EXATO DO PDF "GUIA DO MOTORISTA"
         # =================================================================
         def renderizar_leitor_nativo(chave_aba):
-            if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
-         
+        
+        if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
+            
             st.markdown("""
             <style>
                 /* Blindagem CSS para garantir que o Streamlit renderize como UI Avançada */
