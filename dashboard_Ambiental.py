@@ -655,7 +655,9 @@ def renderizar_leitor_nativo(chave_aba):
        # =================================================================
         # 4. CONTEÚDO NATIVO EXATO DO PDF "GUIA DO MOTORISTA"
         # =================================================================
-        if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
+        def renderizar_leitor_nativo(chave_aba):
+            if st.session_state['leitor_ativo'] == "DOC-01: Guia do Motorista":
+         
             st.markdown("""
             <style>
                 /* Blindagem CSS para garantir que o Streamlit renderize como UI Avançada */
@@ -1208,7 +1210,6 @@ with tab5:
 # ==========================================
 with tab6:
     st.markdown(f"""
-    renderizar_leitor_nativo("aba6")
     
     <div class='painel-3d'>
         <p style="margin: 0 0 5px 0; color: {COR_DOURADO}; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">Linha de Frente • Portos e Rodovias</p>
@@ -1237,6 +1238,7 @@ with tab6:
                 if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc1", use_container_width=True):
                     st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
                     st.rerun()
+               
                 # Este comando renderiza o guia se ele estiver ativo
                 renderizar_leitor_nativo("aba6")
                     
