@@ -707,7 +707,7 @@ def renderizar_leitor_nativo(chave_aba):
             </div>
             """, unsafe_allow_html=True)
 
-       # =====================================================================
+        # =====================================================================
         # 🐟 DOC-04: GUIA VMS PARGO (NÍVEL APPLE / PREMIUM UI)
         # =====================================================================
         elif st.session_state['leitor_ativo'] == "DOC-04: Guia VMS Pargo":
