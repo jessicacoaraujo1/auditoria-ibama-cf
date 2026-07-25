@@ -706,7 +706,104 @@ def renderizar_leitor_nativo(chave_aba):
                 </div>
             </div>
             """, unsafe_allow_html=True)
+
+        # =====================================================================
+        # 👇 COLE O CÓDIGO DO DOC-04 EXATAMENTE AQUI 👇
+        # =====================================================================
+        elif st.session_state['leitor_ativo'] == "DOC-04: Guia VMS Pargo":
+            st.markdown("""
+            <style>
+                .vms-wrapper { font-family: 'Inter', sans-serif; background: linear-gradient(145deg, #fcfaf9 0%, #f1f5f9 100%); padding: 50px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; margin-bottom: 30px; }
+                .vms-header { text-align: center; margin-bottom: 40px; }
+                .vms-title { color: #7c1617; font-size: 34px; font-weight: 900; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: -0.5px; }
+                .vms-subtitle { background: #1a1a1a; color: #c09f52; padding: 6px 18px; border-radius: 30px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; display: inline-block; }
+                .vms-meta { font-size: 12.5px; color: #475569; margin-top: 12px; font-weight: 500; }
+                
+                .vms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 30px; }
+                .vms-card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); position: relative; overflow: hidden; display: flex; flex-direction: column; }
+                .vms-card::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: #7c1617; }
+                .vms-card-num { font-size: 11px; font-weight: 800; color: #c09f52; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+                .vms-card h3 { color: #0f172a; font-size: 16px; font-weight: 800; text-transform: uppercase; margin: 0 0 12px 0; }
+                .vms-card p { font-size: 13.5px; color: #475569; line-height: 1.6; margin: 0; }
+                
+                .vms-table-container { margin-top: 35px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); }
+                .vms-table-title { color: #7c1617; font-size: 18px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+                
+                .vms-alert-box { background: #fdf2f2; border: 1px solid #fecaca; border-left: 5px solid #dc2626; border-radius: 8px; padding: 20px; margin-top: 30px; display: flex; align-items: center; gap: 20px; }
+            </style>
             
+            <div class="vms-wrapper">
+                <div class="vms-header">
+                    <h1 class="vms-title">DOC-04: Guia VMS e Navegação para Pargo</h1>
+                    <div class="vms-subtitle">Operações de Mar e Telemetria Satélite (PREPS)</div>
+                    <div class="vms-meta"><b>Base Normativa:</b> IN Interministerial MPA/MMA nº 42/2012 | <b>Supervisão Técnica:</b> Dra. Jéssica Araújo (OAB/PA 37.748)</div>
+                </div>
+                
+                <div class="vms-grid">
+                    <div class="vms-card">
+                        <div class="vms-card-num">Regra Crítica 01</div>
+                        <h3>O Limite da Isóbata de 50 Metros</h3>
+                        <p>Proibição absoluta de lançamento de linhas, manzuás ou petrechos de captura de Pargo (<i>Lutjanus purpureus</i>) em profundidades inferiores a 50 metros. A incursão em zonas costeiras rasas gera coautoria e autuação direta no CNPJ da Prime Seafood.</p>
+                    </div>
+                    
+                    <div class="vms-card">
+                        <div class="vms-card-num">Monitoramento 02</div>
+                        <h3>Rastreamento PREPS/VMS (24/7)</h3>
+                        <p>O transponder satelital ("caixa negra") nunca deve ser desligado ou obstruído em alto-mar. Em caso de falha técnica, o comandante tem o <b>prazo improrrogável de 24 horas</b> para comunicar a base via rádio ou abortar o cruzeiro pesqueiro.</p>
+                    </div>
+                    
+                    <div class="vms-card">
+                        <div class="vms-card-num">Rastreabilidade 03</div>
+                        <h3>Diário de Bordo (Mapa de Bordo)</h3>
+                        <p>Exige o registo ininterrupto de coordenadas geográficas (latitude/longitude), profundidade exata dos lances e estimativa real de captura em quilos, que deve convergir obrigatoriamente com a pesagem de cais.</p>
+                    </div>
+                </div>
+
+                <div class="vms-table-container">
+                    <div class="vms-table-title">Auditoria de Cais e Sanções Contratuais Aplicadas</div>
+                    <p style="font-size: 13px; color: #475569; margin-bottom: 20px;">A Prime Seafood executa dupla verificação cruzando os logs do VMS satelital com o Mapa de Bordo no desembarque:</p>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                        <thead>
+                            <tr style="background: #1a1a1a; color: #fff;">
+                                <th style="padding: 12px; border-top-left-radius: 6px;">Infração Operacional (Mar)</th>
+                                <th style="padding: 12px; border-top-right-radius: 6px;">Sanção Diretiva (Desembarque)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #fff5f5;">
+                                <td style="padding: 12px; font-weight: 700; color: #991b1b;">Incursão em Zona de Exclusão (< 50m)</td>
+                                <td style="padding: 12px; color: #1e293b;"><b>REJEIÇÃO TOTAL:</b> Embargo comercial da carga e suspensão imediata do armador no sistema.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+                                <td style="padding: 12px; font-weight: 700; color: #b45309;">Falha VMS não reportada em 24h</td>
+                                <td style="padding: 12px; color: #1e293b;">Notificação formal ao IBAMA e retenção do faturamento até auditoria das cartas náuticas e logs.</td>
+                            </tr>
+                            <tr style="background: #fff5f5;">
+                                <td style="padding: 12px; font-weight: 700; color: #991b1b;">Divergência Crítica no Mapa de Bordo</td>
+                                <td style="padding: 12px; color: #1e293b;">Recusa do lote até retificação documental sob supervisão do Controle de Qualidade (CQ).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="vms-alert-box">
+                    <div style="font-size: 32px;">🛰️</div>
+                    <div>
+                        <b style="color: #991b1b; font-size: 14px; text-transform: uppercase;">Blindagem do Serviço de Inspeção Federal (SIF):</b><br>
+                        <span style="font-size: 13px; color: #7f1d1d; line-height: 1.4;">O rigor absoluto no cumprimento do DOC-04 protege as licenças industriais da Prime Seafood contra a cassação de selos de exportação decorrentes de pesca em áreas protegidas ou desrespeito ao defeso.</span>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        # =====================================================================
+        # 👆 FIM DO CÓDIGO DO DOC-04 👆
+        # =====================================================================
+
+        else:
+            # ... (aqui continua o código original da tela de Módulo em Desenvolvimento) ...
+            st.markdown(f"""
+            <div style='background: linear-gradient(135deg, #fcfaf9 0%, #f1f5f9 100%); padding: 60px; border-radius: 20px; border: 1px solid #cbd5e1; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; margin-bottom: 30px;'>
+        
         else:
             st.markdown(f"""
             <div style='background: linear-gradient(135deg, #fcfaf9 0%, #f1f5f9 100%); padding: 60px; border-radius: 20px; border: 1px solid #cbd5e1; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; margin-bottom: 30px;'>
