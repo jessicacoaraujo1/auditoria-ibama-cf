@@ -795,14 +795,6 @@ def renderizar_leitor_nativo(chave_aba):
                 </div>
             </div>
             """, unsafe_allow_html=True)
-        # =====================================================================
-        # 👆 FIM DO CÓDIGO DO DOC-04 👆
-        # =====================================================================
-
-        else:
-            # ... (aqui continua o código original da tela de Módulo em Desenvolvimento) ...
-            st.markdown(f"""
-            <div style='background: linear-gradient(135deg, #fcfaf9 0%, #f1f5f9 100%); padding: 60px; border-radius: 20px; border: 1px solid #cbd5e1; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; margin-bottom: 30px;'>
         
         else:
             st.markdown(f"""
