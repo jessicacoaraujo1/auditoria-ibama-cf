@@ -1315,6 +1315,7 @@ with tab_custodia:
                     "• *Ação Operacional:* Garantir que a gerência de armazém saiba que este volume específico é intocável comercialmente."
                 )
 
+
 # ---------------------------------------------------------
 # ABA MAXIMIZADA: CUSTÓDIA, FIEL DEPOSITÁRIO E MEDIDAS ACAUTELATÓRIAS
 # ---------------------------------------------------------
@@ -1565,6 +1566,7 @@ with tab_custodia:
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
+
 
 # ---------------------------------------------------------
 # ABA 4: PESQUISA PROFUNDA (FILTROS)
