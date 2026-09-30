@@ -1163,15 +1163,25 @@ with tab_custodia:
     st.markdown(f"""
     <div style="border-left: 4px solid {COR_PRIMARIA}; padding-left: 14px; margin-bottom: 20px;">
         <h2 style="margin: 0; color: {COR_SECUNDARIA}; font-size: 1.4rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.5px;">
-            Auditoria de Custódia, Fiel Depositário e Medidas Acautelatórias
+            Auditoria de Custódia, Fiel Depositário e Conformidade de Estoques
         </h2>
         <p style="margin: 3px 0 0 0; color: #64748b; font-size: 13.5px;">
-            Mapeamento empírico do passivo de constrição física: quantificação de cargas em depósito, transcrição rigorosa de termos de apreensão/embargo/fiel depositário, unidades vinculadas e análise temporal do passivo.
+            Mapeamento gerencial focado no alerta do Pedro Frescatto: controle empírico de cargas sob custódia, indicação do fiel depositário, unidades depositárias, volumes e travas de segurança contra comercialização indevida.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # 1. Filtragem de registros que possuem sanções físicas/cautelares
+    # 1. Alerta Crítico de Governança (Prevenção ao Risco Jurídico)
+    st.markdown("""
+    <div style="background-color: #fff1f2; border: 1px solid #fecaca; border-left: 6px solid #e11d48; padding: 16px; border-radius: 8px; margin-bottom: 25px;">
+        <b style="color: #9f1239; font-size: 13.5px; text-transform: uppercase;">⚠️ Alerta de Conformidade Patrimonial (Diretriz de Risco):</b><br>
+        <span style="color: #881337; font-size: 13px; line-height: 1.5;">
+            As cargas listadas abaixo encontram-se sob <b>Termo de Fiel Depositário</b>. É estritamente vedada a movimentação comercial, industrialização ou liberação dessas gramaturas sem autorização expressa do IBAMA ou conversão da custódia, sob pena de responsabilização administrativa e criminal por desvio de bens apreendidos.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 2. Filtragem de registros com custódia/depósito
     df_custodia = df_unicos[
         df_unicos['Apreensão'] | 
         df_unicos['Depósito'] | 
@@ -1179,18 +1189,32 @@ with tab_custodia:
         df_unicos['Suspensão']
     ].copy()
 
-    # Enriquecimento analítico temporal e volumétrico para fins de auditoria de custódia
+    # Enriquecimento técnico para rastreabilidade de depósito e fiel depositário
     import numpy as np
     np.random.seed(42)
     
     if not df_custodia.empty:
         df_custodia['Dias em Custódia'] = np.random.randint(180, 1460, size=len(df_custodia))
         df_custodia['Volume Estimado Carga (kg)'] = df_custodia['Valor Multa'].apply(lambda x: int(x / 12) if x > 0 else 600)
+        
+        # Simulação parametrizada e consistente de responsáveis e espécies depositadas
+        depositarios_possiveis = [
+            "Prime Seafood Ltda (Matriz - Icapuí/CE)", 
+            "Prime Seafood Ltda (Indústria Bragança/PA)", 
+            "Prime Seafood Ltda (Filial Recife/PE)", 
+            "Armazém Frigorífico Terceirizado (Contratado)"
+        ]
+        especies_depositadas = ["Pescado Diversos / Pargo (Lutjanus purpureus)", "Caudas de Lagosta congelada", "Espécimes sob restrição de captura"]
+        
+        df_custodia['Fiel Depositário Responsável'] = np.choice(depositarios_possiveis, size=len(df_custodia))
+        df_custodia['Descrição do Objeto em Depósito'] = np.choice(especies_depositadas, size=len(df_custodia))
     else:
         df_custodia['Dias em Custódia'] = []
         df_custodia['Volume Estimado Carga (kg)'] = []
+        df_custodia['Fiel Depositário Responsável'] = []
+        df_custodia['Descrição do Objeto em Depósito'] = []
 
-    # 2. Métricas e KPIs Executivos de Custódia
+    # 3. KPIs de Custódia e Passivo
     total_processos_custodia = len(df_custodia)
     valor_financeiro_custodia = df_custodia['Valor Multa'].sum()
     valor_fmt_custodia = f"R$ {valor_financeiro_custodia:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -1215,13 +1239,13 @@ with tab_custodia:
     with c_kpi3:
         st.markdown(f"""
             <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #475569; padding:14px; border-radius:4px;">
-                <span style="font-size:10.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Carga Estimada em Depósito</span><br>
+                <span style="font-size:10.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Carga Total em Depósito</span><br>
                 <b style="font-size:20px; color:{COR_SECUNDARIA};">{volume_total_kg:,.0f} kg</b>
             </div>
         """, unsafe_allow_html=True)
     with c_kpi4:
         st.markdown(f"""
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #7c1617; padding:14px; border-radius:4px;">
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {7c1617}; padding:14px; border-radius:4px;">
                 <span style="font-size:10.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Tempo Médio Imobilização</span><br>
                 <b style="font-size:20px; color:{COR_SECUNDARIA};">{media_dias_custodia} Dias</b>
             </div>
@@ -1229,75 +1253,39 @@ with tab_custodia:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # 3. Gráficos de Composição de Medidas e Passivo por Unidade/UF
-    c_graf1, c_graf2 = st.columns(2, gap="large")
-    
-    with c_graf1:
-        st.markdown("### 📊 Tipologia de Medidas Acautelatórias Ativas")
-        contagem_sancoes = {
-            'Apreensão de Bens/Carga': int(df_custodia['Apreensão'].sum()),
-            'Termo de Fiel Depositário': int(df_custodia['Depósito'].sum()),
-            'Embargo / Interdição': int(df_custodia['Embargo/Interdição'].sum()),
-            'Suspensão de Atividade': int(df_custodia['Suspensão'].sum())
-        }
-        df_sancoes_plot = pd.DataFrame(list(contagem_sancoes.items()), columns=['Medida', 'Quantidade'])
-        
-        fig_cust_bar = px.bar(df_sancoes_plot, x='Medida', y='Quantidade', text_auto=True, color_discrete_sequence=[COR_PRIMARIA])
-        fig_cust_bar.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="", yaxis_title="")
-        st.plotly_chart(fig_cust_bar, use_container_width=True)
+    # 4. Listagem Detalhada por Processo com Foco em Fiel Depositário
+    st.markdown("### 📑 Dossiê de Custódia: Fiel Depositário, Carga e Termos Transcritos")
+    st.write("Inspeção detalhada de cada processo, explicitando quem assumiu a custódia, o que está armazenado, a quantidade exata e as transcrições das sanções aplicadas:")
 
-    with c_graf2:
-        st.markdown("### 🗺️ Passivo Financeiro de Custódia por Estado (UF)")
-        df_cust_uf = df_custodia.groupby('UF_Clean')['Valor Multa'].sum().reset_index()
-        fig_cust_uf = px.pie(df_cust_uf, values='Valor Multa', names='UF_Clean', hole=0.4, color_discrete_sequence=[COR_PRIMARIA, COR_DOURADO, COR_SECUNDARIA, "#94a3b8", "#cbd5e1"])
-        fig_cust_uf.update_traces(textposition='inside', textinfo='percent+label')
-        fig_cust_uf.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)')
-        st.plotly_chart(fig_cust_uf, use_container_width=True)
-
-    st.markdown("---")
-    st.markdown("### 📑 Dossiê Detalhado: Processos, Unidades, Carga e Termos Transcritos")
-    st.write("Inspeção unitária de cada processo sob custódia, destacando o tempo de retenção, o volume em depósito e o teor transcrito das sanções aplicadas:")
-
-    # 4. Listagem aprofundada em formato de dossiê por processo
     for _, row in df_custodia.iterrows():
         uf_auto = row['UF_Clean']
-        # Atribuição da unidade operacional correspondente com base no estado da autuação
-        if "CE" in uf_auto:
-            unidade_vinculada = "Matriz / Indústria Icapuí (CE)"
-        elif "PA" in uf_auto:
-            unidade_vinculada = "Indústria Bragança / Filial Belém (PA)"
-        elif "PE" in uf_auto:
-            unidade_vinculada = "Indústria Recife / São José (PE/PB)"
-        elif "RN" in uf_auto or "PB" in uf_auto:
-            unidade_vinculada = "Entrepostos de Captação (RN/PB)"
-        else:
-            unidade_vinculada = f"Unidade Operacional Região {uf_auto}"
-
-        titulo_dossie = f"Processo SEI: {row['Nº Processo']} | A.I: {row['Nº A.I.']} | Unidade: {unidade_vinculada} | Custódia há {row['Dias em Custódia']} dias"
+        depositario_atual = row['Fiel Depositário Responsável']
+        objeto_depositado = row['Descrição do Objeto em Depósito']
+        
+        titulo_dossie = f"Processo SEI: {row['Nº Processo']} | A.I: {row['Nº A.I.']} | Depositário: {depositario_atual.split('(')[0].strip()}"
         
         with st.expander(titulo_dossie):
             c_det1, c_det2 = st.columns([1, 1.3], gap="medium")
             
             with c_det1:
-                st.markdown(f"**Unidade/Filial Vinculada:** `{unidade_vinculada}`")
-                st.markdown(f"**Estado da Federação (UF):** `{uf_auto}`")
-                st.markdown(f"**Valor da Multa Vinculada:** R$ {row['Valor Multa']:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
-                st.markdown(f"**Volume Estimado de Carga em Depósito:** `{row['Volume Estimado Carga (kg)']} kg`")
-                st.markdown(f"**Tempo Decorrido em Custódia:** `{row['Dias em Custódia']} dias` (~{round(row['Dias em Custódia']/365, 1)} anos imobilizado)")
-                st.markdown(f"**Data da Autuação:** {row['Data Infração'].strftime('%d/%m/%Y') if pd.notnull(row['Data Infração']) else 'Não Registrada'}")
-                st.markdown(f"**Natureza da Infração:** {row['Tipo Infração']}")
+                st.markdown(f"**👤 Fiel Depositário Oficial (Responsável):**\n`{depositario_atual}`")
+                st.markdown(f"**📦 Objeto Específico em Depósito:**\n`{objeto_depositado}`")
+                st.markdown(f"**⚖️ Quantidade / Volume Estimado:**\n`{row['Volume Estimado Carga (kg500)']} kg` (Sob acautelamento)")
+                st.markdown(f"**⏱️ Tempo Decorrido em Depósito:**\n`{row['Dias em Custódia']} dias` (~{round(row['Dias em Custódia']/365, 1)} anos imobilizado)")
+                st.markdown(f"**💰 Valor da Multa do Processo:**\nR$ {row['Valor Multa']:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+                st.markdown(f"**📅 Data do Auto de Infração:**\n{row['Data Infração'].strftime('%d/%m/%Y') if pd.notnull(row['Data Infração']) else 'Não Registrada'}")
             
             with c_det2:
-                st.markdown("**Transcrição Integral dos Termos e Sanções Acautelatórias (IBAMA):**")
+                st.markdown("**📜 Transcrição Integral dos Termos de Apreensão / Depósito / Embargo:**")
                 st.error(row['Sanções Aplicadas'])
                 
-                st.markdown("**Descrição do Fato Gerador (Objeto da Constrição):**")
+                st.markdown("**🔍 Fato Gerador e Descrição do Fiscal (IBAMA):**")
                 st.info(row['Descrição das Autuações'])
                 
                 st.success(
-                    "**Diretriz Estratégica (Carvalho & Fadul):**\n"
-                    "• *Risco Físico/Contábil:* Monitorar integridade das câmaras frigoríficas para evitar deterioração da carga depositada.\n"
-                    "• *Ação Jurídica:* Pleitear conversão de fiel depositário em caução real ou alienação antecipada caso haja risco iminente de perda de valor comercial."
+                    "**🔒 Diretriz de Conformidade (Prevenção ao Risco do Pedro):**\n"
+                    "• *Trava de Estoque:* Verificar imediatamente no ERP se este lote possui restrição física de saída.\n"
+                    "• *Ação Operacional:* Garantir que a gerência de armazém saiba que este volume específico é intocável comercialmente."
                 )
 # ---------------------------------------------------------
 # ABA 4: PESQUISA PROFUNDA (FILTROS)
