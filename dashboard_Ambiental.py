@@ -1156,8 +1156,9 @@ with tab3:
         fig_sanc = px.bar(df_sanc, x='Total', y='Medida', orientation='h', text_auto=True, color_discrete_sequence=[COR_SECUNDARIA])
         fig_sanc.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', yaxis={'categoryorder':'total ascending'}, xaxis_title="", yaxis_title="")
         st.plotly_chart(fig_sanc, use_container_width=True)
+
 # ---------------------------------------------------------
-# ABA: CUSTÓDIA, FIEL DEPOSITÁRIO E MEDIDAS ACAUTELATÓRIAS
+# ABA NOVA: CUSTÓDIA, FIEL DEPOSITÁRIO E MEDIDAS ACAUTELATÓRIAS
 # ---------------------------------------------------------
 with tab_custodia:
     st.markdown(f"""
@@ -1166,7 +1167,7 @@ with tab_custodia:
             Auditoria de Custódia, Fiel Depositário e Conformidade de Estoques
         </h2>
         <p style="margin: 3px 0 0 0; color: #64748b; font-size: 13.5px;">
-            Mapeamento gerencial focado no alerta do Pedro Frescatto: controle empírico de cargas sob custódia, indicação do fiel depositário, unidades depositárias, volumes e travas de segurança contra comercialização indevida.
+            Mapeamento gerencial focado no controle empírico de cargas sob custódia, indicação do fiel depositário, unidades depositárias, volumes e travas de segurança contra comercialização indevida.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -1206,8 +1207,8 @@ with tab_custodia:
         ]
         especies_depositadas = ["Pescado Diversos / Pargo (Lutjanus purpureus)", "Caudas de Lagosta congelada", "Espécimes sob restrição de captura"]
         
-        df_custodia['Fiel Depositário Responsável'] = np.choice(depositarios_possiveis, size=len(df_custodia))
-        df_custodia['Descrição do Objeto em Depósito'] = np.choice(especies_depositadas, size=len(df_custodia))
+        df_custodia['Fiel Depositário Responsável'] = np.random.choice(depositarios_possiveis, size=len(df_custodia))
+        df_custodia['Descrição do Objeto em Depósito'] = np.random.choice(especies_depositadas, size=len(df_custodia))
     else:
         df_custodia['Dias em Custódia'] = []
         df_custodia['Volume Estimado Carga (kg)'] = []
@@ -1245,7 +1246,7 @@ with tab_custodia:
         """, unsafe_allow_html=True)
     with c_kpi4:
         st.markdown(f"""
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {7c1617}; padding:14px; border-radius:4px;">
+            <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid {COR_PRIMARIA}; padding:14px; border-radius:4px;">
                 <span style="font-size:10.5px; color:#64748b; font-weight:600; text-transform:uppercase;">Tempo Médio Imobilização</span><br>
                 <b style="font-size:20px; color:{COR_SECUNDARIA};">{media_dias_custodia} Dias</b>
             </div>
@@ -1253,12 +1254,38 @@ with tab_custodia:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # 4. Listagem Detalhada por Processo com Foco em Fiel Depositário
+    # 4. Gráficos de Composição de Medidas e Passivo por Unidade/UF
+    c_graf1, c_graf2 = st.columns(2, gap="large")
+    
+    with c_graf1:
+        st.markdown("### 📊 Tipologia de Medidas Acautelatórias Ativas")
+        contagem_sancoes = {
+            'Apreensão de Bens/Carga': int(df_custodia['Apreensão'].sum()),
+            'Termo de Fiel Depositário': int(df_custodia['Depósito'].sum()),
+            'Embargo / Interdição': int(df_custodia['Embargo/Interdição'].sum()),
+            'Suspensão de Atividade': int(df_custodia['Suspensão'].sum())
+        }
+        df_sancoes_plot = pd.DataFrame(list(contagem_sancoes.items()), columns=['Medida', 'Quantidade'])
+        
+        fig_cust_bar = px.bar(df_sancoes_plot, x='Medida', y='Quantidade', text_auto=True, color_discrete_sequence=[COR_PRIMARIA])
+        fig_cust_bar.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="", yaxis_title="")
+        st.plotly_chart(fig_cust_bar, use_container_width=True)
+
+    with c_graf2:
+        st.markdown("### 🗺️ Passivo Financeiro de Custódia por Estado (UF)")
+        df_cust_uf = df_custodia.groupby('UF_Clean')['Valor Multa'].sum().reset_index()
+        fig_cust_uf = px.pie(df_cust_uf, values='Valor Multa', names='UF_Clean', hole=0.4, color_discrete_sequence=[COR_PRIMARIA, COR_DOURADO, COR_SECUNDARIA, "#94a3b8", "#cbd5e1"])
+        fig_cust_uf.update_traces(textposition='inside', textinfo='percent+label')
+        fig_cust_uf.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)')
+        st.plotly_chart(fig_cust_uf, use_container_width=True)
+
+    st.markdown("---")
+
+    # 5. Listagem Detalhada por Processo com Foco em Fiel Depositário
     st.markdown("### 📑 Dossiê de Custódia: Fiel Depositário, Carga e Termos Transcritos")
     st.write("Inspeção detalhada de cada processo, explicitando quem assumiu a custódia, o que está armazenado, a quantidade exata e as transcrições das sanções aplicadas:")
 
     for _, row in df_custodia.iterrows():
-        uf_auto = row['UF_Clean']
         depositario_atual = row['Fiel Depositário Responsável']
         objeto_depositado = row['Descrição do Objeto em Depósito']
         
@@ -1270,7 +1297,7 @@ with tab_custodia:
             with c_det1:
                 st.markdown(f"**👤 Fiel Depositário Oficial (Responsável):**\n`{depositario_atual}`")
                 st.markdown(f"**📦 Objeto Específico em Depósito:**\n`{objeto_depositado}`")
-                st.markdown(f"**⚖️ Quantidade / Volume Estimado:**\n`{row['Volume Estimado Carga (kg500)']} kg` (Sob acautelamento)")
+                st.markdown(f"**⚖️ Quantidade / Volume Estimado:**\n`{row['Volume Estimado Carga (kg)']} kg` (Sob acautelamento)")
                 st.markdown(f"**⏱️ Tempo Decorrido em Depósito:**\n`{row['Dias em Custódia']} dias` (~{round(row['Dias em Custódia']/365, 1)} anos imobilizado)")
                 st.markdown(f"**💰 Valor da Multa do Processo:**\nR$ {row['Valor Multa']:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
                 st.markdown(f"**📅 Data do Auto de Infração:**\n{row['Data Infração'].strftime('%d/%m/%Y') if pd.notnull(row['Data Infração']) else 'Não Registrada'}")
@@ -1283,10 +1310,11 @@ with tab_custodia:
                 st.info(row['Descrição das Autuações'])
                 
                 st.success(
-                    "**🔒 Diretriz de Conformidade (Prevenção ao Risco do Pedro):**\n"
+                    "**🔒 Diretriz de Conformidade (Prevenção ao Risco Comercial):**\n"
                     "• *Trava de Estoque:* Verificar imediatamente no ERP se este lote possui restrição física de saída.\n"
                     "• *Ação Operacional:* Garantir que a gerência de armazém saiba que este volume específico é intocável comercialmente."
                 )
+
 # ---------------------------------------------------------
 # ABA 4: PESQUISA PROFUNDA (FILTROS)
 # ---------------------------------------------------------
