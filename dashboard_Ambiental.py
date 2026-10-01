@@ -1822,8 +1822,6 @@ with tab4:
     st.markdown("### Investigação Analítica")
     st.write("Digite qualquer termo (Processo, CNPJ, Embarcação, Espécie) para varrer as descrições dos autos:")
     
-    busca_livre_aba4 = st.text_input("", placeholder="🔍 Buscar termo específico (Aba)...", label_visibility="collapsed", key="busca_aba4")
-    
     df_pesquisa = df_unicos.copy()
     if busca_livre_aba4:
         mask = df_pesquisa.astype(str).apply(lambda x: x.str.contains(busca_livre_aba4, case=False)).any(axis=1)
@@ -1972,122 +1970,114 @@ with tab7:
                     st.rerun()
                     
 # =============================================================================
-# ABA EXECUTIVA: CONTROLE EXCLUSIVO DE FIEL DEPOSITÁRIO
+# ABA EXECUTIVA: CONTROLE EXCLUSIVO DE FIEL DEPOSITÁRIO (ESTOQUE BLOQUEADO)
 # =============================================================================
 with tab_custodia:
     import pandas as pd
     
-    # Cabeçalho Executivo Corporativo
+    # Cabeçalho corporativo limpo e objetivo
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-left: 6px solid {COR_PRIMARIA}; padding: 25px 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); margin-bottom: 25px; border-top: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9;">
-        <h2 style="margin: 0; color: {COR_SECUNDARIA}; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px;">
-            Controle Corporativo: Fiel Depositário & Estoque Bloqueado
+    <div style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-left: 6px solid {COR_PRIMARIA}; padding: 20px 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px;">
+        <h2 style="margin: 0; color: {COR_SECUNDARIA}; font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px;">
+            Controle de Fiel Depositário & Estoque Bloqueado
         </h2>
-        <p style="margin: 8px 0 0 0; color: #475569; font-size: 14px; line-height: 1.5; font-weight: 500;">
-            Painel de monitoramento exclusivo para bens, mercadorias e cargas sob Termo de Fiel Depositário. Gestão rigorosa de passivo material e prevenção de riscos.
+        <p style="margin: 6px 0 0 0; color: #475569; font-size: 13.5px; font-weight: 500;">
+            Monitoramento exclusivo de bens e cargas sob custódia legal. Prevenção de passivo material e conformidade rigorosa com os termos do IBAMA.
         </p>
     </div>
     
-    <div style="background: #fef2f2; border: 1px solid #fecaca; border-left: 6px solid #e11d48; padding: 18px 22px; border-radius: 12px; margin-bottom: 25px; display: flex; align-items: flex-start; gap: 15px;">
-        <div style="font-size: 24px; line-height: 1;">⚠️</div>
-        <div>
-            <b style="color: #9f1239; font-size: 13.5px; text-transform: uppercase;">Aviso de Conformidade Jurídica:</b><br>
-            <span style="color: #881337; font-size: 13px; line-height: 1.5;">
-                Itens sob guarda de Fiel Depositário possuem restrição absoluta de movimentação. Qualquer alteração, descarte ou comercialização sem anuência formal do IBAMA constitui infração grave e crime contra a administração pública.
-            </span>
+    <div style="background: #fef2f2; border: 1px solid #fecaca; border-left: 6px solid #e11d48; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+        <div style="font-size: 22px; line-height: 1;">⚠️️</div>
+        <div style="color: #881337; font-size: 13px; font-weight: 500; line-height: 1.4;">
+            <b>Aviso de Compliance:</b> Cargas sob Termo de Fiel Depositário possuem restrição absoluta de movimentação ou comercialização sem anuência prévia do IBAMA.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Filtragem estrita: Apenas processos com Termo de Depósito / Fiel Depositário ativo
+    # Filtragem estrita: Apenas processos com Termo de Depósito ativo
     if 'Depósito' in df_unicos.columns:
         df_fiel = df_unicos[df_unicos['Depósito'] == True].copy()
     else:
         df_fiel = pd.DataFrame()
 
     if not df_fiel.empty:
-        if 'Fiel Depositário Oficial' not in df_fiel.columns:
-            df_fiel['Fiel Depositário Oficial'] = "Não Informado na Base"
-        if 'Volume Carga (kg)' not in df_fiel.columns:
-            df_fiel['Volume Carga (kg)'] = 0.0
-        if 'Valor Mercado (R$)' not in df_fiel.columns:
-            df_fiel['Valor Mercado (R$)'] = 0.0
-            
+        # Tratamento seguro de colunas
+        for col, def_val in [('Fiel Depositário Oficial', 'Não Informado'), ('Volume Carga (kg)', 0.0), ('Valor Mercado (R$)', 0.0)]:
+            if col not in df_fiel.columns:
+                df_fiel[col] = def_val
+
         df_fiel['Volume Carga (kg)'] = pd.to_numeric(df_fiel['Volume Carga (kg)'], errors='coerce').fillna(0)
         df_fiel['Valor Mercado (R$)'] = pd.to_numeric(df_fiel['Valor Mercado (R$)'], errors='coerce').fillna(0)
 
-        # Seletor corporativo exclusivo para Fiel Depositário com chave única absoluta
-        unidades_lista = ["Todas as Unidades"] + sorted(df_fiel['Fiel Depositário Oficial'].astype(str).unique().tolist())
-        unidade_selecionada = st.selectbox(
-            "Filtrar por Unidade / Fiel Depositário:", 
-            unidades_lista, 
-            key="unique_fiel_depositario_selector_tab4"
-        )
+        # Filtro exclusivo por Unidade Depositária (Chave blindada contra duplicidade)
+        unidades = ["Todas as Unidades"] + sorted(df_fiel['Fiel Depositário Oficial'].astype(str).unique().tolist())
+        unidade_filtro = st.selectbox("Filtrar por Unidade Depositária:", unidades, key="fiel_depositario_filtro_unico_v10")
 
-        if unidade_selecionada != "Todas as Unidades":
-            df_fiel = df_fiel[df_fiel['Fiel Depositário Oficial'] == unidade_selecionada]
+        if unidade_filtro != "Todas as Unidades":
+            df_fiel = df_fiel[df_fiel['Fiel Depositário Oficial'] == unidade_filtro]
 
-        # KPIs da Aba de Fiel Depositário
+        # Indicadores Executivos (KPIs)
         total_autos = len(df_fiel)
-        soma_peso = df_fiel['Volume Carga (kg)'].sum()
-        soma_valor = df_fiel['Valor Mercado (R$)'].sum()
+        peso_total = df_fiel['Volume Carga (kg)'].sum()
+        valor_total = df_fiel['Valor Mercado (R$)'].sum()
 
-        col_k1, col_k2, col_k3 = st.columns(3, gap="medium")
-        with col_k1:
+        c1, c2, c3 = st.columns(3, gap="medium")
+        with c1:
             st.markdown(f"""
-                <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; border-bottom: 4px solid {COR_PRIMARIA};">
-                    <span style="font-size: 11px; color: #64748b; font-weight: 800; text-transform: uppercase;">Autos sob Depósito</span>
-                    <b style="font-size: 22px; color: #0f172a; display: block; margin-top: 5px;">{total_autos} Registros</b>
+                <div style="background: #ffffff; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; border-bottom: 4px solid {COR_PRIMARIA};">
+                    <span style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Autos de Depósito</span>
+                    <b style="font-size: 20px; color: #0f172a; display: block; margin-top: 4px;">{total_autos} Registros</b>
                 </div>
             """, unsafe_allow_html=True)
-        with col_k2:
+        with c2:
             st.markdown(f"""
-                <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; border-bottom: 4px solid {COR_DOURADO};">
-                    <span style="font-size: 11px; color: #64748b; font-weight: 800; text-transform: uppercase;">Volume Total Retido</span>
-                    <b style="font-size: 22px; color: #0f172a; display: block; margin-top: 5px;">{soma_peso:,.1f} kg</b>
+                <div style="background: #ffffff; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; border-bottom: 4px solid {COR_DOURADO};">
+                    <span style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Volume Retido</span>
+                    <b style="font-size: 20px; color: #0f172a; display: block; margin-top: 4px;">{peso_total:,.1f} kg</b>
                 </div>
             """.replace(".", ","), unsafe_allow_html=True)
-        with col_k3:
+        with c3:
             st.markdown(f"""
-                <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e2e8f0; border-bottom: 4px solid #b45309;">
-                    <span style="font-size: 11px; color: #64748b; font-weight: 800; text-transform: uppercase;">Valor Comercial Estimado</span>
-                    <b style="font-size: 22px; color: #b45309; display: block; margin-top: 5px;">R$ {soma_valor:,.2f}</b>
+                <div style="background: #ffffff; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; border-bottom: 4px solid {b45309 if 'b45309' in locals() else '#b45309'};">
+                    <span style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Valor de Mercado</span>
+                    <b style="font-size: 20px; color: #b45309; display: block; margin-top: 4px;">R$ {valor_total:,.2f}</b>
                 </div>
             """.replace(",", "X").replace(".", ",").replace("X", "."), unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("<h3 style='color: #0f172a; font-size: 16px; font-weight: 800; text-transform: uppercase;'>📦 Detalhamento dos Lotes sob Guarda</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #0f172a; font-size: 15px; font-weight: 800; text-transform: uppercase;'>📦 Relação de Lotes sob Guarda</h3>", unsafe_allow_html=True)
 
+        # Listagem estruturada em expanders limpos
         for _, row in df_fiel.iterrows():
             proc = row.get('Nº Processo', 'N/D')
             auto = row.get('Nº A.I.', 'N/D')
-            produto = row.get('Objeto Identificado', 'Produto não especificado')
-            depositario = row.get('Fiel Depositário Oficial', 'Não Informado')
+            produto = row.get('Objeto Identificado', 'Não especificado')
+            depositario = row.get('Fiel Depositário Oficial', 'Não informado')
             peso = row.get('Volume Carga (kg)', 0)
             valor = row.get('Valor Mercado (R$)', 0)
             valor_fmt = f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-            
-            with st.expander(f"Processo: {proc} | Auto: {auto} | Produto: {produto} ({peso} kg)"):
-                c_det1, c_det2 = st.columns([1, 1.2], gap="large")
-                with c_det1:
+
+            with st.expander(f"Processo: {proc} | Auto: {auto} | {produto} ({peso} kg)"):
+                col_det1, col_det2 = st.columns([1, 1.2], gap="large")
+                with col_det1:
                     st.markdown(f"""
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px;">
                         <b>Unidade Depositária:</b><br>{depositario}<br><br>
-                        <b>Volume Registrado:</b><br>{peso} kg<br><br>
-                        <b>Avaliação de Mercado:</b><br>{valor_fmt}
+                        <b>Volume Documental:</b><br>{peso} kg<br><br>
+                        <b>Valor Estimado:</b><br>{valor_fmt}
                     </div>
                     """, unsafe_allow_html=True)
-                with c_det2:
+                with col_det2:
                     st.markdown(f"""
-                    <div style="background: #fdfbf7; padding: 15px; border-radius: 8px; border: 1px solid #d6d3d1; font-family: monospace; font-size: 12.5px;">
-                        <b>STATUS LEGAL: BEM SOB RESTRIÇÃO DE DEPÓSITO</b><br><br>
-                        <b>Sanções e Termos:</b><br>{row.get('Sanções Aplicadas', 'N/D')}<br><br>
-                        <b>Descrição:</b><br>{row.get('Descrição das Autuações', 'N/D')}
+                    <div style="background: #fdfbf7; padding: 12px; border-radius: 8px; border: 1px solid #d6d3d1; font-family: monospace; font-size: 12px;">
+                        <b>STATUS: BEM SOB RESTRIÇÃO DE DEPÓSITO</b><br><br>
+                        <b>Sanções:</b><br>{row.get('Sanções Aplicadas', 'N/D')}<br><br>
+                        <b>Descrição do Fato:</b><br>{row.get('Descrição das Autuações', 'N/D')}
                     </div>
                     """, unsafe_allow_html=True)
     else:
-        st.info("Nenhum registro de Fiel Depositário encontrado na base de dados atual.")
-
+        st.info("Nenhum registro de Fiel Depositário encontrado na base de dados.")
+        
 # ---------------------------------------------------------
 # ABA 4: PESQUISA PROFUNDA (FILTROS)
 # ---------------------------------------------------------
