@@ -586,7 +586,7 @@ def renderizar_leitor_nativo(chave_aba):
 
         c_fechar, c_vazio, c_baixar = st.columns([1.5, 2, 1.5])
         with c_fechar:
-            if st.button("⬅️ VOLTAR AO PAINEL", use_container_width=True, key=f"fechar_{chave_aba}"):
+            if st.button("⬅️ VOLTAR AO PAINEL", width="stretch", key=f"fechar_{chave_aba}"):
                 st.session_state['leitor_ativo'] = None
                 st.rerun()
         with c_baixar:
@@ -594,7 +594,7 @@ def renderizar_leitor_nativo(chave_aba):
                 with open(arquivo_pdf_atual, "rb") as file: dados_pdf = file.read()
             except:
                 dados_pdf = b"Arquivo Pendente"
-            st.download_button("📥 BAIXAR PDF ORIGINAL", data=dados_pdf, file_name=arquivo_pdf_atual, mime="application/pdf", key=f"dl_{chave_aba}", use_container_width=True)
+            st.download_button("📥 BAIXAR PDF ORIGINAL", data=dados_pdf, file_name=arquivo_pdf_atual, mime="application/pdf", key=f"dl_{chave_aba}", width="stretch")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -874,7 +874,7 @@ with tab_mapa:
         st.markdown("<b style='font-size:11.5px; color:transparent;'>Layout</b>", unsafe_allow_html=True)
         # BOTÃO DISCRETO E PROFISSIONAL (Apenas Ícone)
         icone_btn = "🗗" if st.session_state["map_fullscreen"] else "⛶"
-        if st.button(icone_btn, help="Clique para alternar entre Mapa Expandido e Modo Dividido (Lado a Lado)", use_container_width=True):
+        if st.button(icone_btn, help="Clique para alternar entre Mapa Expandido e Modo Dividido (Lado a Lado)", width="stretch"):
             st.session_state["map_fullscreen"] = not st.session_state["map_fullscreen"]
             st.rerun()
 
@@ -1056,7 +1056,7 @@ with tab_mapa:
             'cnpj': 'CNPJ',
             'endereco': 'Endereço Registrado'
         }), 
-        use_container_width=True, 
+        width="stretch", 
         hide_index=True
     )
 
@@ -1074,7 +1074,7 @@ with tab1:
         
         fig_obj = px.bar(df_obj, y='Objeto', x='Quantidade', orientation='h', text_auto=True, color_discrete_sequence=[COR_PRIMARIA])
         fig_obj.update_layout(yaxis={'categoryorder':'total ascending'}, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="", yaxis_title="", margin=dict(l=0, r=0, t=10, b=0), height=400)
-        st.plotly_chart(fig_obj, use_container_width=True)
+        st.plotly_chart(fig_obj, width="stretch")
         
     with c2:
         st.markdown("### Investigação Qualitativa Individual")
@@ -1120,13 +1120,13 @@ with tab2:
         st.markdown("### Concentração de Passivo Financeiro (R$)")
         fig_uf_val = px.bar(df_uf, x='UF_Filtro', y='Valor Multa', text_auto='.2s', color_discrete_sequence=[COR_PRIMARIA])
         fig_uf_val.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="", yaxis_title="")
-        st.plotly_chart(fig_uf_val, use_container_width=True)
+        st.plotly_chart(fig_uf_val, width="stretch")
         
     with c_reg2:
         st.markdown("### Densidade de Autos de Infração (Volume)")
         fig_uf_qtd = px.bar(df_uf, x='UF_Filtro', y='Nº A.I.', text_auto=True, color_discrete_sequence=["#475569"])
         fig_uf_qtd.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_title="", yaxis_title="")
-        st.plotly_chart(fig_uf_qtd, use_container_width=True)
+        st.plotly_chart(fig_uf_qtd, width="stretch")
 
 # ---------------------------------------------------------
 # ABA 3: TIPOLOGIA E SANÇÕES
@@ -1141,7 +1141,7 @@ with tab3:
         fig_tipo = px.pie(tipos_df, values='Contagem', names='Natureza da Infração', hole=0.5, color_discrete_sequence=[COR_PRIMARIA, COR_DOURADO, COR_SECUNDARIA, "#94a3b8"])
         fig_tipo.update_traces(textposition='inside', textinfo='percent+label')
         fig_tipo.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)')
-        st.plotly_chart(fig_tipo, use_container_width=True)
+        st.plotly_chart(fig_tipo, width="stretch")
         
     with c_tip2:
         st.markdown("### Medidas Restritivas Diretas")
@@ -1156,7 +1156,7 @@ with tab3:
         
         fig_sanc = px.bar(df_sanc, x='Total', y='Medida', orientation='h', text_auto=True, color_discrete_sequence=[COR_SECUNDARIA])
         fig_sanc.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', yaxis={'categoryorder':'total ascending'}, xaxis_title="", yaxis_title="")
-        st.plotly_chart(fig_sanc, use_container_width=True)
+        st.plotly_chart(fig_sanc, width="stretch")
 
 # =============================================================================
 # ABA EXECUTIVA DE CUSTÓDIA, FIEL DEPOSITÁRIO E PASSIVO PATRIMONIAL
@@ -1329,7 +1329,7 @@ with tab_custodia:
             csv_inspecao = df_export.to_csv(index=False).encode('utf-8-sig')
             st.download_button(
                 label=f"📥 BAIXAR PLANILHA EXECUTIVA ({len(df_filtrado)} Lotes)",
-                data=csv_inspecao, file_name=f"Relatorio_Auditoria_Custodia.csv", mime='text/csv', use_container_width=True, key="corp_btn_download_v4"
+                data=csv_inspecao, file_name=f"Relatorio_Auditoria_Custodia.csv", mime='text/csv', width="stretch", key="corp_btn_download_v4"
             )
         else:
             st.warning("Nenhum dado disponível para exportação com os filtros atuais.")
@@ -1447,7 +1447,7 @@ with tab5:
     colunas_finais = ['Nº Processo', 'Nº A.I.', 'Data Infração', 'UF_Clean', 'Objeto Identificado', 'Tipo Infração', 'Valor Multa', 'Descrição das Autuações']
     df_export = df_unicos[colunas_finais].rename(columns={'UF_Clean': 'UF'})
     
-    st.dataframe(df_export, use_container_width=True, hide_index=True)
+    st.dataframe(df_export, width="stretch", hide_index=True)
     
     csv = df_export.to_csv(index=False).encode('utf-8')
     st.download_button(label="📥 Exportar Matriz Analítica (CSV)", data=csv, file_name='Auditoria_IBAMA.csv', mime='text/csv')
@@ -1484,26 +1484,26 @@ with tab6:
         with col_op1:
             with st.expander("🚚 DOC-01: Guia do Motorista", expanded=True):
                 st.markdown("<p style='font-size: 13.5px; color: #475569; line-height: 1.5; margin-bottom: 15px;'><b>Foco Estratégico:</b> Conduta em barreiras fiscais, aferição obrigatória de balança INMETRO, limites de tolerância de espécies e acionamento imediato do SLA Jurídico de 48H.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc1", use_container_width=True):
+                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc1", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-01: Guia do Motorista"
                     st.rerun()
                     
             with st.expander("🦞 DOC-02: POP Triagem Lagosta", expanded=True):
                 st.markdown("<p style='font-size: 13.5px; color: #475569; line-height: 1.5; margin-bottom: 15px;'><b>Foco Estratégico:</b> Tolerância zero para tamanhos mínimos e fêmeas ovadas no exato momento do desembarque industrial.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc2", use_container_width=True):
+                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc2", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-02: Triagem de Lagosta"
                     st.rerun()
 
         with col_op2:
             with st.expander("🐟 DOC-04: Guia VMS Pargo", expanded=True):
                 st.markdown("<p style='font-size: 13.5px; color: #475569; line-height: 1.5; margin-bottom: 15px;'><b>Foco Estratégico:</b> Obediência incondicional às zonas de exclusão costeira (limite de 50 metros) e monitoramento satelital obrigatório (PREPS).</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc4", use_container_width=True):
+                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc4", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-04: Guia VMS Pargo"
                     st.rerun()
                     
             with st.expander("🛑 DOC-07: Cartilha Petrechos", expanded=True):
                 st.markdown("<p style='font-size: 13.5px; color: #475569; line-height: 1.5; margin-bottom: 15px;'><b>Foco Estratégico:</b> Identificação visual rápida de métodos e redes ilegais (como rede de caçoeira) na atracação da frota pesqueira.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc7", use_container_width=True):
+                if st.button("👁️ ABRIR GUIA 3D INTERATIVO", key="btn_abrir_doc7", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-07: Cartilha de Petrechos"
                     st.rerun()
 
@@ -1536,32 +1536,31 @@ with tab7:
         with col_jur1:
             with st.expander("❄️ DOC-03: Manual do Defeso", expanded=True):
                 st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Trava de ERP, inventário cego e declaração oficial de estoques.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc3", use_container_width=True):
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc3", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-03: Manual do Defeso"
                     st.rerun()
                     
             with st.expander("⚖️ DOC-05: Teses Defensivas", expanded=True):
                 st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Matriz de respostas rápidas (SLA 48h) e conversão via NUCAM.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc5", use_container_width=True):
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc5", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-05: Teses Defensivas"
                     st.rerun()
                     
             with st.expander("📊 DOC-09: Resumo Executivo", expanded=True):
                 st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Relatório de Governança para Board e Investidores.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc9", use_container_width=True):
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc9", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-09: Resumo Executivo"
                     st.rerun()
 
         with col_jur2:
             with st.expander("🔍 DOC-06: Due Diligence RGP", expanded=True):
                 st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Triagem rigorosa de fornecedores e armadores embargados.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc6", use_container_width=True):
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc6", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-06: Due Diligence RGP"
                     st.rerun()
                     
             with st.expander("🚢 DOC-08: Checklist Aduaneiro", expanded=True):
                 st.markdown("<p style='font-size: 13px; color: #475569;'><b>Foco:</b> Liberação aduaneira (Sinal Verde) e controle de NCMs/LPCO.</p>", unsafe_allow_html=True)
-                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc8", use_container_width=True):
+                if st.button("👁️ ABRIR INFOGRÁFICO VIVO", key="btn_abrir_doc8", width="stretch"):
                     st.session_state['leitor_ativo'] = "DOC-08: Checklist Exportação"
                     st.rerun()
-                    
