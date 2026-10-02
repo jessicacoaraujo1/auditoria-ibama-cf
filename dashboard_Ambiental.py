@@ -1172,10 +1172,10 @@ with tab_custodia:
     <div style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-left: 6px solid {COR_PRIMARIA}; padding: 25px 30px; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.04); margin-bottom: 25px; border-top: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; position: relative; overflow: hidden;">
         <div style="position: absolute; right: -20px; top: -30px; font-size: 120px; opacity: 0.03; transform: rotate(-15deg);">🛡️</div>
         <h2 style="margin: 0; color: {COR_SECUNDARIA}; font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.05);">
-            Auditoria de Custódia e Conformidade de Estoques
+            Termos de Depósito Digital & Custódia de Estoques
         </h2>
         <p style="margin: 8px 0 0 0; color: #475569; font-size: 14px; line-height: 1.6; font-weight: 500; max-width: 85%;">
-            Painel gerencial focado EXCLUSIVAMENTE no controle empírico de cargas sob custódia (Termo de Fiel Depositário). Acompanhamento de volumes, tempo de retenção, indicação de unidades e valores estipulados pelo IBAMA.
+            Módulo digital de controle empírico de cargas sob Fiel Depósito. Gestão de volumes, tempo de retenção e validação de conformidade patrimonial das unidades da Prime Seafood autuadas pelo IBAMA.
         </p>
     </div>
     
@@ -1184,7 +1184,7 @@ with tab_custodia:
         <div>
             <b style="color: #9f1239; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Alerta de Conformidade Patrimonial (Diretriz de Risco):</b><br>
             <span style="color: #881337; font-size: 13.5px; line-height: 1.6;">
-                As cargas listadas abaixo encontram-se sob <b>Termo de Fiel Depositário</b>. É estritamente vedada a movimentação comercial, industrialização ou liberação sem anuência prévia do órgão ambiental. O descumprimento configura infração grave e crime contra a administração pública por desvio de bens apreendidos.
+                As cargas listadas abaixo encontram-se sob <b>Termo de Fiel Depositário</b>. É estritamente vedada a movimentação comercial, industrialização, doação ou liberação sem anuência prévia oficial do IBAMA. O descumprimento configura infração grave e crime de desobediência (Art. 330, CP).
             </span>
         </div>
     </div>
@@ -1193,11 +1193,10 @@ with tab_custodia:
     # ---------------------------------------------------------
     # 2. HIGIENIZAÇÃO E ISOLAMENTO DA BASE (APENAS FIEL DEPOSITÁRIO)
     # ---------------------------------------------------------
-    # Filtro estrito: Retém apenas processos onde há Termo de Fiel Depositário
     df_fiel_dep = df_unicos[df_unicos['Depósito'] == True].copy()
 
     colunas_obrigatorias = {
-        'Fiel Depositário Oficial': "Não Informado na Base",
+        'Fiel Depositário Oficial': "PRIME SEAFOOD LTDA", # Valor padrão ajustado para a empresa
         'Volume Carga (kg)': 0.0,
         'Valor Mercado (R$)': 0.0
     }
@@ -1210,7 +1209,6 @@ with tab_custodia:
     df_fiel_dep['Valor Mercado (R$)'] = pd.to_numeric(df_fiel_dep['Valor Mercado (R$)'], errors='coerce').fillna(0)
     df_fiel_dep['Valor Multa'] = pd.to_numeric(df_fiel_dep['Valor Multa'], errors='coerce').fillna(0)
     
-    # Cálculo Dinâmico do Tempo de Retenção
     if 'Data Infração' in df_fiel_dep.columns:
         df_fiel_dep['Data Infração'] = pd.to_datetime(df_fiel_dep['Data Infração'], errors='coerce')
         hoje = pd.Timestamp.now()
@@ -1241,7 +1239,7 @@ with tab_custodia:
         st.markdown(f"""
             <div style="background: #f8fafc; border-radius: 8px; padding: 20px; border: 1px solid #e2e8f0; border-top: 4px solid #b45309;">
                 <span style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase;">Carga Total Retida (Kg)</span><br>
-                <b style="font-size: 26px; color: #b45309; display: block; margin-top: 4px;">{carga_total_kg:,.3f} kg</b>
+                <b style="font-size: 26px; color: #b45309; display: block; margin-top: 4px;">{carga_total_kg:,.2f} kg</b>
             </div>
         """.replace(".", ","), unsafe_allow_html=True)
         
@@ -1261,7 +1259,7 @@ with tab_custodia:
     c_txt_btn, c_down = st.columns([1.6, 1])
     with c_txt_btn:
         st.markdown("<h3 style='color: #0f172a; font-size: 16px; margin-bottom: 4px; font-weight: 800; text-transform: uppercase;'>📋 Relatório de Auditoria in Loco (Câmara Fria)</h3>", unsafe_allow_html=True)
-        st.write("Exporte a planilha de controle contendo Estado, Unidade, Data, Espécie e Volume para a validação física dos estoques retidos.")
+        st.write("Exporte a planilha de controle para validação física e checklist diário dos estoques embargados e retidos.")
     
     with c_down:
         st.markdown("<br>", unsafe_allow_html=True)
@@ -1269,88 +1267,105 @@ with tab_custodia:
             df_export = pd.DataFrame({
                 'Nº PROCESSO SEI': df_fiel_dep['Nº Processo'],
                 'AUTO DE INFRAÇÃO': df_fiel_dep['Nº A.I.'],
-                'DATA DA AUTUAÇÃO': df_fiel_dep['Data Infração'].dt.strftime('%d/%m/%Y').fillna('N/D'),
                 'ESTADO (UF)': df_fiel_dep['UF_Clean'],
                 'PRODUTO/ESPÉCIE': df_fiel_dep['Objeto Identificado'],
-                'FIEL DEPOSITÁRIO (UNIDADE)': df_fiel_dep['Fiel Depositário Oficial'],
-                'TEMPO DE CUSTÓDIA (DIAS)': df_fiel_dep['Dias em Custódia'],
-                'VOLUME DOCUMENTAL (KG)': df_fiel_dep['Volume Carga (kg)'],
-                'VALOR DO IBAMA (R$)': df_fiel_dep['Valor Mercado (R$)'].apply(lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")),
+                'FIEL DEPOSITÁRIO': df_fiel_dep['Fiel Depositário Oficial'],
+                'DIAS RETIDOS': df_fiel_dep['Dias em Custódia'],
+                'VOLUME (KG)': df_fiel_dep['Volume Carga (kg)'],
                 '[ ] CONFERÊNCIA FÍSICA (KG)': '',
-                '[ ] INTEGRIDADE DO LACRE': '',
                 '[ ] OBSERVAÇÕES': ''
             })
             csv_inspecao = df_export.to_csv(index=False).encode('utf-8-sig')
             st.download_button(
-                label=f"📥 BAIXAR PLANILHA EXECUTIVA ({len(df_fiel_dep)} Lotes)",
-                data=csv_inspecao, file_name=f"Relatorio_Auditoria_Fiel_Depositario.csv", mime='text/csv', use_container_width=True, key="btn_download_fiel_dep_v6"
+                label=f"📥 BAIXAR PLANILHA DE CHECKLIST ({len(df_fiel_dep)} Lotes)",
+                data=csv_inspecao, file_name=f"Relatorio_Auditoria_Camara_Fria.csv", mime='text/csv', use_container_width=True
             )
-        else:
-            st.warning("Nenhum dado de Fiel Depositário encontrado.")
 
     # ---------------------------------------------------------
-    # 5. ANÁLISE PROCESSO POR PROCESSO (DOSSIÊ DOCUMENTAL)
+    # 5. GERADOR DO TERMO DE DEPÓSITO DIGITAL (NOVO MÓDULO)
     # ---------------------------------------------------------
     st.markdown("---")
-    st.markdown("<h3 style='color: #0f172a; font-size: 17px; margin-bottom: 5px; font-weight: 800; text-transform: uppercase;'>📑 Dossiê de Custódia: Carga e Termos Transcritos</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #475569; font-size: 14px; margin-bottom: 20px;'>Inspeção detalhada de cada processo, explicitando quem assumiu a custódia, o que está armazenado, a quantidade exata e o tempo decorrido.</p>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #0f172a; font-size: 17px; margin-bottom: 5px; font-weight: 800; text-transform: uppercase;'>📄 Termos de Depósito Digitais</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #475569; font-size: 14px; margin-bottom: 20px;'>Versões digitalizadas dos documentos originais lavrados pelo IBAMA, estruturadas para fácil leitura e fiscalização pelas equipes operacionais.</p>", unsafe_allow_html=True)
 
     if df_fiel_dep.empty:
-        st.info("A base de dados não contém processos classificados como Fiel Depositário.")
+        st.info("Nenhum Termo de Fiel Depositário ativo registrado na base de dados no momento.")
     else:
-        categorias = df_fiel_dep['Objeto Identificado'].astype(str).unique()
-        
-        for categoria in sorted(categorias):
-            df_cat = df_fiel_dep[df_fiel_dep['Objeto Identificado'] == categoria]
+        for _, row in df_fiel_dep.iterrows():
+            depositario = str(row.get('Fiel Depositário Oficial', 'PRIME SEAFOOD LTDA'))
+            categoria = row['Objeto Identificado']
+            volume_kg = row['Volume Carga (kg)']
+            auto_infracao = row['Nº A.I.']
+            processo = row['Nº Processo']
+            uf_str = str(row.get('UF_Clean', 'N/D'))
             
-            st.markdown(f"""
-            <div style="background: #f1f5f9; border-radius: 8px; padding: 10px 16px; margin-top: 20px; margin-bottom: 12px; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: space-between;">
-                <b style="color: {COR_PRIMARIA}; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.5px;">📦 {categoria}</b>
-                <span style="background: #ffffff; color: #475569; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; border: 1px solid #cbd5e1;">{len(df_cat)} Registro(s)</span>
-            </div>
-            """, unsafe_allow_html=True)
+            titulo_aba = f"🟡 TERMO DIGITAL: {categoria} | {volume_kg} kg | A.I: {auto_infracao} ({uf_str})"
             
-            for _, row in df_cat.iterrows():
-                depositario = str(row.get('Fiel Depositário Oficial', 'Não Informado'))
-                uf_str = str(row.get('UF_Clean', 'N/D'))
-                valor_carga_fmt = f"R$ {row['Valor Mercado (R$)']:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-                multa_fmt = f"R$ {row['Valor Multa']:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            with st.expander(titulo_aba):
+                # Cabeçalho do Termo Interno
+                st.markdown(f"<h4 style='color:{COR_PRIMARIA}; margin-bottom:0;'>TERMO DE DEPÓSITO DIGITAL — IBAMA</h4>", unsafe_allow_html=True)
+                st.caption(f"Reconstrução baseada no Auto de Infração {auto_infracao} e Processo Administrativo {processo}.")
                 
-                # Tratamento de Datas e Tempo
-                data_inf_str = row['Data Infração'].strftime('%d/%m/%Y') if pd.notnull(row['Data Infração']) else 'Data não consta'
-                dias_cust = row['Dias em Custódia']
+                st.divider()
+
+                # Painel de Status Integrado
+                col_m1, col_m2, col_m3 = st.columns(3)
+                with col_m1:
+                    st.metric(label="Status Legal", value="Ativo 🟢", delta="Sob Guarda")
+                with col_m2:
+                    st.metric(label="Tempo em Custódia", value=f"{row['Dias em Custódia']} Dias")
+                with col_m3:
+                    st.metric(label="Volume Sob Guarda", value=f"{volume_kg} kg")
+
+                st.divider()
+
+                # Seção 1 e 2 em Colunas
+                col_sec1, col_sec2 = st.columns(2, gap="large")
                 
-                if dias_cust >= 365:
-                    anos = dias_cust / 365.25
-                    tempo_str = f"{dias_cust} dias corridos (~ {anos:.1f} anos)"
-                else:
-                    tempo_str = f"{dias_cust} dias corridos"
-                
-                titulo_expander = f"Processo SEI: {row['Nº Processo']} | A.I: {row['Nº A.I.']} | UF: {uf_str} | Volume: {row['Volume Carga (kg)']} kg"
-                
-                with st.expander(titulo_expander):
-                    c_info, c_ibama = st.columns([1, 1.2], gap="large")
+                with col_sec1:
+                    st.markdown("**1. Identificação do Depositário**")
+                    st.info(f"**Empresa Fiel Depositária:** {depositario}\n\n"
+                            "**Condição:** A empresa atua como guardiã legal dos bens em nome do Estado. "
+                            "A posse é provisória e condicionada à decisão final do órgão ambiental correspondente.")
                     
-                    with c_info:
-                        st.markdown(f"👤 **Fiel Depositário Oficial (Responsável):** `{depositario}`")
-                        st.markdown(f"📦 **Objeto Específico em Depósito:** <span style='color: #475569; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px;'>{categoria}</span>", unsafe_allow_html=True)
-                        st.markdown(f"⚖️ **Quantidade / Volume Estimado:** `{row['Volume Carga (kg)']} kg` (sob acautelamento)")
-                        st.markdown(f"⏳ **Tempo Decorrido em Depósito:** `{tempo_str}`")
-                        st.markdown(f"💰 **Valor Estimado pelo IBAMA:** `{valor_carga_fmt}`")
-                        st.markdown(f"⚠️ **Valor da Multa do Processo:** `{multa_fmt}`")
-                        st.markdown(f"📅 **Data do Auto de Infração:** `{data_inf_str}`")
-                        st.markdown(f"📍 **Unidade/Estado:** `{uf_str}`")
+                with col_sec2:
+                    st.markdown("**2. Bens Confiados**")
+                    df_bens = pd.DataFrame({
+                        "Espécie / Produto": [categoria],
+                        "Quantidade Total": [f"{volume_kg} kg"],
+                        "Local de Autuação": [uf_str]
+                    })
+                    st.dataframe(df_bens, use_container_width=True, hide_index=True)
 
-                    with c_ibama:
-                        st.markdown("📜 **Transcrição Integral dos Termos de Apreensão/Depósito:**")
-                        st.error(row['Sanções Aplicadas'] if row['Sanções Aplicadas'] != '-' else "Termo não especificado na base de dados")
-                        
-                        st.markdown("**Fato Gerador e Descrição do Fiscal (IBAMA):**")
-                        st.info(f"\"{row['Descrição das Autuações']}\"")
-                        
-                        st.markdown("💡 **Diretriz de Conformidade (Prevenção de Risco):**")
-                        st.success("Bloqueio imediato no ERP se este lote possui saldo ativo. É crucial garantir que a gerência de armazém saiba que esta mercadoria é intocável sob pena de crime contra a administração pública.")
+                # Seção 3: Regras e Responsabilidades Interativas
+                st.markdown("**3. Regras e Responsabilidades Operacionais**")
+                col_deveres, col_proibicoes = st.columns(2)
+                
+                with col_deveres:
+                    st.success("**✅ DEVERES (O que a unidade DEVE fazer):**\n"
+                               "* Armazenar o pescado em temperatura ideal.\n"
+                               "* Zelar pela integridade da carga (evitar perdas ou furtos).\n"
+                               "* Apresentar os bens imediatamente caso o IBAMA solicite vistoria.")
+                    
+                with col_proibicoes:
+                    st.error("**❌ PROIBIÇÕES (O que NÃO pode ser feito):**\n"
+                             "* Vender, despachar ou comercializar a carga.\n"
+                             "* Doar, processar ou consumir o pescado.\n"
+                             "* Alterar de câmara fria/endereço sem aviso prévio ao IBAMA.")
 
+                # Seção 4: Alerta Legal e Resumo do Fato
+                st.warning("⚠️ **ALERTA PENAL:** O descumprimento das regras configura Quebra de Fiel Depósito e Crime de Desobediência (Art. 330, CP), sujeitando o representante legal da unidade à prisão e agravo das multas.")
+                
+                # Contexto Extraído do Auto original
+                with st.container(border=True):
+                    st.markdown("**Contexto Original da Autuação:**")
+                    st.caption(f"\"{row['Descrição das Autuações']}\"")
+                    
+                col_btn, col_vazio = st.columns([1, 3])
+                with col_btn:
+                    if st.button("🖨️ Imprimir Termo", key=f"print_{auto_infracao}", use_container_width=True):
+                        st.toast("Preparando versão PDF para impressão...")
+                        
 # ---------------------------------------------------------
 # ABA 4: PESQUISA PROFUNDA (FILTROS)
 # ---------------------------------------------------------
